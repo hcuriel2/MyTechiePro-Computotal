@@ -8,7 +8,7 @@
     "scripts": {
         "installAll": "cd ./AdminFront/ && npm i && cd ../ClientFront/ && npm i && cd ../Backend && npm i",
         "ebReady": "cd ./AdminFront/ && npm ci && cd ../ClientFront/ && npm ci && cd ../Backend && npm ci",
-        "start": "cd ./Backend && node ./dist/server",
+        "start": "cd ./Backend && npm start",
         "startall": "cd ./AdminFront/ && ng build && cd ./ClientFront/ && ng build && cd .. && npm start"
     },
     "dependencies": {
