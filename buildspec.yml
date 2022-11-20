@@ -10,11 +10,11 @@ phases:
     commands:
       - cd backend
       - npm run build
+  post_build:
+    commands:
+        - cp -R node_modules/ dist/node_modules
 artifacts:
   type: zip
   files:
     - "**/*"
   base-directory: build
-post_build:
-    commands:
-        - cp -R node_modules/ dist/node_modules
