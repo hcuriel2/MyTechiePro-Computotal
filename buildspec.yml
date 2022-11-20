@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: latest
     commands:
-      - cd Backend
+      - cd backend
       - npm install --force
       - npm install -g typescript
       # - npm install
