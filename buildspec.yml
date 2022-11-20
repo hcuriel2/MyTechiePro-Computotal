@@ -1,28 +1,20 @@
 version: 0.2
 
+batch:
+  fast-fail: true
 phases:
   install:
     runtime-versions:
-      nodejs: latest
-    commands:
-      - cd backend
-      - npm install --force
-      - npm install -g typescript
-      # - npm install
+      nodejs: 16
   build:
     commands:
-      - tsc --project tsconfig.json
-  start:
-    commands:
-      - npm start
-
-  post_build:
+      - cd backend
+      - npm run build
+artifacts:
+  type: zip
+  files:
+    - "**/*"
+  base-directory: build
+post_build:
     commands:
         - cp -R node_modules/ dist/node_modules
-
-artifacts:
-  files:
-    - package.json
-    - package-lock.json
-    - 'build/**/*'
-  discard-paths: yes
