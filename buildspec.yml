@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - cd Backend
+      - npm install --force
+      - npm install -g typescript
+      # - npm install
+  build:
+    commands:
+      - tsc --project tsconfig.json
+  start:
+    commands:
+      - npm start
+
+artifacts:
+  files:
+    - package.json
+    - package-lock.json
+    - 'build/**/*'
+  discard-paths: yes
