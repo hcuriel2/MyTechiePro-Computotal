@@ -1,5 +1,5 @@
 {
-    "name": "Computotal",
+    "name": "computotal",
     "description": "Simple Hello World Node.js sample for AWS",
     "version": "0.0.1",
     "private": true,
@@ -8,7 +8,7 @@
     "scripts": {
         "installAll": "cd ./AdminFront/ && npm i && cd ../ClientFront/ && npm i && cd ../Backend && npm i",
         "ebReady": "cd ./AdminFront/ && npm ci && cd ../ClientFront/ && npm ci && cd ../Backend && npm ci",
-        "start": "cd ./Backend && node ./dist/server",
+        "start": "cd ./backend && node ./dist/server",
         "startall": "cd ./AdminFront/ && ng build && cd ./ClientFront/ && ng build && cd .. && npm start"
     },
     "dependencies": {
