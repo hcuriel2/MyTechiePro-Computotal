@@ -1,0 +1,1 @@
+{"version":3,"file":"WrongAdminException.js","sourceRoot":"","sources":["../../src/exceptions/WrongAdminException.ts"],"names":[],"mappings":";;;;;AAAA,oEAA4C;AAE5C,MAAM,mBAAoB,SAAQ,uBAAa;IAC3C;QACI,KAAK,CAAC,GAAG,EAAE,kCAAkC,CAAC,CAAC;IACnD,CAAC;CACJ;AAED,kBAAe,mBAAmB,CAAC"}
