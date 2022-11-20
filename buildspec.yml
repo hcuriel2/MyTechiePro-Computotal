@@ -9,7 +9,8 @@ phases:
   build:
     commands:
       - cd backend
-      - npm run build
+      - npm i --force
+      - tsc --project tsconfig.json
   post_build:
     commands:
         - cp -R node_modules/ dist/node_modules
