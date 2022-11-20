@@ -1,0 +1,60 @@
+<mat-toolbar class="mat-elevation-z8">
+  <button mat-icon-button *ngIf="sidenav.mode === 'over'" (click)="sidenav.toggle()">
+    <mat-icon *ngIf="!sidenav.opened">
+      menu
+    </mat-icon>
+    <mat-icon *ngIf="sidenav.opened">
+      close
+    </mat-icon>
+  </button>
+  <a href="/" class="logo">Computer Guys</a>
+  <span class="fill-remaining-space"></span>
+  <button
+  mat-raised-button
+  id="app-menu-signout-btn"
+  class="m-1"
+  (click)="signOut()"
+>
+  Sign Out
+</button>
+</mat-toolbar>
+
+
+<mat-sidenav-container>
+  <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8">
+    <img class="avatar mat-elevation-z8" src="https://images.pngnice.com/thumb.php?src=https://images.pngnice.com/download/2007/The-Secret-Life-Of-Pets-Rabbit-Snowball-PNG-File.png&h=200&w=200&zc=1" />
+
+    <h4 class="name" id="fullName">John Smith</h4>
+    <p class="designation">Admin Panel</p>
+
+    <mat-divider></mat-divider>
+
+    <button mat-button class="menu-button" routerLink="/">
+      <mat-icon>home</mat-icon>
+      <span>Dashboard</span>
+    </button>
+    <button mat-button class="menu-button" routerLink="/users">
+      <mat-icon>supervisor_account</mat-icon>
+      <span>Users</span>
+    </button>
+    <button mat-button class="menu-button" routerLink="/admins">
+      <mat-icon>person</mat-icon>
+      <span>Admins</span>
+    </button>
+    <button mat-button class="menu-button" routerLink="/projects">
+      <mat-icon>dashboard</mat-icon>
+      <span>Projects</span>
+    </button>
+    <button mat-button class="menu-button" routerLink="/client-request">
+      <mat-icon>contact_mail</mat-icon>
+      <span>Client Requests</span>
+    </button>
+  </mat-sidenav>
+
+
+  <mat-sidenav-content>
+    <div class="content mat-elevation-z8">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ 'Label.ProjectPay' | translate }}</h2>
+
+<mat-dialog-content class="row">
+    Did you pay the project fee?
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <div>
+        <button mat-raised-button color="warn" (click)="onCancel()">
+            {{ 'Dictionary.No' | translate }}
+        </button>
+        <button
+            mat-raised-button
+            color="primary"
+            class="mat-primary"
+            (click)="onSubmit()"
+        >
+            {{ 'Dictionary.Yes' | translate }}
+        </button>
+    </div>
+</mat-dialog-actions>

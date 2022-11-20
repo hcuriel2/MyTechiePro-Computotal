@@ -1,0 +1,79 @@
+<button mat-button class="backBtn" routerLink="/users">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+
+<p class="textStyle">Users</p>
+<p>Pros</p>
+
+<div class="searchbardiv">
+  <mat-form-field>
+    <input matInput type="text" (keyup)="applyFilter($event)" placeholder="Filter">
+  </mat-form-field>
+  <!-- <button mat-raised-button aria-label="Search">
+    <mat-icon>search</mat-icon>
+  </button> -->
+
+</div>
+
+
+<div class="mat-elevation-z8">
+
+  <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport tableStyle">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <!-- Tech number Column -->
+      <!-- <ng-container matColumnDef="alias">
+        <th mat-header-cell *matHeaderCellDef>Alias</th>
+        <td mat-cell *matCellDef="let element"> {{element.alias}} </td>
+      </ng-container> -->
+
+      <!-- Username Column -->
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>Full Name</th>
+        <td mat-cell *matCellDef="let element"> {{element.firstName + " " + element.lastName}} </td>
+      </ng-container>
+
+      <!-- Status Column-->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element"> {{element.proStatus}} </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+      </ng-container>
+
+      <!-- Rating Column -->
+      <ng-container matColumnDef="rating">
+        <th mat-header-cell *matHeaderCellDef>Rating</th>
+        <td mat-cell *matCellDef="let element"> {{element.ratingSum / element.ratingCount}} </td>
+      </ng-container>
+    
+      <!-- View Profile Button -->
+      <ng-container matColumnDef="viewProfile">
+        <th mat-header-cell *matHeaderCellDef> </th>
+
+        <!-- [routerLink]="['/proDetails/' + element.id]" -->
+        <td mat-cell *matCellDef="let element"  [style.width.px]="150"> <button mat-raised-button class="btnProfiles"
+            (click)="routeToProDetails(element._id)">View Profile</button> </td>
+            
+      </ng-container>
+
+
+      <!-- Approve account Button -->
+      <ng-container matColumnDef="approve">
+        <th mat-header-cell *matHeaderCellDef> </th>
+
+        <!-- [routerLink]="['/proDetails/' + element.id]" -->
+        <td mat-cell *matCellDef="let element" [style.width.px]="150"> <button mat-raised-button class="btnProfiles"
+            (click)="approvePro(element._id)" [disabled]="element.approved === true ? 'disabled' : null">Approve</button> </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </cdk-virtual-scroll-viewport>
+</div>

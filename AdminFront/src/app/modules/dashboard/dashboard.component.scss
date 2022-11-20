@@ -1,0 +1,97 @@
+.textStyle {
+  padding-top: 35px;
+  font-size: xx-large;
+  font-weight: bold;
+  color: #002b5c;
+}
+
+.row {
+  height: auto;
+}
+
+.cell {
+  padding: 10px 20px 10px 20px;
+}
+
+.tableStyle{
+    margin-top: 30px;
+}
+
+.searchbardiv{
+    margin-top: 30px;
+}
+
+.searchbar{
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.ml-3{
+    margin-left: 30px;
+}
+
+.btnProfiles {
+  display:block;
+  border-radius: 24px;
+  background-color: rgb(42, 124, 218);
+  color: white
+  
+}
+
+.btnPermissions {
+  display:block;
+  border-radius: 24px;
+  background-color: rgb(233, 16, 99);
+  color: white
+  
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}
+
+@media(max-width: 600px) {
+  .mobile-label {
+    width: 80px;
+    display: inline-block;
+        font-weight: bold;
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-row { 
+    flex-direction: column;
+    align-items: start;
+    padding: 8px 24px;
+  }
+}
+
+.content {
+  width: calc(50vh - 180px);
+  height: calc(30vh);
+  border-radius: 10px;
+  float: left;
+  margin: 16px;
+  font-size: x-large;
+}
+
+.cardHeader {
+  text-align: center;
+  display: block;
+}
+
+.cardTitle {
+  text-align: center;
+  padding-top: 8%;
+}
+
+.cardContent {
+  font-size: 200%;
+  text-align: center;
+  padding-top: 35%;
+  font-family: 'Anton';
+  color: rgba(77, 99, 228, 0.959)
+}

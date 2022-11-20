@@ -1,0 +1,20 @@
+{
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#3264a6",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#447cc7",
+        "titleBar.activeBackground": "#3264a6",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#3264a699",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#3264A6",
+    "git.ignoreLimitWarning": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "[typescript]": {
+        "editor.tabSize": 4
+    },
+    "prettier.tabWidth": 4,
+    "prettier.singleQuote": true,
+    "angular.enable-strict-mode-prompt": false
+}

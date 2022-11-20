@@ -1,0 +1,57 @@
+<p class="textStyle">Admins</p>
+<p>Profiles</p>
+
+<div class="searchbardiv">
+  <input type="text" placeholder="Search profile" aria-label="Search" class="searchbar">
+  <button mat-raised-button aria-label="Search">
+    <mat-icon>search</mat-icon>
+  </button>
+
+  <button class="ml-3" id="createAdmin" (click)="onAdminCreate()">Add new Admin</button>
+
+</div>
+
+
+<table mat-table [dataSource]="admins" class="mat-elevation-z8 tableStyle">
+
+  <!-- ID -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let element" class="boldText"> {{element._id}} </td>
+  </ng-container>
+
+  <!-- Username -->
+  <ng-container matColumnDef="username">
+    <th mat-header-cell *matHeaderCellDef>Full Name</th>
+    <td mat-cell *matCellDef="let element"> {{element.firstName + " " +  element.lastName}} </td>
+  </ng-container>
+
+  <!-- Email -->
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef> Email</th>
+    <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+  </ng-container>
+
+  <!-- Permissions -->
+  <!-- <ng-container matColumnDef="permissions">
+    <th mat-header-cell *matHeaderCellDef> Permissions</th>
+    <td mat-cell *matCellDef="let element"> {{element.permissions}} </td>
+  </ng-container> -->
+
+  <!-- View Profile Button -->
+  <!-- <ng-container matColumnDef="viewProfile">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> <button mat-raised-button class="btnProfiles"
+        (click)="routeToAdminDetails(element.id)">View Profile</button> </td>
+  </ng-container> -->
+
+  <!-- Edit Permissions Button -->
+  <!-- <ng-container matColumnDef="editPermissions">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> <button mat-raised-button class="btnPermissions"
+        (click)="routeToAdminDetails(element.id)">Edit Permissions</button> </td>
+  </ng-container> -->
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

@@ -1,0 +1,80 @@
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Anton">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+</head>
+
+
+<p class="textStyle">Dashboard</p>
+<!-- <p>Profiles</p> -->
+
+<!-- <div class="searchbardiv">
+  <input type="text" placeholder="Search profile" aria-label="Search" class="searchbar">
+  <button mat-raised-button aria-label="Search">
+    <mat-icon>search</mat-icon>
+  </button>
+
+  <button class="ml-3">Add new Admin</button>
+
+</div> -->
+
+
+<div>
+  <mat-card class="content">
+    <mat-card-header class="cardHeader">
+      <mat-card-title class="cardTitle">
+        Number of Clients
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="cardContent">
+      {{clientAmount}}
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="content">
+    <mat-card-header class="cardHeader">
+      <mat-card-title class="cardTitle">
+        Number of Professionals
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="cardContent">
+      {{proAmount}}
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="content">
+    <mat-card-header class="cardHeader">
+      <mat-card-title class="cardTitle">
+        Number of Projects
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="cardContent">
+      {{projectAmount}}
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+<!-- <div class="mat-elevation-z8">
+  <table class="tableStyle">
+    <thead>
+      <tr>
+        <th *ngFor="let head of headElements" scope="col">{{head}} </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let el of elements" class="cell">
+        <th scope="row" class="cell">{{el.id}}</th>
+        <td class="cell mobile-label">{{el.username}}</td>
+        <td class="cell mobile-label">{{el.email}}</td>
+        <td class="cell mobile-label">{{el.password}}</td>
+        <td class="cell mobile-label">{{el.permissions}}</td>
+        <td class="cell mobile-label">
+          <button mat-button class="btnProfiles">View Profile</button>
+        </td>
+        <td class="cell mobile-label">
+          <button mat-button class="btnPermissions">Edit Permissions</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->

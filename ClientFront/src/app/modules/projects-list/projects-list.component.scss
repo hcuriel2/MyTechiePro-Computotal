@@ -1,0 +1,55 @@
+@import '~@angular/material/theming';
+// import our custom theme
+@import 'my-theme.scss';
+
+// specify theme class eg: <body class="my-theme"> ... </body>
+.my-theme {
+    
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($my-theme);
+}
+
+:root {
+    --background-color: blue;
+  }
+
+$tabco: var(--background-color);
+
+/* Structure */
+table {
+    width: 100%;
+}
+
+.content-container {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-bottom: 5%;
+}
+.header {
+    margin-top: 4%;
+    margin-bottom: 2%;
+    display: flex;
+    // align-items: center;
+}
+.head-title {
+    margin: 0;
+    padding: 0;
+}
+.status {
+    margin-left: 50px;
+    margin-top: 10px;
+}
+.project-id {
+    color: cornflowerblue;
+}
+.project-id:hover {
+    color: blue;
+}
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar {
+    background-color: $tabco !important;
+}

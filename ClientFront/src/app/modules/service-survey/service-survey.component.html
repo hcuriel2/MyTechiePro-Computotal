@@ -1,0 +1,18 @@
+<div *ngIf="!goToSummary && !goToTechSelection">
+    <app-service-survey-module
+        [title]="title"
+        [surveyModule]="currentModule"
+        [isFirstModule]="isFirstModule"
+        (nextSurveyRequest)="goToNextSurvey($event)"
+        (prevSurveyRequest)="goToPrevSurvey()"
+    >
+    </app-service-survey-module>
+</div>
+
+<div *ngIf="goToSummary && !goToTechSelection">
+    <app-service-survey-module-summary
+        [summary]="summary"
+        (goToTechSelectionRequest)="renderTechSelection()"
+        (prevSurveyRequest)="goToPrevSurvey()"
+    ></app-service-survey-module-summary>
+</div>

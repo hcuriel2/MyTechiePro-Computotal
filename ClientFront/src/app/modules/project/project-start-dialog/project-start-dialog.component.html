@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{ 'Label.ProjectStart' | translate }}</h2>
+
+<mat-dialog-content [formGroup]="formGroup" class="row">
+    <mat-form-field class="col-sm-12">
+        <input
+            matInput
+            [placeholder]="'Label.TotalCost' | translate"
+            formControlName="price"
+            type="text"
+            mask="separator.2"
+            thousandSeparator=","
+            prefix="$"
+            required
+        />
+    </mat-form-field>
+
+    <!-- <mat-form-field class="col-sm-12" appearance="fill">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+            <input
+                formControlName="startDate"
+                matStartDate
+                placeholder="Start date"
+            />
+            <input
+                formControlName="endDate"
+                matEndDate
+                placeholder="End date"
+            />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field> -->
+
+    <mat-form-field class="col-sm-12">
+        <textarea
+            matInput
+            [placeholder]="'Label.ProjectDetail' | translate"
+            formControlName="detailText"
+        >
+        </textarea>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <div>
+        <button mat-raised-button (click)="onCancel()">
+            {{ 'Dictionary.Cancel' | translate }}
+        </button>
+        <button
+            mat-raised-button
+            class="mat-primary"
+            (click)="onSubmit()"
+            [disabled]="!formGroup.valid"
+        >
+            {{ 'Dictionary.OK' | translate }}
+        </button>
+    </div>
+</mat-dialog-actions>

@@ -1,0 +1,27 @@
+@use '../../../assets/scss/computotal-theme.scss' as theme;
+
+.row {
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.flex-align-top {
+    align-items: normal;
+}
+
+.bg-primary-lighter {
+    background-color: map-get(theme.$computotal-app-primary, 'lighter');
+}
+
+a.serviceItem {
+    cursor: pointer;
+}
+
+.noItems {
+    color: dimgrey;
+}
+
+.noItems:not(:last-child) {
+    display: none;
+}

@@ -1,0 +1,121 @@
+<p class="textStyle">Projects</p>
+
+<mat-tab-group dynamicHeight>
+
+  <mat-tab label="All Projects">
+
+    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport tableStyle">
+
+      <table mat-table matSort matSortStart="desc" [dataSource]="dataSource" class="mat-elevation-z8">
+        
+        <!-- Project State -->
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef> Project State</th>
+          <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+        </ng-container>
+
+        <!-- Service Name -->
+        <ng-container matColumnDef="serviceName">
+          <th mat-header-cell *matHeaderCellDef> Service Name</th>
+          <td mat-cell *matCellDef="let element"> {{element.serviceName}} </td>
+        </ng-container>
+
+        <!-- Date Created -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef> Date Created</th>
+          <td mat-cell *matCellDef="let element"> {{element.createdAt.split("T")[0]}} </td>
+        </ng-container>
+
+        <!-- Professional -->
+        <ng-container matColumnDef="professional">
+          <th mat-header-cell *matHeaderCellDef> Professional</th>
+          <td mat-cell *matCellDef="let element" class="blue" (click)="routeToUserDetails(element.professional)">
+            {{element.professionalName}} </td>
+        </ng-container>
+
+        <!-- Feedback -->
+        <ng-container matColumnDef="feedback">
+          <th mat-header-cell *matHeaderCellDef> Feedback</th>
+          <td mat-cell *matCellDef="let element"> {{element.feedback}} </td>
+        </ng-container>
+
+        <!-- Rating -->
+        <ng-container matColumnDef="ratings">
+          <th mat-header-cell *matHeaderCellDef> Rating</th>
+          <td mat-cell *matCellDef="let element"> {{element.rating}} </td>
+        </ng-container>
+
+        <!-- Customer -->
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef> Customer</th>
+          <td mat-cell *matCellDef="let element" class="blue" (click)="routeToUserDetails(element.client)">
+            {{element.clientName}} </td>
+            <!-- <td mat-cell *matCellDef="let element" class="blue" (click)="getName(element.client)">
+              {{getName(element.client)}} </td> -->
+        </ng-container>
+
+        
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsProjects"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsProjects;"></tr>
+      </table>
+
+    </cdk-virtual-scroll-viewport>
+
+  </mat-tab>
+  <mat-tab label="Projects Under Review">
+    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport tableStyle">
+
+      <table mat-table [dataSource]="dataSourceBad" class="mat-elevation-z8">
+
+        <!-- Project State -->
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef> Project State</th>
+          <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+        </ng-container>
+
+        <!-- Service Name -->
+        <ng-container matColumnDef="serviceName">
+          <th mat-header-cell *matHeaderCellDef> Service Name</th>
+          <td mat-cell *matCellDef="let element"> {{element.serviceName}} </td>
+        </ng-container>
+
+        <!-- Date Created -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef> Date Created</th>
+          <td mat-cell *matCellDef="let element"> {{element.createdAt.split("T")[0]}} </td>
+        </ng-container>
+
+        <!-- Professional -->
+        <ng-container matColumnDef="professional">
+          <th mat-header-cell *matHeaderCellDef> Professional</th>
+          <td mat-cell *matCellDef="let element" class="blue" (click)="routeToUserDetails(element.professional)">
+            {{element.professionalName}} </td>
+        </ng-container>
+
+        <!-- Feedback -->
+        <ng-container matColumnDef="feedback">
+          <th mat-header-cell *matHeaderCellDef> Feedback</th>
+          <td mat-cell *matCellDef="let element"> {{element.feedback}} </td>
+        </ng-container>
+
+        <!-- Rating -->
+        <ng-container matColumnDef="ratings">
+          <th mat-header-cell *matHeaderCellDef> Rating</th>
+          <td mat-cell *matCellDef="let element"> {{element.rating}} </td>
+        </ng-container>
+
+        <!-- Customer -->
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef> Customer</th>
+          <td mat-cell *matCellDef="let element" class="blue" (click)="routeToUserDetails(element.client)">
+            {{element.clientName}} </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsProjects"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsProjects;"></tr>
+      </table>
+
+    </cdk-virtual-scroll-viewport>
+  </mat-tab>
+</mat-tab-group>

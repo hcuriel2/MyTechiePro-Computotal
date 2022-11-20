@@ -1,0 +1,65 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content [formGroup]="formGroup">
+            <mat-card-title class="mt-3">
+                {{ 'Dictionary.ContactUs' | translate }}
+            </mat-card-title>
+
+            <div class="row">
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'Label.FirstName' | translate }}</mat-label>
+                    <input
+                        matInput
+                        formControlName="firstName"
+                        type="text"
+                        required
+                    />
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'Label.LastName' | translate }}</mat-label>
+                    <input
+                        matInput
+                        formControlName="lastName"
+                        type="text"
+                        required
+                    />
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'Label.Email' | translate }}</mat-label>
+                    <input
+                        matInput
+                        placeholder="computotal@it.com"
+                        formControlName="emailAddress"
+                        type="text"
+                        required
+                    />
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <mat-form-field appearance="standard">
+                    <mat-label>{{ 'Label.Message' | translate }}</mat-label>
+                    <textarea
+                        matInput
+                        formControlName="message"
+                        type="text"
+                        required
+                    ></textarea>
+                </mat-form-field>
+            </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button
+                mat-raised-button
+                id="contact-us-submit-btn"
+                color="primary"
+                (click)="onSubmit()"
+            >
+                {{ 'Dictionary.Submit' | translate }}
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>

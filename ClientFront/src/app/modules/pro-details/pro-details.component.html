@@ -1,0 +1,47 @@
+<button class="backBtn" href="/service-tech-select" onclick="location.href='/service-tech-select'">
+  <!-- <mat-icon>keyboard_backspace</mat-icon> -->
+  <p>back</p>
+</button>
+
+<div>
+  <ng-template [ngIf]="avgRating >= 0" [ngIfElse]="none">
+    <p class="textStyle">{{alias + " (" + rating + " stars)"}}</p>
+  </ng-template>
+
+  <ng-template #none>
+    <p class="textStyle">{{name + " (" + rating + " stars)" }}</p>
+  </ng-template>
+
+  <p>Company Name: {{companyName}}</p>
+  <p>Name: {{name}}</p>
+  <p>Email: {{email}}</p>
+  <p>Phone Number: {{phoneNumber}}</p>
+  <p>Address: {{address}}</p>
+  <p>Skills: {{skills}}</p>
+  <p>Unit Price: {{unitPrice}}</p>
+  <p>Pro ID: {{id}}</p>
+
+  
+  <button class="tabopen" (click)="techSelect(id)">Create a Project</button>
+</div>
+
+<!-- <div>this.alias = history.state.alias;
+  this.name = history.state.firstName + ' ' + history.state.lastName;
+  this.companyName = history.state.company;
+  this.email = history.state.email;
+  this.phoneNumber = history.state.phoneNumber;
+  this.address =
+    history.state.address.street +
+    '\n' +
+    history.state.address.city +
+    ' ' +
+    history.state.address.postalCode +
+    ' ' +
+    history.state.address.country;
+  this.skills = history.state.skills;
+  this.unitPrice =
+    '$' + history.state.unitPrice + '/' + history.state.unitType;
+  this.bio = history.state.bio;
+  this.status = history.state.proStatus;
+  this.rating = history.state.ratingSum / history.state.ratingCount
+  this.website = history.state.website;</div> -->

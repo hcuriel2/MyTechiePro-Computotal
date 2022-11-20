@@ -1,0 +1,18 @@
+{
+    "git.ignoreLimitWarning": true,
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#6b56db",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#9080e4",
+        "titleBar.activeBackground": "#6b56db",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#6b56db99",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#6B56DB",
+    "[typescript]": {
+        "editor.tabSize": 4
+    },
+    "prettier.tabWidth": 4,
+    "prettier.singleQuote": true
+}

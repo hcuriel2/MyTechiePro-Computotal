@@ -1,0 +1,67 @@
+<div class="survey-container">
+  <div class="searchbardiv" *ngIf="isFirstModule">
+    <input
+      type="text"
+      placeholder="{{ 'Message.helpSurvey' | translate }}"
+      aria-label="Search"
+      class="searchbar"
+    />
+    <button
+      mat-raised-button
+      aria-label="Search"
+      class="search-btn"
+      color="primary"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+
+  <div class="border rounded" id="survey">
+    <button
+      mat-fab
+      *ngIf="!isFirstModule"
+      class="back-arrow center-v"
+      color="primary"
+      (click)="prevSurvey()"
+    >
+      <mat-icon aria-hidden="back-button" aria-label="Example home icon"
+        >arrow_back</mat-icon
+      >
+    </button>
+
+    <h2 class="center">{{ title }}</h2>
+    <!-- Questionaire Start -->
+    <div>
+      <mat-radio-group
+        aria-labelledby="example-radio-group-label"
+        class="example-radio-group"
+        [(ngModel)]="choice"
+        id="selector"
+      >
+        <mat-radio-button
+          class="radio-button"
+          *ngFor="let choice of surveyModule"
+          [value]="choice"
+        >
+          {{ choice }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <!-- Questionaire End -->
+
+    <p class=".mat-body-strong red center">{{ message }}</p>
+  </div>
+  <button
+    #nextbtn
+    mat-raised-button
+    color="primary"
+    class="pull-right"
+    id="next-btn"
+    (click)="nextSurvey($event.target)"
+  >
+    {{ "Dictionary.Next" | translate }}
+  </button>
+</div>
+
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>

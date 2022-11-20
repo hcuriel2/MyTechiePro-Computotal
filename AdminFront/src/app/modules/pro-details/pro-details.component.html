@@ -1,0 +1,79 @@
+<button mat-button class="backBtn" routerLink="/pros">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+
+<div>
+  <ng-template [ngIf]="avgRating >= 0" [ngIfElse]="none">
+    <p class="textStyle">{{alias + " (" + rating + " stars)"}}</p>
+  </ng-template>
+
+  <ng-template #none>
+    <p class="textStyle">{{name + " (" + rating + " stars)" }}</p>
+  </ng-template>
+
+  <p>{{companyName}}</p>
+</div>
+
+<mat-tab-group dynamicHeight>
+
+  <mat-tab label="Account Info">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 tableStyle">
+
+      <!-- Column 1 -->
+      <ng-container matColumnDef="key">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="boldText"> {{element.key}} </td>
+      </ng-container>
+
+      <!-- Column 2 -->
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsAccount"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsAccount;"></tr>
+    </table>
+  </mat-tab>
+
+  <mat-tab label="Projects">
+    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport tableStyle">
+      <table mat-table [dataSource]="dataSourceProjects" class="mat-elevation-z8">
+
+        <!-- Project State -->
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef> Project State</th>
+          <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+        </ng-container>
+
+        <!-- Service Name -->
+        <ng-container matColumnDef="serviceName">
+          <th mat-header-cell *matHeaderCellDef> Service Name</th>
+          <td mat-cell *matCellDef="let element"> {{element.serviceName}} </td>
+        </ng-container>
+
+        <!-- Comments -->
+        <ng-container matColumnDef="feedback">
+          <th mat-header-cell *matHeaderCellDef> Comments</th>
+          <td mat-cell *matCellDef="let element"> {{element.feedback}} </td>
+        </ng-container>
+
+        <!-- Ratings -->  
+        <ng-container matColumnDef="ratings">
+          <th mat-header-cell *matHeaderCellDef> Rating</th>
+          <td mat-cell *matCellDef="let element"> {{element.rating}} </td>
+        </ng-container>
+
+        <!-- Date Created -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef> Date Created</th>
+          <td mat-cell *matCellDef="let element"> {{element.createdAt.split("T")[0]}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsProjects"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsProjects;"></tr>
+      </table>
+    </cdk-virtual-scroll-viewport>
+  </mat-tab>
+
+</mat-tab-group>

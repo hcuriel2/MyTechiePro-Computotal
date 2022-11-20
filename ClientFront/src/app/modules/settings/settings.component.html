@@ -1,0 +1,29 @@
+<p class="h1 text-center">
+    {{'Dictionary.MFA' | translate }}
+</p>
+<div class="full-width mt-5 py-5 mat-toolbar mat-primary text-center">
+    
+    <span *ngIf="!hasMfa">
+        <span *ngIf="!!mfa">
+            <p>Scan QR code or manually enter the information below into the Google Authenticator App. 
+                Verify the setup by entering the Authentication Code.
+                Successful setup will log out your account.
+            </p>
+            <img class="center" id="qr" [src]="mfa?.dataURL" alt=''/>
+            <p>Issuer: {{mfa.issuer}}</p>
+            <p>Secret: {{mfa.secret}}</p>
+            <label>verify with TOTP code: </label>
+            <input id="token" type="text" [(ngModel)]="token">
+            <br>
+            <button (click)="verify()">verify</button>
+        </span>
+        
+        <button *ngIf="!mfa" (click)="setupMfa()">add MFA</button>
+    </span>
+    <span *ngIf="hasMfa">
+        <p>MFA is already set up.</p>
+        <button (click)="resetMFA()">reset MFA</button>
+    </span>
+</div>
+
+<router-outlet></router-outlet>

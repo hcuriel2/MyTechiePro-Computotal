@@ -1,0 +1,76 @@
+.project-container {
+    width: 100%;
+    height: 90vh;
+}
+.tab-container {
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+}
+.button-container {
+    padding-top: 1vh;
+    padding-left: 5%;
+}
+.center {
+    margin: auto;
+}
+.select-button {
+    margin-right: 10px;
+    width: 100px;
+}
+
+.content-container {
+    margin-top: 1vh;
+    width: 90%;
+    height: 90%;
+}
+.blue {
+    background-color: royalblue;
+}
+.message {
+    margin: 0;
+}
+.sender {
+    margin: 0;
+}
+.searchbardiv {
+    padding: auto;
+    width: 100%;
+}
+.chatbar {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0;
+    margin-right: auto;
+}
+.chat-log {
+    height: 70vh;
+    overflow: auto;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+h2 {
+    font-size: 2rem;
+}
+h3 {
+    margin: 0;
+}
+
+button {
+    margin-top: 1rem;
+    margin-right: 0.5rem;
+}
+
+.flex-row {
+    button {
+        margin: auto;
+    }
+    margin: 0;
+}
+
+// #project-component-review-button {
+//     display: block;
+// }

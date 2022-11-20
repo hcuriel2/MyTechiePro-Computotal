@@ -1,0 +1,45 @@
+.headingDec{
+  padding-top: 50px;
+  font-size: xx-large;
+  font-weight: bold;
+  color: #002b5c;
+}
+
+.content {
+    width: calc(50vh - 180px);
+    height: calc(10vh);
+    border-radius: 10px;
+    float: left;
+    margin: 16px;
+    font-size: x-large;
+}
+
+.cardTitle {
+    color: 002b5c;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.cardHeader {
+  text-align: center;
+  display: block;
+}
+
+.cardButton {
+  border: 1px solid rgb(51, 125, 209);
+  background-color: rgb(51, 125, 209);
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  
+}
+
+.cardActions {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  bottom: 30%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}

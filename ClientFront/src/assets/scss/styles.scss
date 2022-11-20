@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.tab-container {
+    padding: 0px 2px 2px 2px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.fill-remaining-space {
+    flex: 1 1 auto;
+}
+
+.grey {
+    color: rgba( 0, 0, 0, 0.38 );
+}
+
+.mat-dialog-actions {
+    justify-content: flex-end;
+}
+
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';

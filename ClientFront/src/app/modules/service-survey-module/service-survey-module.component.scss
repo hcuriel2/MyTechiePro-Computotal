@@ -1,0 +1,52 @@
+.survey-container {
+  height: 85vw;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+// Search Bar start
+.searchbardiv {
+  width: 100%;
+  margin-bottom: 1vh;
+}
+.searchbar {
+  width: 80%;
+  margin-right: 2%;
+}
+.search-btn {
+  width: 5%;
+}
+// Search Bar end
+
+.pull-right {
+  margin-top: 15px;
+  float: right;
+}
+
+#survey {
+  padding-top: 2vw;
+  padding-bottom: 1vw;
+}
+
+mat-radio-button {
+  margin-left: 25%;
+  margin-bottom: 10px;
+}
+.radio-button {
+  display: flex;
+  flex-direction: column;
+}
+.center {
+  text-align: center;
+}
+.center-v {
+  text-align: center;
+}
+
+.red {
+  color: red;
+}
+.back-arrow {
+  margin-left: 2vw;
+}

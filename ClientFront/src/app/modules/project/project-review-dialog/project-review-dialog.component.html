@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>REVIEW DIALOG TEST</h2>
+
+<mat-dialog-content class="row" [formGroup]="formGroup">
+    <mat-form-field class="col-sm-12">
+        <textarea
+            matInput
+            placeholder="Comments"
+            formControlName="Comment"
+            type="comment"
+        ></textarea>
+    </mat-form-field>
+
+    <ngb-rating [(rate)]="starRating" [max]="5" [readonly]="false"></ngb-rating><br />
+    
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <div>
+        <button mat-raised-button color="warn" (click)="onCancel()">
+            Cancel
+        </button>
+        <button
+            mat-raised-button
+            color="primary"
+            class="mat-primary"
+            (click)="onSubmit()"
+        >
+            Submit
+        </button>
+    </div>
+</mat-dialog-actions>

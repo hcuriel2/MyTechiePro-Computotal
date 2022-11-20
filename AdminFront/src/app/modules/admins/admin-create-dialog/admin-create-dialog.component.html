@@ -1,0 +1,81 @@
+
+<mat-dialog-content class="row" [formGroup]="formGroup">
+
+    <h2>Add New Admin</h2>
+
+    <mat-form-field class="col-sm-12">
+        <input
+            matInput
+            placeholder="First Name"
+            formControlName="firstName"
+            type="text"
+            mask="separator.2"
+            thousandSeparator=","
+            required
+        />
+    </mat-form-field>
+
+
+    <mat-form-field class="col-sm-12" id="lastID">
+        <input
+            matInput
+            placeholder="Last Name"
+            formControlName="lastName"
+            type="text"
+            mask="separator.2"
+            thousandSeparator=","
+            required
+        />
+    </mat-form-field>
+
+    <br>
+    <mat-form-field class="col-sm-12">
+        <input
+            matInput
+            placeholder="Email"
+            formControlName="email"
+            type="text"
+            mask="separator.2"
+            thousandSeparator=","
+            required
+        />
+    </mat-form-field>
+
+    <br>
+
+    <mat-form-field class="col-sm-12">
+        <input
+            matInput
+            placeholder="Password"
+            formControlName="password"
+            type="text"
+            mask="separator.2"
+            thousandSeparator=","
+            required
+        />
+    </mat-form-field>
+
+    <br>
+    <mat-form-field class="col-sm-12">
+        <input
+            matInput
+            placeholder="Phone Number"
+            formControlName="phoneNumber"
+            type="text"
+            mask="separator.2"
+            thousandSeparator=","
+            required
+        />
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <div>
+        <button mat-raised-button (click)="onCancel()">
+            Cancel
+        </button>
+        <button mat-raised-button class="mat-primary" (click)="onSubmit()">
+            Submit
+        </button>
+    </div>
+</mat-dialog-actions>
