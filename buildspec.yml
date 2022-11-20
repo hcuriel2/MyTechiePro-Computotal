@@ -16,6 +16,10 @@ phases:
     commands:
       - npm start
 
+  post_build:
+    commands:
+        - cp -R node_modules/ dist/node_modules
+
 artifacts:
   files:
     - package.json
