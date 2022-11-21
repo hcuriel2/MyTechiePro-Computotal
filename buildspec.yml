@@ -13,7 +13,6 @@ phases:
       - tsc --project tsconfig.json
   post_build:
     commands:
-        - Console.log("post-build...")
         - cp -R node_modules/ dist/
 artifacts:
   type: zip
