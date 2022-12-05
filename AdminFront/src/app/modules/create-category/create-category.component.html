@@ -1,0 +1,18 @@
+  <p class="textStyle">Create Category</p>
+
+  <input [(ngModel)]="newCategoryNameFromInput" placeholder="eg Hardware">
+
+
+
+  <p class="textStyle">Enter valid Material icon</p>
+  <input [(ngModel)]="newMaterialIconFromInput" placeholder="eg check_circle_outline">
+  <br>
+  <p>Find more Material Icons <a href="https://fonts.google.com/icons" style="text-decoration: none;" target="_blank">here</a></p>
+  <p class="textStyle">Enter Services offered in Category</p>
+  <p>Enter services dilimeted by a , after each service.</p>
+  <input  [(ngModel)]="newServicesFromInput" placeholder="eg. laptop repair, printer repair, screen repair ">
+  <br>
+  <br>
+  <button mat-raised-button id="create-category-submit-btn" color="primary"
+    (click)="loggingValue()">Submit New Category
+  </button>

@@ -139,13 +139,15 @@ class CategoryController implements Controller {
         request: RequestWithUser,
         response: Response
     ) => {
+        const hardCodedId = "6186fe3acf028f3a8836ff99";
         const categoryData: CreateCategoryDto = request.body;
-        const findUser = await this.user.findById(request.user._id);
+        // const findUser = await this.user.findById(request.user._id);
+        const findUser = await this.user.findById(hardCodedId);
         console.log(findUser);
 
         const createdCategory = new this.category({
             ...categoryData,
-            author: request.user._id,
+            author: hardCodedId,
         });
         const savedCategory = await createdCategory.save();
         await savedCategory.populate("author", "-password").execPopulate();

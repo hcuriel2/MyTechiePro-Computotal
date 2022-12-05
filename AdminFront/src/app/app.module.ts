@@ -8,6 +8,9 @@ import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { UsersComponent } from './modules/users/users.component';
 import { AdminsComponent } from './modules/admins/admins.component';
 import { ProjectsComponent } from './modules/projects/projects.component';
+import { CreateCategoryComponent } from './modules/create-category/create-category.component'; //this is new
+
+// import { CreateCategoryComponent } from './modules/create-category/create-category.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 import { MatDialogModule } from '@angular/material/dialog';
@@ -39,6 +42,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ProjectsComponent,
     ClientRequestComponent,
     AdminCreateDialogComponent,
+    CreateCategoryComponent, //this is new
   ],
   imports: [
     BrowserModule,
@@ -53,7 +57,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatSortModule,
     MatDialogModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

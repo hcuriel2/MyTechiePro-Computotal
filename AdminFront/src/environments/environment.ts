@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiEndpoint: 'http://localhost:5000'
+  apiEndpoint: 'http://backenduploadfiles-env.eba-fbpxbdmr.us-west-2.elasticbeanstalk.com'
 };
 
 /*

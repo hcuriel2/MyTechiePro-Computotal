@@ -26,7 +26,7 @@ export class AdminsComponent implements OnInit {
   constructor(
     private userService: UserService,
     private dialog: MatDialog,
-    ) {}
+  ) { }
 
   ngOnInit(): void {
     //get list of current admins
@@ -53,24 +53,24 @@ export class AdminsComponent implements OnInit {
      * page and refresh the page so that the button will no longer be there.
      */
     this.dialog
-        .open(AdminCreateDialogComponent, dialogConfig)
-        .afterClosed()
-        .subscribe((data: any) => {
-            console.log("onAdminCreate after close after subscribe");
-            this.admin = data;
-            console.log("User on admin.compnent.ts");
-            this.admin.userType = "Admin";
-            console.log(this.admin);
-            this.userService
-                .registerUser(this.admin
-                )
-                .pipe(first())
-                .subscribe((project) => {
-                    console.log("admin create dialog subscribed");
-                    window.location.reload();
-                });
-        });
-}
+      .open(AdminCreateDialogComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((data: any) => {
+        console.log("onAdminCreate after close after subscribe");
+        this.admin = data;
+        console.log("User on admin.compnent.ts");
+        this.admin.userType = "Admin";
+        console.log(this.admin);
+        this.userService
+          .registerUser(this.admin
+          )
+          .pipe(first())
+          .subscribe((project) => {
+            console.log("admin create dialog subscribed");
+            window.location.reload();
+          });
+      });
+  }
 }
 
 export interface Admins {

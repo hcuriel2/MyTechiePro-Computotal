@@ -9,20 +9,16 @@
   </button>
   <a href="/" class="logo">Computer Guys</a>
   <span class="fill-remaining-space"></span>
-  <button
-  mat-raised-button
-  id="app-menu-signout-btn"
-  class="m-1"
-  (click)="signOut()"
->
-  Sign Out
-</button>
+  <button mat-raised-button id="app-menu-signout-btn" class="m-1" (click)="signOut()">
+    Sign Out
+  </button>
 </mat-toolbar>
 
 
 <mat-sidenav-container>
   <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8">
-    <img class="avatar mat-elevation-z8" src="https://images.pngnice.com/thumb.php?src=https://images.pngnice.com/download/2007/The-Secret-Life-Of-Pets-Rabbit-Snowball-PNG-File.png&h=200&w=200&zc=1" />
+    <img class="avatar mat-elevation-z8"
+      src="https://images.pngnice.com/thumb.php?src=https://images.pngnice.com/download/2007/The-Secret-Life-Of-Pets-Rabbit-Snowball-PNG-File.png&h=200&w=200&zc=1" />
 
     <h4 class="name" id="fullName">John Smith</h4>
     <p class="designation">Admin Panel</p>
@@ -45,10 +41,28 @@
       <mat-icon>dashboard</mat-icon>
       <span>Projects</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/client-request">
+    <button mat-button class="menu-button" routerLink="/categories">
       <mat-icon>contact_mail</mat-icon>
       <span>Client Requests</span>
     </button>
+
+
+
+    <!-- this is new -->
+    <!--     <button mat-button class="menu-button" routerLink="/create-new-category">
+      <mat-icon>brush</mat-icon>
+      <span>Create Category</span>
+    </button> -->
+
+    <button mat-button class="menu-button" onclick="location.href='/create-new-category'">
+      <mat-icon>brush</mat-icon>
+      <span>Create Category</span>
+    </button>
+
+
+
+
+
   </mat-sidenav>
 
 

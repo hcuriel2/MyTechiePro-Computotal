@@ -62,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
             document.getElementById("app-menu-signup-btn")!.style.display  = "none";
             document.getElementById("app-menu-join-btn")!.style.display  = "none";
             document.getElementById("app-menu-project-btn")!.style.display  = "block";
+            document.getElementById("app-menu-user-info")!.style.display = "block";
             if(JSON.parse(localStorage.getItem("user")!).userType == "Professional") {
                 document.getElementById('app-toolbar')!.style.backgroundColor = "#ef0078";
                 document.getElementById('footer')!.style.background = "#ef0078";
@@ -105,19 +106,8 @@ export class AppComponent implements OnInit, OnDestroy {
     // Signs out the user and redirects to homepage
     public signOut(): void {
         const keys = ['Message.LoggedOut', 'Dictionary.OK'];
-
-        //removing cookie (mainly for admin page) on signout 
-        
-        // document.cookie = 'COOKIE_NAME=user; Max-Age=0; path=/; domain=' + location.hostname;
-
         let cookie = getCookie("user");
-        console.log(cookie);
-        console.log("//////////////");
-        console.log(document.cookie);
         document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        // cookie = '"user=" + cookie; '; 
-        //document.cookie = cookie;
-
         this.translateService
             .get(keys)
             .pipe(first())
@@ -129,9 +119,6 @@ export class AppComponent implements OnInit, OnDestroy {
             });
 
         this.authService.signOut();
-        // this.routeToHomePage();
-        // window.location.reload();
-
 
         this.router.navigateByUrl('/')
             .then(() => {

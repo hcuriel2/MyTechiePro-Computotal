@@ -35,7 +35,7 @@ class App {
     }
 
     private initializeErrorHandling() {
-        // this.app.use(errorMiddleware);
+        this.app.use(errorMiddleware);
     }
 
     private initializeControllers(controllers: Controller[]) {

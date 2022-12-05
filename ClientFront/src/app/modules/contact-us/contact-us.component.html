@@ -34,9 +34,15 @@
                         matInput
                         placeholder="computotal@it.com"
                         formControlName="emailAddress"
+                        pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
                         type="text"
                         required
                     />
+                    <mat-error *ngIf="formGroup.get('emailAddress')?.hasError('required')"
+                    >Email is required</mat-error>
+                    <mat-error *ngIf="formGroup.get('emailAddress')?.hasError('email')"
+                    >Please enter a valid email address
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="row">
