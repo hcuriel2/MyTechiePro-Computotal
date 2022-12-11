@@ -62,9 +62,6 @@ export class ProjectsComponent implements OnInit {
       ))
      )
       .subscribe((projects: ProjectWithUserNames[]) => {
-        // save projects.
-        // this.dataSourceProjects = projects;
-        // console.log("Projects:")
         this.dataSourceProjectsWithNames = projects;
         console.log("Logging switchmap results")
         console.log(projects)
@@ -78,8 +75,7 @@ export class ProjectsComponent implements OnInit {
         console.log(badProjectsList)
         this.dataSourceProjectsWithNames = badProjectsList
         this.dataSourceBad = new MatTableDataSource(this.dataSourceProjectsWithNames);
-        this.dataSource = new MatTableDataSource(this.dataSourceProjectsWithNames);
-        // this.dataSource = new MatTableDataSource(this.dataSourceProjects);
+        this.dataSource = new MatTableDataSource(projects);
         this.dataSource.sort = this.sort;
 
         console.log("logging datasource")
@@ -89,33 +85,8 @@ export class ProjectsComponent implements OnInit {
       });
   }
 
-  // public addClientUserNamesToProjectsWithUserNames(projects: ProjectWithUserNames[]) : ProjectWithUserNames[]{
-  //   for (let i = 0; i < projects.length; i++) {
-  //     this.userService.getById(projects[i].client.toString()).pipe(first(), map(user => {
-  //       projects[i].clientName = user.firstName + " " + user.lastName;
-  //     }))
-  //   }
-  //   return projects;
-
-
-  //   // public getName(id: string) {
-  //   //   let somedata = this.userService
-  //   //     .getById(id)
-  //   //     .pipe(first())
-  //   //     .subscribe((user: User) => {
-  //   //       this.user = user;
-  //   //       // console.log(this.user.firstName + ' ' + this.user.lastName);
-  //   //       // return this.user.firstName + ' ' + this.user.lastName;
-  //   //       // return this.user.firstName;
-  //   //     });
-  //   //   console.log(somedata)
-  //   // }
-  // }
-
   public changeProjectsToProjectsWithUserNames(projects: Project[]) {
     let tempProjectsWithNames = [];
-    // console.log("starting switch from project to project with names")
-    // console.log(projects)
     for (let i = 0; i < projects.length; i++) {
       let tempProjectUserName = new ProjectWithUserNames;
       tempProjectUserName.state = projects[i].state;
@@ -131,8 +102,6 @@ export class ProjectsComponent implements OnInit {
       tempProjectUserName.professionalName = "";
       tempProjectUserName.clientName = "";
       tempProjectsWithNames.push(tempProjectUserName)
-      // tempProjectUserName.professionalName = projects[i].professional?.firstName! + ' ' + projects[i].professional?.lastName!;
-      // tempProjectUserName.clientName = projects[i].client?.firstName + ' ' + projects[i].client?.lastName;
     }
     console.log("logging projectwithNames array");
     console.log(tempProjectsWithNames);
@@ -146,7 +115,6 @@ export class ProjectsComponent implements OnInit {
       .subscribe((user: User) => {
         console.log(this.user.firstName + ' ' + this.user.lastName);
         return this.user.firstName + ' ' + this.user.lastName;
-        // return this.user.firstName;
       });
   }
 
