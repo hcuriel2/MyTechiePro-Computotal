@@ -17,19 +17,19 @@
   <!-- ID -->
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef>ID</th>
-    <td mat-cell *matCellDef="let element" class="boldText"> {{element._id}} </td>
+    <td mat-cell *matCellDef="let element" class="boldText"> {{ element._id }}</td>
   </ng-container>
 
   <!-- Username -->
   <ng-container matColumnDef="username">
     <th mat-header-cell *matHeaderCellDef>Full Name</th>
-    <td mat-cell *matCellDef="let element"> {{element.firstName + " " +  element.lastName}} </td>
+    <td mat-cell *matCellDef="let element"> {{ element.firstName + " " + element.lastName }}</td>
   </ng-container>
 
   <!-- Email -->
   <ng-container matColumnDef="email">
     <th mat-header-cell *matHeaderCellDef> Email</th>
-    <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    <td mat-cell *matCellDef="let element"> {{ element.email }}</td>
   </ng-container>
 
   <!-- Permissions -->
