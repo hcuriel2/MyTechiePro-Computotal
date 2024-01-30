@@ -1,148 +1,147 @@
 import {
-    CommonModule,
-    DecimalPipe
+  CommonModule,
+  DecimalPipe
 } from '@angular/common';
 import {
-    MatButtonModule
+  MatButtonModule
 } from '@angular/material/button';
 import {
-    MatButtonToggleModule
+  MatButtonToggleModule
 } from '@angular/material/button-toggle';
 import {
-    MatCardModule
+  MatCardModule
 } from '@angular/material/card';
 import {
-    MatCheckboxModule
+  MatCheckboxModule
 } from '@angular/material/checkbox';
 import {
-    MatDatepickerModule
+  MatDatepickerModule
 } from '@angular/material/datepicker';
 import {
-    MatDialog, MatDialogModule
+  MatDialog, MatDialogModule
 } from '@angular/material/dialog';
 import {
-    MatExpansionModule
+  MatExpansionModule
 } from '@angular/material/expansion';
 import {
-    MatIconModule,
-    MatIconRegistry
+  MatIconModule,
+  MatIconRegistry
 } from '@angular/material/icon';
 import {
-    MatInputModule
+  MatInputModule
 } from '@angular/material/input';
 import {
-    MatListModule
+  MatListModule
 } from '@angular/material/list';
 import {
-    MatMenuModule
+  MatMenuModule
 } from '@angular/material/menu';
 import {
-    MatProgressBarModule
+  MatProgressBarModule
 } from '@angular/material/progress-bar';
 import {
-    MatProgressSpinnerModule
+  MatProgressSpinnerModule
 } from '@angular/material/progress-spinner';
 import {
-    MatSelectModule
+  MatSelectModule
 } from '@angular/material/select';
 import {
-    MatSidenavModule
+  MatSidenavModule
 } from '@angular/material/sidenav';
 import {
-    MatSlideToggleModule
+  MatSlideToggleModule
 } from '@angular/material/slide-toggle';
 import {
-    MatSnackBarModule
+  MatSnackBarModule
 } from '@angular/material/snack-bar';
 import {
-    MatStepperModule
+  MatStepperModule
 } from '@angular/material/stepper';
 import {
-    MatTabsModule
+  MatTabsModule
 } from '@angular/material/tabs';
 import {
-    MatToolbarModule
+  MatToolbarModule
 } from '@angular/material/toolbar';
 import {
-    MatTooltipModule
+  MatTooltipModule
 } from '@angular/material/tooltip';
 import {
-    TranslateModule
+  TranslateModule
 } from '@ngx-translate/core';
 import {
-    FormsModule,
+  FormsModule,
 } from '@angular/forms';
 import {
-    NgModule,
-    ModuleWithProviders
+  NgModule,
+  ModuleWithProviders
 } from '@angular/core';
 
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatCardModule,
-        MatCheckboxModule,
-        MatDatepickerModule,
-        MatDialogModule,
-        MatExpansionModule,
-        MatIconModule,
-        MatInputModule,
-        MatListModule,
-        MatMenuModule,
-        MatProgressBarModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        MatSidenavModule,
-        MatSlideToggleModule,
-        MatSnackBarModule,
-        MatStepperModule,
-        MatTabsModule,
-        MatToolbarModule,
-        MatTooltipModule,
-        TranslateModule
-    ],
-    declarations: [
-    ],
-    exports: [
-        CommonModule,
-        FormsModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatCardModule,
-        MatCheckboxModule,
-        MatDatepickerModule,
-        MatDialogModule,
-        MatExpansionModule,
-        MatIconModule,
-        MatInputModule,
-        MatListModule,
-        MatMenuModule,
-        MatProgressBarModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        MatSidenavModule,
-        MatSlideToggleModule,
-        MatSnackBarModule,
-        MatStepperModule,
-        MatTabsModule,
-        MatToolbarModule,
-        MatTooltipModule,
-        TranslateModule
-    ],
-    providers: [
-        DecimalPipe,
-        MatDialog,
-        MatIconRegistry,
-    ]
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatExpansionModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatStepperModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    TranslateModule
+  ],
+  declarations: [],
+  exports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatExpansionModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatStepperModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    TranslateModule
+  ],
+  providers: [
+    DecimalPipe,
+    MatDialog,
+    MatIconRegistry,
+  ]
 })
 export class SharedModule {
-    static forRoot(): ModuleWithProviders<SharedModule> {
-        return {
-            ngModule: SharedModule,
-            providers: []
-        };
-    }
+  static forRoot(): ModuleWithProviders<SharedModule> {
+    return {
+      ngModule: SharedModule,
+      providers: []
+    };
+  }
 }

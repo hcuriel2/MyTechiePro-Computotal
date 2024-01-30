@@ -1,8 +1,8 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
-import { ViewChild } from '@angular/core';
-import { Component } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import {BreakpointObserver} from '@angular/cdk/layout';
+import {ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
+import {MatSidenav} from '@angular/material/sidenav';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -13,12 +13,13 @@ export class AppComponent {
   @ViewChild(MatSidenav)
   sidenav!: MatSidenav;
 
-  constructor(private observer: BreakpointObserver) { }
+  constructor(private observer: BreakpointObserver) {
+  }
 
   ngAfterViewInit() {
-  //gets cookie from browser and uses it to access user details
+    //gets cookie from browser and uses it to access user details
     let userCookie = getCookie("user");
-    
+
     if (!userCookie || JSON.parse(JSON.parse(userCookie)).userType != "Admin") {
       // window.location.href = "https://mytechie.pro";
     } else {
@@ -55,13 +56,13 @@ export class AppComponent {
 
 /**
  * Gets the cookie by the cookie name and formats it as a cookie string.
- * @param cname 
- * @returns 
+ * @param cname
+ * @returns
  */
 function getCookie(cname: string) {
   let name = cname + "=";
   let ca = document.cookie.split(';');
-  for(let i = 0; i < ca.length; i++) {
+  for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
       c = c.substring(1);

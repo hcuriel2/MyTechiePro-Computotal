@@ -5,16 +5,16 @@ import {
   ViewChild,
   ChangeDetectorRef,
 } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { first, map, concatMap, take, tap, switchMap } from 'rxjs/operators';
-import { Project } from 'src/app/shared/models/project';
-import { User } from 'src/app/shared/models/user';
-import { ProjectService } from 'src/app/shared/services/project.service';
-import { UserService } from 'src/app/shared/services/user.service';
-import { Router } from '@angular/router';
-import { ProjectWithUserNames } from 'src/app/shared/models/projectWithUserNames';
-import { forkJoin } from 'rxjs';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+import {first, map, concatMap, take, tap, switchMap} from 'rxjs/operators';
+import {Project} from 'src/app/shared/models/project';
+import {User} from 'src/app/shared/models/user';
+import {ProjectService} from 'src/app/shared/services/project.service';
+import {UserService} from 'src/app/shared/services/user.service';
+import {Router} from '@angular/router';
+import {ProjectWithUserNames} from 'src/app/shared/models/projectWithUserNames';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-projects',
@@ -40,27 +40,28 @@ export class ProjectsComponent implements OnInit {
   public dataSourceBad: any;
   public user: User;
 
-  @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
+  @ViewChild(MatSort, {static: false}) sort: MatSort | undefined;
 
   constructor(
     private projectService: ProjectService,
     private userService: UserService,
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
     this.projectService
       .getAll()
-      .pipe(first(), 
-      map(projects => this.changeProjectsToProjectsWithUserNames(projects)),
-      switchMap(projects => forkJoin(
-        projects.map(project => this.appendClientUser(project))
-      )),
-      switchMap(projects => forkJoin(
-        projects.map(project => this.appendProUser(project))
-      ))
-     )
+      .pipe(first(),
+        map(projects => this.changeProjectsToProjectsWithUserNames(projects)),
+        switchMap(projects => forkJoin(
+          projects.map(project => this.appendClientUser(project))
+        )),
+        switchMap(projects => forkJoin(
+          projects.map(project => this.appendProUser(project))
+        ))
+      )
       .subscribe((projects: ProjectWithUserNames[]) => {
         this.dataSourceProjectsWithNames = projects;
         console.log("Logging switchmap results")
@@ -145,9 +146,9 @@ export class ProjectsComponent implements OnInit {
   public routeToUserDetails(id: any) {
     this.userService.getById(id).subscribe((user: User) => {
       if (user.userType == 'Professional') {
-        this.router.navigateByUrl('/proDetails', { state: user });
+        this.router.navigateByUrl('/proDetails', {state: user});
       } else {
-        this.router.navigateByUrl('/customerDetails', { state: user });
+        this.router.navigateByUrl('/customerDetails', {state: user});
       }
       console.log('Pro page', user);
     });

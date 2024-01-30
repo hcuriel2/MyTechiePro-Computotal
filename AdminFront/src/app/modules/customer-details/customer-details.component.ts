@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 
 @Component({
   selector: 'app-customer-details',
@@ -34,7 +34,8 @@ export class CustomerDetailsComponent implements OnInit {
   ];
   dataSourceComments = COMMENTS_DATA;
 
-  constructor() {}
+  constructor() {
+  }
 
   ngOnInit(): void {
     this.view_account_info();
@@ -56,11 +57,11 @@ export class CustomerDetailsComponent implements OnInit {
       history.state.address.country;
 
     this.dataSource = [
-      { key: 'Name', value: this.name },
-      { key: 'Company Name', value: this.companyName },
-      { key: 'Phone Number', value: this.phoneNumber },
-      { key: 'Email', value: this.email },
-      { key: 'Address', value: this.address },
+      {key: 'Name', value: this.name},
+      {key: 'Company Name', value: this.companyName},
+      {key: 'Phone Number', value: this.phoneNumber},
+      {key: 'Email', value: this.email},
+      {key: 'Address', value: this.address},
     ];
   }
 }

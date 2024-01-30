@@ -1,4 +1,4 @@
-.headingDec{
+.headingDec {
   padding-top: 50px;
   font-size: xx-large;
   font-weight: bold;
@@ -6,18 +6,18 @@
 }
 
 .content {
-    width: calc(50vh - 180px);
-    height: calc(10vh);
-    border-radius: 10px;
-    float: left;
-    margin: 16px;
-    font-size: x-large;
+  width: calc(50vh - 180px);
+  height: calc(10vh);
+  border-radius: 10px;
+  float: left;
+  margin: 16px;
+  font-size: x-large;
 }
 
 .cardTitle {
-    color: 002b5c;
-    padding-bottom: 10px;
-    text-align: center;
+  color: 002b5c;
+  padding-bottom: 10px;
+  text-align: center;
 }
 
 .cardHeader {
@@ -31,7 +31,7 @@
   color: white;
   border-radius: 5px;
   text-align: center;
-  
+
 }
 
 .cardActions {

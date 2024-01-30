@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from 'src/app/shared/services/user.service';
-import { User } from 'src/app/shared/models/user';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { AdminCreateDialogComponent } from './admin-create-dialog/admin-create-dialog.component';
-import { first } from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
+import {UserService} from 'src/app/shared/services/user.service';
+import {User} from 'src/app/shared/models/user';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {AdminCreateDialogComponent} from './admin-create-dialog/admin-create-dialog.component';
+import {first} from 'rxjs/operators';
 
 @Component({
   selector: 'app-admins',
@@ -22,14 +22,15 @@ export class AdminsComponent implements OnInit {
     // 'editPermissions',
   ];
 
-  //dataSource = ADMINS_DATA;
+  // dataSource = ADMINS_DATA;
   constructor(
     private userService: UserService,
     private dialog: MatDialog,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
-    //get list of current admins
+    // get list of current admins
     this.userService.getAllAdmins().subscribe((admins: User[]) => {
       this.admins = admins;
       console.log("test");
@@ -42,7 +43,7 @@ export class AdminsComponent implements OnInit {
   }
 
   public onAdminCreate(): void {
-    console.log("On Admin Create");
+    console.log('On Admin Create');
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.autoFocus = true;
@@ -56,17 +57,17 @@ export class AdminsComponent implements OnInit {
       .open(AdminCreateDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe((data: any) => {
-        console.log("onAdminCreate after close after subscribe");
+        console.log('onAdminCreate after close after subscribe');
         this.admin = data;
-        console.log("User on admin.compnent.ts");
-        this.admin.userType = "Admin";
+        console.log('User on admin.compnent.ts');
+        this.admin.userType = 'Admin';
         console.log(this.admin);
         this.userService
           .registerUser(this.admin
           )
           .pipe(first())
           .subscribe((project) => {
-            console.log("admin create dialog subscribed");
+            console.log('admin create dialog subscribed');
             window.location.reload();
           });
       });

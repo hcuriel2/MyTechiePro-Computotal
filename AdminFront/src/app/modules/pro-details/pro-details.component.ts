@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { first } from 'rxjs/operators';
-import { Project } from 'src/app/shared/models/project';
-import { ProjectService } from 'src/app/shared/services/project.service';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {first} from 'rxjs/operators';
+import {Project} from 'src/app/shared/models/project';
+import {ProjectService} from 'src/app/shared/services/project.service';
 
 @Component({
   selector: 'app-pro-details',
@@ -41,7 +41,8 @@ export class ProDetailsComponent implements OnInit {
   ];
   dataSourceRatings: any = [];
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService) {
+  }
 
   ngOnInit() {
     this.view_account_info();
@@ -72,16 +73,16 @@ export class ProDetailsComponent implements OnInit {
     this.website = history.state.website;
 
     this.dataSource = [
-      { key: 'Name', value: this.name },
-      { key: 'Phone Number', value: this.phoneNumber },
-      { key: 'Email', value: this.email },
-      { key: 'Address', value: this.address },
-      { key: 'Unit Price', value: this.unitPrice },
-      { key: 'Status', value: this.status },
-      { key: 'Bio', value: this.bio },
-      { key: 'Skills', value: this.skills },
-      { key: 'Rating', value: this.rating },
-      { key: 'Website', value: this.website},
+      {key: 'Name', value: this.name},
+      {key: 'Phone Number', value: this.phoneNumber},
+      {key: 'Email', value: this.email},
+      {key: 'Address', value: this.address},
+      {key: 'Unit Price', value: this.unitPrice},
+      {key: 'Status', value: this.status},
+      {key: 'Bio', value: this.bio},
+      {key: 'Skills', value: this.skills},
+      {key: 'Rating', value: this.rating},
+      {key: 'Website', value: this.website},
     ];
   }
 

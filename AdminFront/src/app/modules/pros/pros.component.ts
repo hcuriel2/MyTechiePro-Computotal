@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ChildActivationStart, Router } from '@angular/router';
-import { User } from 'src/app/shared/models/user';
-import { UserService } from 'src/app/shared/services/user.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {ChildActivationStart, Router} from '@angular/router';
+import {User} from 'src/app/shared/models/user';
+import {UserService} from 'src/app/shared/services/user.service';
+import {MatTableDataSource} from '@angular/material/table';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-pros',
@@ -26,7 +26,8 @@ export class ProsComponent implements OnInit {
     'approve',
   ];
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private userService: UserService) {
+  }
 
   ngOnInit(): void {
     this.userService.getAllProfessionals().subscribe((pros: User[]) => {
@@ -46,36 +47,35 @@ export class ProsComponent implements OnInit {
 
       // iterates over each user in pros array. The variable users is an index value, ex- 0, 1, 2 ,etc.
       // for (var users in this.pros) {
-        // console.log(this.pros[users].performance);
-        // userPerformance = this.pros[users].performance;
-        // pros[users].rating = this.pros[users].ratingSum / this.pros[users].ratingCount;
+      // console.log(this.pros[users].performance);
+      // userPerformance = this.pros[users].performance;
+      // pros[users].rating = this.pros[users].ratingSum / this.pros[users].ratingCount;
 
-        //checks if there is a performance field for that pro
-        // if (userPerformance != undefined) {
-        //   for (var i = 0; i < userPerformance.length; i++) {
-        //     ratingSum += userPerformance[i].rating;
-        //   }
-        //   avg = ratingSum / userPerformance.length;
-        //   pros[users].rating = avg;
-        //   console.log('avg: ', avg)
-        // }
+      //checks if there is a performance field for that pro
+      // if (userPerformance != undefined) {
+      //   for (var i = 0; i < userPerformance.length; i++) {
+      //     ratingSum += userPerformance[i].rating;
+      //   }
+      //   avg = ratingSum / userPerformance.length;
+      //   pros[users].rating = avg;
+      //   console.log('avg: ', avg)
+      // }
       //}
     });
-
 
 
     // let observable: Observable<User[]>;
     // this.pros = new MatTableDataSource(
     //   this.pros
     // );
-       
+
   };
 
   // Displays details about the specified technician
   routeToProDetails(id: any) {
     this.userService.getById(id).subscribe((pro: User) => {
       this.pro = pro;
-      this.router.navigateByUrl('/proDetails', { state: this.pro });
+      this.router.navigateByUrl('/proDetails', {state: this.pro});
       console.log('Pro page', this.pro);
     });
   }

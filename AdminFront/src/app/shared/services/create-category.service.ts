@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { plainToClass } from 'class-transformer';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { User } from '../models/user';
-import { Category } from '../models/create-category';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {plainToClass} from 'class-transformer';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {first, map} from 'rxjs/operators';
+import {environment} from 'src/environments/environment';
+import {User} from '../models/user';
+import {Category} from '../models/create-category';
 
 @Injectable({
   providedIn: 'root',
@@ -26,11 +26,11 @@ export class CreateCategoryService {
     console.log("here is the new category created" + newCategory.name + newCategory.icon + newCategory.services);
     return this.httpClient
       .post<Category>(`${this.API_URL}`, newCategory)
-      // .pipe(
-      //   map((newCategory: Category) => {
-      //     localStorage.setItem('newCategory', JSON.stringify(newCategory));
-      //     return newCategory;
-      //   })
-      // );
+    // .pipe(
+    //   map((newCategory: Category) => {
+    //     localStorage.setItem('newCategory', JSON.stringify(newCategory));
+    //     return newCategory;
+    //   })
+    // );
   }
 }

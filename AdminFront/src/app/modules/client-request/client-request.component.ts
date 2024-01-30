@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { ClientRequest } from 'src/app/shared/models/client-request';
-import { ContactUsService } from 'src/app/shared/services/contact-us.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+import {ClientRequest} from 'src/app/shared/models/client-request';
+import {ContactUsService} from 'src/app/shared/services/contact-us.service';
 
 @Component({
   selector: 'app-client-request',
@@ -13,9 +13,10 @@ export class ClientRequestComponent implements OnInit {
   public clientRequests: ClientRequest[] | undefined;
   public dataSource: any;
 
-  @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
+  @ViewChild(MatSort, {static: false}) sort: MatSort | undefined;
 
-  constructor(private contactUsService: ContactUsService) {}
+  constructor(private contactUsService: ContactUsService) {
+  }
 
   ngOnInit() {
     this.contactUsService

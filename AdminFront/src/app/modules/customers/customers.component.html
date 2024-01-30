@@ -22,34 +22,37 @@
       <!-- Username Column -->
       <ng-container matColumnDef="username">
         <th mat-header-cell *matHeaderCellDef>Full Name</th>
-        <td mat-cell *matCellDef="let element"> {{element.firstName + " " + element.lastName}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.firstName + " " + element.lastName }}</td>
       </ng-container>
 
       <!-- Email Column -->
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef>Email</th>
-        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.email }}</td>
       </ng-container>
 
       <!-- Phone Number -->
       <ng-container matColumnDef="phoneNumber">
         <th mat-header-cell *matHeaderCellDef>Phone Number</th>
-        <td mat-cell *matCellDef="let element"> {{element.phoneNumber}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.phoneNumber }}</td>
       </ng-container>
 
       <!-- Company Column -->
       <ng-container matColumnDef="company">
         <th mat-header-cell *matHeaderCellDef>Company</th>
-        <td mat-cell *matCellDef="let element"> {{element.company}} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.company }}</td>
       </ng-container>
 
       <!-- View Profile Button -->
       <ng-container matColumnDef="viewProfile">
-        <th mat-header-cell *matHeaderCellDef> </th>
+        <th mat-header-cell *matHeaderCellDef></th>
 
         <!-- [routerLink]="['/customerDetails/' + element.id]" -->
-        <td mat-cell *matCellDef="let element"> <button mat-raised-button class="btnProfiles"
-            (click)="routeToCustomerDetails(element._id)">View Profile</button> </td>
+        <td mat-cell *matCellDef="let element">
+          <button mat-raised-button class="btnProfiles"
+                  (click)="routeToCustomerDetails(element._id)">View Profile
+          </button>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

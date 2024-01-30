@@ -1,5 +1,5 @@
-import { Address } from './address';
-import { Company } from './company';
+import {Address} from './address';
+import {Company} from './company';
 
 export class User {
   _id: string | undefined;
@@ -12,7 +12,7 @@ export class User {
   address: Address | undefined;
   company: Company | undefined;
   skills: any[] | undefined;
-  projects: any[] | undefined; 
+  projects: any[] | undefined;
 
   // Professional's attributes
   alias: string | undefined;

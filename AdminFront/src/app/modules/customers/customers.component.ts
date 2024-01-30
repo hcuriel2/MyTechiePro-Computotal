@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { Router } from '@angular/router';
-import { User } from 'src/app/shared/models/user';
-import { UserService } from 'src/app/shared/services/user.service';
+import {Component, OnInit} from '@angular/core';
+import {MatButton} from '@angular/material/button';
+import {Router} from '@angular/router';
+import {User} from 'src/app/shared/models/user';
+import {UserService} from 'src/app/shared/services/user.service';
 
 @Component({
   selector: 'app-customers',
@@ -21,7 +21,8 @@ export class CustomersComponent implements OnInit {
     'viewProfile',
   ];
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private userService: UserService) {
+  }
 
   ngOnInit() {
     this.userService.getAllClients().subscribe((customers: User[]) => {
@@ -37,7 +38,7 @@ export class CustomersComponent implements OnInit {
   routeToCustomerDetails(id: string) {
     this.userService.getById(id).subscribe((customer: User) => {
       this.customer = customer;
-      this.router.navigateByUrl('/customerDetails', { state: this.customer });
+      this.router.navigateByUrl('/customerDetails', {state: this.customer});
       console.log('Customer page', this.customer);
     });
   }
