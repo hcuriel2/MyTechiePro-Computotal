@@ -1,3 +1,34 @@
+/*NOTES*/
+/*
+IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTION
+
+
+Summary:
+This class serves as an Express controller responsible for handling routes related
+to projects (ratings, retrieving, adding, payment, etc).
+
+
+Unused Code:
+- adminMiddleware is commented out and unused again (assuming that this is the case for all backend code)
+    - numerous lines of code related to this are unused 
+- a ton of handlers related to client and pro are commented out
+- project start and end date fields are commented out
+- rating system commented out (towards the bottom)
+
+
+Clarification needed:
+- how do we plan on mitigating thie adminMiddleware issue
+- what commented out functions are needed - which aren't
+- one commented out version is the 'auth version' - are the others not auth?
+- rating system is commented out (near the bottom)
+
+
+
+Changes:
+
+
+*/
+
 import { Request, Response, NextFunction, Router } from "express";
 import NotFoundprojectException from "../../exceptions/NotFoundProjectException";
 import Controller from "../../interfaces/controller.interface";
@@ -14,14 +45,15 @@ import adminMiddleware from "../../middleware/admin.middleware";
 class ProjectController implements Controller {
     public path = "/projects";
     public router = Router();
-    private project = projectModel;
-    private user = userModel;
-    private category = categoryModel;
+    private project = projectModel; // references the projectModel
+    private user = userModel; // references the userModel
+    private category = categoryModel; // references the categoryModel
 
     constructor() {
         this.initializeRoutes();
     }
 
+    // Define routes and the associated middleware
     private initializeRoutes() {
         // // auth version do not delete it!
         // this.router.get(this.path, adminMiddleware, this.getAllProjects);
@@ -39,9 +71,9 @@ class ProjectController implements Controller {
         this.router.get(`${this.path}/:id`,this.getprojectById);
         this.router.delete(`${this.path}/:id`, this.deleteproject);
         this.router.all(`${this.path}/*`)
-                    .post(this.path, this.createproject)
-                    .patch(`${this.path}/comment/:id`, this.commentProject)
-                    .patch(`${this.path}/start/:id`,this.startProject)
+                    .post(this.path, this.createproject) // route to create a new project
+                    .patch(`${this.path}/comment/:id`, this.commentProject) // route to add comment to a project
+                    .patch(`${this.path}/start/:id`,this.startProject) // route to start a project
                     .patch(`${this.path}/feedback/:id`,this.reviewProject)
                     .patch(`${this.path}/complete/:id`, this.completeProject)
                     .patch(`${this.path}/pay/:id`, this.payProject)
@@ -237,12 +269,14 @@ class ProjectController implements Controller {
     //     }
     // };
 
+    // Handler to get all projects
     private getAllProjects = async (request: Request, response: Response) => {
         const projects = await this.project
             .find()
         response.send(projects);
     };
 
+    // Handler to get projects by ID
     private getprojectById = async (
         request: Request,
         response: Response,
@@ -260,6 +294,8 @@ class ProjectController implements Controller {
         }
     };
 
+
+    // Handler to get projects by client ID
     private getProjectsByClientId = async (
         request: Request,
         response: Response,
@@ -276,6 +312,7 @@ class ProjectController implements Controller {
     };
 
 
+    // Handler to get projects by Professional ID
     private getProjectsProfessionalById = async (
         request: Request,
         response: Response,
@@ -292,6 +329,7 @@ class ProjectController implements Controller {
     };
 
 
+    // Handler to create a new project
     private createproject = async (
         request: RequestWithUser,
         response: Response
@@ -326,7 +364,7 @@ class ProjectController implements Controller {
     };
 
  
-
+    // Handler to create a new project
     private startProject = async (
         request: RequestWithUser,
         response: Response,
@@ -349,6 +387,7 @@ class ProjectController implements Controller {
     };
 
 
+    // Handler to complete a project
     private completeProject = async (
         request: RequestWithUser,
         response: Response,
@@ -377,7 +416,8 @@ class ProjectController implements Controller {
         });
     };
 
-    // TODO Check if this is necessary, remove otherwise
+    // Handler to reveiw a project
+    // OLD COMMENT (previous team): TODO Check if this is necessary, remove otherwise
     private reviewProject = async (
         request: RequestWithUser,
         response: Response,
@@ -428,7 +468,7 @@ class ProjectController implements Controller {
     };
     
 
-
+    // Handler to pay for a project
     private payProject = async (
         request: RequestWithUser,
         response: Response,
@@ -464,6 +504,7 @@ class ProjectController implements Controller {
             });
     };
 
+    // Handler to comment on a project
     private commentProject = async (
         request: RequestWithUser,
         response: Response,
@@ -489,6 +530,7 @@ class ProjectController implements Controller {
         }
     };
 
+    // Handler to delete a project
     private deleteproject = async (
         request: Request,
         response: Response,
