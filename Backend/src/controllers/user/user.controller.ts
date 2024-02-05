@@ -1,3 +1,30 @@
+/*NOTES*/
+/*
+IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTION
+
+
+Summary:
+This class serves as a ctonroller for handling user-related routes. It includes various route handlers
+and middleware for managing users, such as getting users/pros/admins, reseting passwords, and approving users.
+There is also an aspect of retrieving Professionals by skills and geo-location. This is used on the 
+mytechie.pro domain.
+
+
+Unused Code:
+- adminMiddleware isn't used & is commented out
+- getUserByID has a commented out line - unsure of its use
+- getAllPostsOfUser is commented out
+
+
+Clarification needed:
+
+
+
+Changes:
+
+
+*/
+
 import { Router, Request, Response, NextFunction } from "express";
 import NotAuthorizedException from "../../exceptions/NotAuthorizedException";
 import Controller from "../../interfaces/controller.interface";
@@ -47,6 +74,7 @@ class UserController implements Controller {
         // this.router.get(`${this.path}/:id/posts`, authMiddleware, this.getAllPostsOfUser);
     }
 
+    // Handler for getting a user by ID
     private getUserById = async (
         request: Request,
         response: Response,
@@ -63,6 +91,7 @@ class UserController implements Controller {
         }
     };
 
+    // Handler to get all users
     private getAllUsers = async (
         request: RequestWithUser,
         response: Response,
@@ -76,6 +105,7 @@ class UserController implements Controller {
         }
     };
 
+    // Handler to get all clients
     private getAllClients = async (
         request: RequestWithUser,
         response: Response,
@@ -95,6 +125,7 @@ class UserController implements Controller {
     };
 
 
+    // Handler to get all admins
     private getAllAdmins = async (
         request: RequestWithUser,
         response: Response,
@@ -113,6 +144,7 @@ class UserController implements Controller {
         }
     };
 
+    // Handler to get all professionals
     private getAllProfessionals = async (
         request: RequestWithUser,
         response: Response,
@@ -127,7 +159,9 @@ class UserController implements Controller {
         }
     };
 
-    // function for getting list of techies, filtered by SKILL as well as LOCATION
+
+    // Handler to get all professionals - filltered by skill and location
+    // OLD COMMENT (PREVIOUS TEAM): function for getting list of techies, filtered by SKILL as well as LOCATION
     private getAllProfessionalsBySkill = async (
         request: RequestWithUser,
         response: Response,
@@ -167,6 +201,7 @@ class UserController implements Controller {
         }
     };
 
+    // Handler to reset password
     private resetPassword = async (request: Request, response: Response) => {
         const id = request.params.id;
         const data: ResetPasswordDto = request.body;
@@ -188,6 +223,7 @@ class UserController implements Controller {
         }
     };
 
+    // Handler to update the user's status
     private changeStatus = async (request: Request, response: Response) => {
         const id = request.params.id;
         const { proStatus } = request.body;
@@ -200,6 +236,7 @@ class UserController implements Controller {
         }
     };
 
+    // Handler for deleting a user
     private deleteUser = async (
         request: Request,
         response: Response,
@@ -215,7 +252,8 @@ class UserController implements Controller {
     };
 
 
-    // approves the new Pro account
+    // Handler to approve a new pro account
+    // OLD COMMENT (PREVIOUS TEAM): approves the new Pro account
     private approveUser = async (
         request: Request,
         response: Response,
@@ -232,7 +270,7 @@ class UserController implements Controller {
         })
     };
 
-    // verify new accounts email address
+    // Handler to verify a new user's email
     private verifyUserEmail = async (
         request: Request,
         response: Response,

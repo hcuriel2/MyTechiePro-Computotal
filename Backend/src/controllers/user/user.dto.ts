@@ -1,3 +1,24 @@
+/*NOTES*/
+/*
+IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTION
+
+
+Summary:
+This class serves as a data transfer object (DTO) used for defining the structure and 
+validation rules for creating a user object.
+
+Unused Code:
+
+
+Clarification needed:
+
+
+
+Changes:
+
+
+*/
+
 import {
     IsOptional,
     IsString,

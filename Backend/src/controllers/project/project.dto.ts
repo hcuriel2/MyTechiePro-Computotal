@@ -5,7 +5,7 @@ IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTIO
 
 Summary:
 This class serves as a data transfer object (DTO) used for defining the structure and 
-validation rules for creating a project.
+validation rules for creating a project object.
 
 
 Unused Code:
