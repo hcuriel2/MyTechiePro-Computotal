@@ -17,7 +17,7 @@ export class AppComponent {
   }
 
   ngAfterViewInit() {
-    //gets cookie from browser and uses it to access user details
+    // gets cookie from browser and uses it to access user details
     let userCookie = getCookie("user");
 
     if (!userCookie || JSON.parse(JSON.parse(userCookie)).userType != "Admin") {

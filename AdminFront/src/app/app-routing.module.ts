@@ -11,7 +11,7 @@ import {CustomerDetailsComponent} from './modules/customer-details/customer-deta
 import {ProDetailsComponent} from './modules/pro-details/pro-details.component';
 import {ClientRequestComponent} from './modules/client-request/client-request.component';
 
-import {CreateCategoryComponent} from './modules/create-category/create-category.component'; //this is new
+import {CreateCategoryComponent} from './modules/create-category/create-category.component'; // this is new
 
 const routes: Routes = [
   {path: '', component: DashboardComponent},
@@ -31,7 +31,7 @@ const routes: Routes = [
   {path: 'customerDetails', component: CustomerDetailsComponent},
   {path: 'proDetails', component: ProDetailsComponent},
   {path: 'client-request', component: ClientRequestComponent},
-  {path: 'create-category', component: CreateCategoryComponent}, //this is new
+  {path: 'create-category', component: CreateCategoryComponent}, // this is new
 ];
 
 @NgModule({
