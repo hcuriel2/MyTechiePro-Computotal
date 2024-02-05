@@ -1,3 +1,34 @@
+/*NOTES*/
+/*
+IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTION
+
+
+Summary:
+This class is responsible for managing category-related operations by use of Express.js. It includes
+routes and handlers for actions such as retrieving all categories, getting a cateogry by ID, modifying 
+categories, adding service keywords, creating new categories and deleting categories or services within
+the aforementioned categories. This class integrates with the 'categoryModel' and 'userModel' for database
+operations.
+
+
+Unused Code:
+- adminMiddleware doesn't appear to be used (seems related to the commented out adminMiddleware line @ )
+- createCategory handler
+    - it appears there were issues getting this to work (the user is hardcoded)
+
+Clarification needed:
+- why is adminMiddleware commented out
+- why is the createCategory handler hardcoded - this needs to be changed
+    - are there more functions that require user id, that don't have it incorporated?
+
+
+Changes:
+
+
+*/
+
+
+
 import { Request, Response, NextFunction, Router } from "express";
 import NotFoundCategoryException from "../../exceptions/NotFoundCategoryException";
 import Controller from "../../interfaces/controller.interface";
@@ -9,19 +40,22 @@ import Category from "../../models/category/category.interface";
 import categoryModel from "../../models/category/category.model";
 import userModel from "../../models/user/user.model";
 
+// Implements the Controller interface
 class CategoryController implements Controller {
-    public path = "/categories";
+    public path = "/categories"; // base path for category-related routes
     public router = Router();
-    private category = categoryModel;
-    private user = userModel;
+    private category = categoryModel; // references the category model
+    private user = userModel; // references the user model
 
     constructor() {
         this.initializeRoutes();
     }
 
+    // Initialize the routes for the CategoryController
+    // Uses different HTTP methods to create, read, update and delete different items
     private initializeRoutes() {
-        this.router.get(this.path, this.getAllCategories);
-        this.router.get(`${this.path}/:id`, this.getCategoryById);
+        this.router.get(this.path, this.getAllCategories); 
+        this.router.get(`${this.path}/:id`, this.getCategoryById); 
         this.router.get(`${this.path}/:id/:serviceId`, this.getServiceById);
         this.router
             .all(`${this.path}/*`)
@@ -42,6 +76,7 @@ class CategoryController implements Controller {
             );
     }
 
+    // Handler to get all categories
     private getAllCategories = async (request: Request, response: Response) => {
         const categories = await this.category
             .find()
@@ -49,6 +84,7 @@ class CategoryController implements Controller {
         response.send(categories);
     };
 
+    // Handler to get a category by ID
     private getCategoryById = async (
         request: Request,
         response: Response,
@@ -63,6 +99,7 @@ class CategoryController implements Controller {
         }
     };
 
+    // Handler to get a service within a category
     private getServiceById = async (
         request: Request,
         response: Response,
@@ -78,6 +115,7 @@ class CategoryController implements Controller {
         }
     };
 
+    // Handler to modify a category
     private modifyCategory = async (
         request: Request,
         response: Response,
@@ -97,6 +135,7 @@ class CategoryController implements Controller {
         }
     };
 
+    // Handler to add service keywords
     private addServiceKeywords = async (
         request: Request,
         response: Response,
@@ -116,6 +155,7 @@ class CategoryController implements Controller {
         }
     };
 
+    // Handler to modify keywords for a service by serviceId
     private modifyKeywordsByServiceId = async (
         request: Request,
         response: Response,
@@ -135,6 +175,7 @@ class CategoryController implements Controller {
         }
     };
 
+    // Handler to create a new category
     private createCategory = async (
         request: RequestWithUser,
         response: Response
@@ -154,6 +195,7 @@ class CategoryController implements Controller {
         response.send(savedCategory);
     };
 
+    // Handler to delete a category
     private deleteCategory = async (
         request: Request,
         response: Response,
@@ -168,6 +210,7 @@ class CategoryController implements Controller {
         }
     };
 
+    // Handler to delete a service
     private deleteService = async (
         request: Request,
         response: Response,
