@@ -45,6 +45,8 @@ class App {
     }
 
     private connectToTheDatabase() {
+        console.log('Connecting to the database...');
+
         const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH } = process.env;
         mongoose.connect(
             `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,
@@ -55,6 +57,8 @@ class App {
                 useFindAndModify: false,
               },
         );
+
+        console.log('Database successfully connected.');
     }
 }
 

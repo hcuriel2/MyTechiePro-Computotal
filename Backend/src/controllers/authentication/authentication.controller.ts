@@ -1,3 +1,48 @@
+/*NOTES*/
+/*
+IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTION
+
+Summary:
+This file defines an Express controller called AuthenticationController,
+which handles various authentication-related operations. It also uses
+different middleware for validation, authentication and authorization, MFA,
+login/logout, and sending reset password emails. It also contains methods
+for creating JWT tokens and cookies for user authentication and session management.
+
+
+Imported but not used in this file (may be related to unfinished pro code):
+- AuthMiddleware
+- userController
+- TokenData
+- DataStoredInToken
+- AdminMiddleware 
+- UserNotVerify
+
+
+Unused Code:
+- lines 90 - 94 --> was supposed to be a route for pro registration
+- lines 166 - 177 --> was supposed to handle pro registration & related data
+
+
+
+MFA (not working currently - should be set up via SMS):
+- lines 190 - 273
+
+
+
+Clarification needed:
+- do we have access to the 'noreplytechie@gmail.com' email --> its used for sending the password reset email (not currently working)
+
+
+
+Changes:
+
+
+*/
+
+
+
+
 import * as bcrypt from "bcryptjs";
 import { Request, Response, NextFunction, Router } from "express";
 import * as jwt from "jsonwebtoken";
@@ -19,24 +64,31 @@ import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
 import emailtransporter from "../../middleware/emailtransporter.middleware";
 import UserNotVerify from "../../exceptions/UserNotVerify";
+
+
+// This class implements the Controller Interface
 class AuthenticationController implements Controller {
-    public path = "/auth";
-    public router = Router();
-    public authenticationService = new AuthenticationService();
-    private user = userModel;
+    public path = "/auth"; // the base path for auth-related routes
+    public router = Router(); // create an Express router for this controller
+    public authenticationService = new AuthenticationService(); // Create an instance of the AuthenticationService
+    private user = userModel; // reference the user model
     public URL = "https://mytechie.pro";
 
     constructor() {
         this.initializeRoutes();
     }
 
+    // Initializes routes and their handlers
     private initializeRoutes() {
+
+        // POST route for user registration
         this.router.post(
             `${this.path}/register`,
             validationMiddleware(CreateUserDto),
             this.registration
         );
 
+        // POST route for admin registration
         this.router.post(
             `${this.path}/admin/register`,
             adminMiddleware,
@@ -44,26 +96,31 @@ class AuthenticationController implements Controller {
             this.registration
         );
         
+        // POST route for resetting mMFA
         this.router.post(
             `${this.path}/resetMfa`,
             this.resetMfa
         )
 
+        // POST route for setting up MFA
         this.router.post(
             `${this.path}/setupMfa`,
             this.setupMfa
         );
 
+        // Post route for verifying MFA
         this.router.post(
             `${this.path}/verifyMfa`,
             this.verifyMfa
         );
+
         // this.router.post(
         //     `${this.path}/professional/register`,
         //     validationMiddleware(CreateUserDto),
         //     this.registration
         // );
 
+        // Post route for user login
         this.router.post(
             `${this.path}/login`,
             validationMiddleware(LogInDto),
@@ -75,6 +132,7 @@ class AuthenticationController implements Controller {
     }
     
 
+    // Handler for resetting user's passwords
     private sendResetPwEmail = async (
         request: Request,
         response: Response,
@@ -89,6 +147,8 @@ class AuthenticationController implements Controller {
             html: "<b>Reset Password</b><br/><br/>" +
             `<p>Please click <a href="${this.URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
           }
+
+        // Sends the reset password email
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
             console.log(error);
@@ -98,23 +158,33 @@ class AuthenticationController implements Controller {
         });
     };
 
+    // Handler for user registration
     private registration = async (
         request: Request,
         response: Response,
         next: NextFunction
     ) => {
+        
+        // extract user data from the request body
         const userData: CreateUserDto = request.body;
         console.log(userData);
         try {
+
+            // Call the registration method from AuthenticationService
             const { cookie, user } = await this.authenticationService.register(
                 userData
             );
+
+            // Set a cookie in the response
             response.setHeader("Set-Cookie", [cookie]);
+
+            // Send the registered user data as a response
             response.send(user);
         } catch (error) {
             next(error);
         }
     };
+
     // private registrationPro = async (request: Request, response: Response, next: NextFunction) => {
     //     const userData: CreateUserDto = request.body;
     //     try {
@@ -128,6 +198,7 @@ class AuthenticationController implements Controller {
     //     }
     // };
 
+    // Handler for resetting MFA
     private resetMfa = async (
         request: Request,
         response: Response,
@@ -141,6 +212,7 @@ class AuthenticationController implements Controller {
         return response.sendStatus(200);
     };
 
+    // Handler for verifying MFA
     private verifyMfa = async (
         request: Request,
         response: Response,
@@ -171,6 +243,7 @@ class AuthenticationController implements Controller {
         }
     };
 
+    // Handler for setting up MFA
     private setupMfa = async (
         request: Request,
         response: Response,
@@ -210,6 +283,7 @@ class AuthenticationController implements Controller {
         }
     };
 
+    // Handler for user login
     private loggingIn = async (
         request: Request,
         response: Response,
@@ -254,15 +328,18 @@ class AuthenticationController implements Controller {
         }
     };
 
+    // Handler for logging out
     private loggingOut = (request: Request, response: Response) => {
         response.setHeader("Set-Cookie", ["Authorization=;Max-age=0"]);
         response.send(200);
     };
 
+    // Method to create an Authorization cookie
     private createCookie(tokenData: TokenData) {
         return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
     }
 
+    // Method to create a JWT token for user authentication
     private createToken(user: User): TokenData {
         const expiresIn = 60 * 60; // an hour
         const secret = process.env.JWT_SECRET;
