@@ -1,27 +1,46 @@
-@use '../../../assets/scss/computotal-theme.scss' as theme;
+@use "../../../assets/scss/computotal-theme.scss" as theme;
 
 .row {
-    align-items: center;
-    justify-content: center;
-    margin: 0;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
 }
 
 .flex-align-top {
-    align-items: normal;
+  align-items: normal;
 }
 
 .bg-primary-lighter {
-    background-color: map-get(theme.$computotal-app-primary, 'lighter');
+  background-color: map-get(theme.$computotal-app-primary, "lighter");
 }
 
 a.serviceItem {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .noItems {
-    color: dimgrey;
+  color: dimgrey;
 }
 
 .noItems:not(:last-child) {
-    display: none;
+  display: none;
+}
+
+#search-text-input {
+  width: 30%;
+}
+
+#resultRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+#categoryName {
+  margin: 15px 0 10px 0;
+  padding: 2px;
+}
+
+#serverItem {
+  margin-top: 15px;
+  padding: 2px;
 }

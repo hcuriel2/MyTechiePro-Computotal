@@ -1,73 +1,81 @@
 <div class="full-width mt-5 py-5 mat-toolbar mat-primary">
-    <p class="h1 text-center">
-        {{ 'Message.HowCanWeHelp' | translate }}
-    </p>
-    <p class="small text-center">
-        {{ 'Message.GetStarted' | translate }}
-    </p>
+  <p class="h1 text-center">
+    {{ "Message.HowCanWeHelp" | translate }}
+  </p>
+  <p class="small text-center">
+    {{ "Message.GetStarted" | translate }}
+  </p>
 
-    <div class="row mt-3">
-        <mat-form-field id="search-text-input" class="form-field">
-            <mat-label>{{ 'Dictionary.Search' | translate }}</mat-label>
-            <input
-                matInput
-                type="text"
-                [(ngModel)]="searchQuery"
-                (ngModelChange)="showResults = searchQuery !== ''"
-            />
-        </mat-form-field>
+  <div class="row mt-3">
+    <mat-form-field id="search-text-input" class="form-field">
+      <mat-label>{{ "Dictionary.Search" | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="showResults = searchQuery !== ''"
+      />
+    </mat-form-field>
 
-        <button
-            mat-raised-button
-            class="m-2"
-            (click)="showResults = !showResults"
-        >
-            {{
-                (!showResults ? 'Dictionary.Go' : 'Dictionary.Hide') | translate
-            }}
-        </button>
-    </div>
+    <button mat-raised-button class="m-2" (click)="showResults = !showResults">
+      {{ (!showResults ? "Dictionary.Go" : "Dictionary.Hide") | translate }}
+    </button>
+  </div>
 </div>
 
 <div
-    *ngIf="showResults"
-    class="row flex-align-top full-width bg-primary-lighter"
+  *ngIf="showResults"
+  class="row flex-align-top px-4 full-width bg-primary-lighter"
+  id="resultRow"
 >
-    <mat-list class="col-sm-1" *ngFor="let category of categories">
-        <h3 matSubheader class="pl-0">{{ category.name }}</h3>
-        <p class="noItems small">
-            <i>{{ 'Message.NoMatchingResults' | translate }}</i>
-        </p>
+  <ng-container *ngFor="let category of categories">
+    <ng-container *ngIf="hasMatchingResults(category); else noResults">
+      <mat-list class="col-12 col-md-6 col-lg-1 my-2 p-0" id="resultList">
+        <h3 matSubheader class="pl-0" id="categoryName">{{ category.name }}</h3>
         <p
-            mat-list-item
-            *ngFor="let service of category.services | filter: searchQuery"
+          mat-list-item
+          *ngFor="let service of category.services | filter : searchQuery"
         >
-            <a
-                class="serviceItem"
-                (click)="selectService(category.name, service.name)"
-                >{{ service.name }}</a
-            >
+          <a
+            class="serviceItem"
+            id="serverItem"
+            (click)="selectService(category.name, service.name)"
+          >
+            {{ service.name }}
+          </a>
         </p>
-    </mat-list>
+      </mat-list>
+    </ng-container>
+    <ng-template #noResults>
+      <mat-list class="col-12 col-md-6 col-lg-1 my-2 p-0" id="resultList">
+        <h3 matSubheader class="pl-0" id="categoryName">{{ category.name }}</h3>
+        <div>
+          <p class="noItems">
+            <i>{{ "Message.NoMatchingResults" | translate }}</i>
+          </p>
+        </div>
+      </mat-list>
+    </ng-template>
+  </ng-container>
 </div>
 
 <div class="full-width mt-5 mb-5">
-    <div class="d-flex justify-content-around">
-        <div class="col-md-1" *ngFor="let category of categories">
-            <div class="row">
-                <button
-                    mat-fab
-                    color="primary"
-                    aria-label="Example icon button with a delete icon"
-                    (click)="goToServiceSurvey(category.name)"
-                >
-                    <mat-icon>{{ category.icon }}</mat-icon>
-                </button>
-            </div>
-            <div class="row">
-                <span class="mt-2 h7">{{ category.name }}</span>
-            </div>
-        </div>
+  <div class="d-flex justify-content-around">
+    <div class="col-md-1" *ngFor="let category of categories">
+      <div class="row">
+        <button
+          mat-fab
+          color="primary"
+          aria-label="Example icon button with a delete icon"
+          (click)="goToServiceSurvey(category.name)"
+        >
+          <mat-icon>{{ category.icon }}</mat-icon>
+        </button>
+      </div>
+      <div class="row">
+        <span class="mt-2 h7">{{ category.name }}</span>
+      </div>
     </div>
+  </div>
 </div>
 <router-outlet></router-outlet>
