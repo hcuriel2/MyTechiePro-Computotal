@@ -30,7 +30,7 @@
 >
   <ng-container *ngFor="let category of categories">
     <ng-container *ngIf="hasMatchingResults(category); else noResults">
-      <mat-list class="col-sm-2" id="resultList">
+      <mat-list class="col-12 col-md-6 col-lg-1 my-2 p-0" id="resultList">
         <h3 matSubheader class="pl-0" id="categoryName">{{ category.name }}</h3>
         <p
           mat-list-item
@@ -47,7 +47,7 @@
       </mat-list>
     </ng-container>
     <ng-template #noResults>
-      <mat-list class="col-sm-2 full-width" id="resultList">
+      <mat-list class="col-12 col-md-6 col-lg-1 my-2 p-0" id="resultList">
         <h3 matSubheader class="pl-0" id="categoryName">{{ category.name }}</h3>
         <div>
           <p class="noItems">
