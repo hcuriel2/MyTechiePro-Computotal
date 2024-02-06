@@ -210,24 +210,21 @@ export class ServiceTechnicianSelectComponent implements OnInit {
         this.isCardListVisible = false;
         this.isFeedbackVisible = false;
         this.isShowMoreBtnVisible = false;
-
+    
         try {
-            if (this.canadaPostalCodeRegex.test(this.areaCode) || this.usZipCodeRegex.test(this.areaCode)) {
-                if (await this.getCoordinates() === "ZERO_RESULTS") {
-                    throw new Error('Area code not found')
-                } else {
-                    await this.getStaticData();
-                    this.displayTechs();
-                }
+            const geoCodeResponse = await this.getCoordinates();
+            if (geoCodeResponse === "ZERO_RESULTS") {
+                throw new Error('Area code not found');
+            } else {
+                await this.getStaticData();
+                this.displayTechs();
             }
-            else {
-                throw new Error("Invalid Canadian or US area code");
-            }
-        } catch(error: any) {
+        } catch (error: any) {
             this.searchFeedback = "Try again - " + error.message;
             this.isFeedbackVisible = true;
         }
     }
+    
 
     /**
      * Toggle the cardList visibility and shows the top 3 results.
