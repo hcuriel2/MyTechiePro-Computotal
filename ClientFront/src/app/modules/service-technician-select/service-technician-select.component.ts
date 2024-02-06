@@ -268,22 +268,29 @@ export class ServiceTechnicianSelectComponent implements OnInit {
     public async getCoordinates(){
         return new Promise((resolve, reject) => {
             let url = `${this.googleMapApiUrl}?address=${this.areaCode}&key=${this.googleMapApiKey}`;
-            this.http
-                .get(url)
-                .subscribe((response: any) => {
-                    console.log(response);
-                    if (response.status === "ZERO_RESULTS") {
-                        this.latitude = 0;
-                        this.longitude = 0;
-                    } else {
-                        let results: any = response.results;
-                        this.latitude = results[0].geometry.location.lat;
-                        this.longitude = results[0].geometry.location.lng;
-                    }
-                    resolve(response.status)
-                })
+            this.http.get(url).subscribe((response: any) => {
+                console.log("Geocoding response:", response); // Log the full response
+    
+                if (response.status === "ZERO_RESULTS") {
+                    this.latitude = 0;
+                    this.longitude = 0;
+                    console.log("No results found for this area code."); // Log no results
+                } else if (response.results && response.results.length > 0) {
+                    let results = response.results;
+                    this.latitude = results[0].geometry.location.lat;
+                    this.longitude = results[0].geometry.location.lng;
+                    console.log("Coordinates found:", this.latitude, this.longitude); // Log the coordinates
+                } else {
+                    console.log("Unexpected response format:", response); // Log unexpected format
+                }
+                resolve(response.status);
+            }, error => {
+                console.error("Error during geocoding:", error); // Log any errors
+                reject(error);
+            });
         })
     }
+    
 
     /**
      * Get the area code with current geolocation coordinates.
