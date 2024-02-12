@@ -15,7 +15,6 @@ import { AuthService } from './shared/services/auth.service';
 import { SignInComponent } from './modules/sign-in/sign-in.component';
 import { Options } from 'ngx-google-places-autocomplete/objects/options/options';
 
-// dlakj;dsaf
 
 @Component({
     selector: 'app-root',

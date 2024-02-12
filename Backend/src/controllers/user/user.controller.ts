@@ -4,7 +4,7 @@ IF YOU MODIFY THE CODE: DOCUMENT THE CHANGE AND MENTION IT IN THE CHANGES SECTIO
 
 
 Summary:
-This class serves as a ctonroller for handling user-related routes. It includes various route handlers
+This class serves as a controller for handling user-related routes. It includes various route handlers
 and middleware for managing users, such as getting users/pros/admins, reseting passwords, and approving users.
 There is also an aspect of retrieving Professionals by skills and geo-location. This is used on the 
 mytechie.pro domain.
