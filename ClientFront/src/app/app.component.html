@@ -4,7 +4,7 @@
             <h5>{{ 'App.Title' | translate }}</h5>
         </button>
         <div *ngIf="user" id="app-menu-user-info" class="m-1">
-            <h6>Hello, {{ user?.firstName }}</h6>
+            <h6>{{'Dictionary.user.email' | translate}}</h6>
         </div>
 
         <button mat-raised-button *ngIf="user" id="app-menu-settings-btn" class="m-1" (click)="settings()">
