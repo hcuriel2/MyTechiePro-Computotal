@@ -10,7 +10,7 @@ import emailtransporter from "../../middleware/emailtransporter.middleware";
 
 class AuthenticationService {
     public user = userModel;
-    public API_URL = "https://api.mytechie.pro";
+    public API_URL = "http://localhost:3333";
 
     public async register(userData: CreateUserDto) {
         if (await this.user.findOne({ email: userData.email })) {
