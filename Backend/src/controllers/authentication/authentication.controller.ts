@@ -24,7 +24,7 @@ class AuthenticationController implements Controller {
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
-    public URL = "https://mytechie.pro";
+    public URL = "http://localhost:3333";
 
     constructor() {
         this.initializeRoutes();
