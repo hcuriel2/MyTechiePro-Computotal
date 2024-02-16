@@ -71,7 +71,7 @@ class AuthenticationController implements Controller {
         );
         this.router.post(`${this.path}/logout`, this.loggingOut);
         
-        this.router.get(`${this.path}/resetPassword/:emailAddress`, this.sendResetPwEmail)
+        this.router.get(`${this.path}/resetPassword/`, this.sendResetPwEmail)
     }
     
 
