@@ -24,7 +24,7 @@ class AuthenticationController implements Controller {
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
-    public URL = "http://localhost:3333";
+    public URL = "http://localhost:8080";
 
     constructor() {
         this.initializeRoutes();
@@ -99,7 +99,7 @@ class AuthenticationController implements Controller {
         */
         
         let setPwEmailOptions  = {
-            from: 'noreplytechie@gmail.com', // sender address
+            from: 'noreply.mytechie.pro@gmail.com', // sender address
             to: emailAddress, // list of receivers
             subject: "Reset Password", // Subject line
             html: "<b>Reset Password</b><br/><br/>" +
