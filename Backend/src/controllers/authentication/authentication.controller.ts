@@ -80,8 +80,24 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
+        
+        console.log('Reset email function called');
+
+        const { emailAddress } = request.body;
+        console.log(emailAddress);
+        const user = await this.user.findOne({ emailAddress });
+
+        if (!user){
+            console.log('No user account is associated with the specified email');
+            response.status(200);
+            return;
+        }
+
+        /*
         const emailAddress = request.params.emailAddress;
         const user = await this.user.findOne({ email: emailAddress });
+        */
+        
         let setPwEmailOptions  = {
             from: 'noreplytechie@gmail.com', // sender address
             to: emailAddress, // list of receivers
@@ -92,8 +108,10 @@ class AuthenticationController implements Controller {
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
             console.log(error);
+            response.status(500); // Error sending email - set status code
         } else {
             console.log('Email sent: ' + info.response);
+            response.status(200); // Email sent successfully
         }
         });
     };
