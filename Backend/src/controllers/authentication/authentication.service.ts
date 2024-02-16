@@ -49,7 +49,7 @@ import emailtransporter from "../../middleware/emailtransporter.middleware";
 
 class AuthenticationService {
     public user = userModel; // reference the user model
-    public API_URL = "https://api.mytechie.pro";
+    public API_URL = "http://localhost:3333";
 
     // User registration
     public async register(userData: CreateUserDto) {

@@ -72,7 +72,7 @@ class AuthenticationController implements Controller {
     public router = Router(); // create an Express router for this controller
     public authenticationService = new AuthenticationService(); // Create an instance of the AuthenticationService
     private user = userModel; // reference the user model
-    public URL = "https://mytechie.pro";
+    public URL = "http://localhost:3333";
 
     constructor() {
         this.initializeRoutes();
@@ -114,11 +114,11 @@ class AuthenticationController implements Controller {
             this.verifyMfa
         );
 
-        // this.router.post(
-        //     `${this.path}/professional/register`,
-        //     validationMiddleware(CreateUserDto),
-        //     this.registration
-        // );
+        this.router.post(
+            `${this.path}/professional/register`,
+             validationMiddleware(CreateUserDto),
+             this.registration
+        );
 
         // Post route for user login
         this.router.post(
@@ -128,20 +128,33 @@ class AuthenticationController implements Controller {
         );
         this.router.post(`${this.path}/logout`, this.loggingOut);
         
-        this.router.get(`${this.path}/resetPassword/:emailAddress`, this.sendResetPwEmail)
+        // MAJOR FIX
+        this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail)
     }
     
-
+    // MAJOR FIX
     // Handler for resetting user's passwords
     private sendResetPwEmail = async (
         request: Request,
         response: Response,
         next: NextFunction
     ) => {
-        const emailAddress = request.params.emailAddress;
+        console.log('reset email function called');
+        const emailAddress = request.body;
+        console.log(JSON.parse(emailAddress));
         const user = await this.user.findOne({ email: emailAddress });
+
+        // If specified email doesn't exist
+        if (!user) {
+            response.status(200);
+            console.log('no user account is associated with the specified email');
+            return;
+        }
+
+        const resetPasswordLink = `${this.URL}/resetPassword/${user._id}`;
+
         let setPwEmailOptions  = {
-            from: 'noreplytechie@gmail.com', // sender address
+            from: 'noreply.mytechie.pro@gmail.com', // sender address
             to: emailAddress, // list of receivers
             subject: "Reset Password", // Subject line
             html: "<b>Reset Password</b><br/><br/>" +
@@ -152,8 +165,10 @@ class AuthenticationController implements Controller {
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
             console.log(error);
+            response.status(500); // Error sending email - should have html/json response
         } else {
             console.log('Email sent: ' + info.response);
+            response.status(200);
         }
         });
     };
@@ -185,18 +200,18 @@ class AuthenticationController implements Controller {
         }
     };
 
-    // private registrationPro = async (request: Request, response: Response, next: NextFunction) => {
-    //     const userData: CreateUserDto = request.body;
-    //     try {
-    //         const { cookie, user } = await this.authenticationService.register(
-    //             userData
-    //         );
-    //         response.setHeader("Set-Cookie", [cookie]);
-    //         response.send(user);
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // };
+    private registrationPro = async (request: Request, response: Response, next: NextFunction) => {
+         const userData: CreateUserDto = request.body;
+         try {
+             const { cookie, user } = await this.authenticationService.register(
+                 userData
+             );
+             response.setHeader("Set-Cookie", [cookie]);
+             response.send(user);
+         } catch (error) {
+             next(error);
+         }
+    };
 
     // Handler for resetting MFA
     private resetMfa = async (

@@ -65,12 +65,11 @@ export class AuthService {
         );
     }
 
+
+    // MAJOR FIX
     public sendEmailResetPw(emailAddress: string): Observable<User> {
-        return this.httpClient.get<User>(`${this.API_URL}/resetPassword/${emailAddress}`).pipe(
-            map((user: User) => {
-                return user;
-            })
-        );
+        const body = { emailAddress };
+        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body);
     }
 
     public signOut(): void {
