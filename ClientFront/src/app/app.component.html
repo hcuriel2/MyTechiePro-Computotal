@@ -16,7 +16,11 @@
       >
         {{ "Dictionary.Settings" | translate }}
       </button>
-      <div class="d-flex justify-content-end mx-5" id="menu-buttons">
+      <div
+        *ngIf="!user"
+        class="d-flex justify-content-end mx-5"
+        id="menu-buttons"
+      >
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="signIn()">
             {{ "Dictionary.SignIn" | translate }}
@@ -31,16 +35,6 @@
           <mat-icon>arrow_drop_down</mat-icon>
         </button>
       </div>
-
-      <button
-        mat-raised-button
-        *ngIf="user"
-        id="app-menu-signout-btn"
-        class="m-1"
-        (click)="signOut()"
-      >
-        {{ "Dictionary.SignOut" | translate }}
-      </button>
 
       <button
         mat-raised-button
