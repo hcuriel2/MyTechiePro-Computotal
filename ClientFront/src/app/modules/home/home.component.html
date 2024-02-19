@@ -1,25 +1,36 @@
-<div class="full-width mt-5 py-5 mat-toolbar mat-primary">
-  <p class="h1 text-center">
-    {{ "Message.HowCanWeHelp" | translate }}
-  </p>
-  <p class="small text-center">
-    {{ "Message.GetStarted" | translate }}
-  </p>
+<div class="container-fluid mt-5 py-5 bg-primary">
+  <div class="row">
+    <div class="col text-center">
+      <p class="h1">
+        {{ "Message.HowCanWeHelp" | translate }}
+      </p>
+      <p class="small">
+        {{ "Message.GetStarted" | translate }}
+      </p>
+    </div>
+  </div>
 
-  <div class="row mt-3">
-    <mat-form-field id="search-text-input" class="form-field">
-      <mat-label>{{ "Dictionary.Search" | translate }}</mat-label>
-      <input
-        matInput
-        type="text"
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="showResults = searchQuery !== ''"
-      />
-    </mat-form-field>
-
-    <button mat-raised-button class="m-2" (click)="showResults = !showResults">
-      {{ (!showResults ? "Dictionary.Go" : "Dictionary.Hide") | translate }}
-    </button>
+  <div class="row mt-3 justify-content-center">
+    <div class="col-md-6">
+      <div class="d-flex align-items-center justify-content-center">
+        <mat-form-field class="form-group">
+          <mat-label>{{ "Dictionary.Search" | translate }}</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="showResults = searchQuery !== ''"
+          />
+        </mat-form-field>
+        <button
+          mat-raised-button
+          class="btn btn-primary mb-3 ml-2"
+          (click)="showResults = !showResults"
+        >
+          {{ (!showResults ? "Dictionary.Go" : "Dictionary.Hide") | translate }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -59,10 +70,10 @@
   </ng-container>
 </div>
 
-<div class="full-width mt-5 mb-5">
-  <div class="d-flex justify-content-around">
+<div class="container-fluid mt-5 mb-5">
+  <div class="row justify-content-around align-items-start">
     <div class="col-md-1" *ngFor="let category of categories">
-      <div class="row">
+      <div class="row justify-content-center align-items-center">
         <button
           mat-fab
           color="primary"
@@ -72,7 +83,7 @@
           <mat-icon>{{ category.icon }}</mat-icon>
         </button>
       </div>
-      <div class="row">
+      <div class="row justify-content-center">
         <span class="mt-2 h7">{{ category.name }}</span>
       </div>
     </div>
