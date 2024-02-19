@@ -21,6 +21,11 @@ h6 {
   margin: 8px 0;
 }
 
+.pro-navbar #app-menu-title-btn h5 {
+  color: white;
+}
+
+
 p {
   margin: 0;
 }
@@ -271,6 +276,11 @@ svg#clouds {
   left: -230px;
   z-index: -10;
   width: 1920px;
+}
+
+
+.pro-navbar {
+  background-color: #087747 !important;
 }
 
 /* Responsive Styles */

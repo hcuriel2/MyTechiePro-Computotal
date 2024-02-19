@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   userAddress: string = "";
   userLatitude: string = "";
   userLongitude: string = "";
+  isProfessional: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -50,6 +51,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.authService.user.subscribe(user => {
+      this.isProfessional = user?.userType === 'Professional' ?? false;
+    });
     let userCookie = localStorage.getItem("user");
 
     if (!userCookie) {
@@ -57,6 +61,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     // Checks the usertype so that clients and techies cannot go to unnecessary pages.
     if (localStorage.getItem("user")) {
+      const user = JSON.parse(localStorage.getItem("user")!);
+    this.isProfessional = user.userType === "Professional";
       document.getElementById("app-menu-signup-btn")!.style.display = "none";
       document.getElementById("app-menu-join-btn")!.style.display = "none";
       document.getElementById("app-menu-project-btn")!.style.display = "block";

@@ -32,8 +32,54 @@ a.serviceItem {
   font-size: 14px !important;
 }
 
-.form-group mat-label {
+.search-container {
+  position: relative;
+}
+
+.form-group {
+  color:#fff;
+}
+
+.search-input {
+  border: 1px solid #ccc;
+  color:#ccc;
+  padding: 8px 12px;
+  width: 100%;
+  // Additional styles to match the screenshot
+}
+
+.search-button {
+  background-color: red; // Change to the color used in the screenshot
   color: white;
+  margin-bottom: 24px !important;
+  margin-left: 20px !important;
+  // Additional styles to match the screenshot
+}
+
+.search-input::placeholder {
+  content: url('/ClientFront/src/app/modules/home/lens.png'); // Update with the correct path
+  padding-right: 8px;
+  vertical-align: middle;
+}
+
+
+.h1{
+  color: white;
+}
+
+.h6 {
+  color: white;
+}
+
+// Adjustments for the mat-form-field if necessary
+mat-form-field {
+  width: 100%; // Ensure full width for the input field
+  // Additional styling as necessary
+}
+
+
+.form-group mat-label {
+  color: rgb(31, 63, 160);
   font-size: 14px !important;
 }
 
@@ -53,15 +99,58 @@ a.serviceItem {
 }
 
 .custom-bg-primary {
-  background-color: #3f51b5;
-  color: #fff;
+  //background-color: #3f51b5;
+  color: #0e5968;
 }
 
 .custom-bg-primary-lighter {
-  background-color: #b3c6ff;
-  color: #000;
+  background-color: #2b50c0;
+  color: #0a4c5e;
 }
 
 #banner {
   height: 400px;
+}
+
+
+.black-text {
+  color: #000; 
+}
+
+
+.h6 {
+  margin-top: 20px;
+}
+
+.user-greeting {
+  margin-bottom: 20px; 
+  color: #fff;
+ 
+}
+
+.client-banner-color {
+  background-color: #105081; // Replace with the color you want for the client
+}
+
+
+
+
+
+.search-input {
+  background-color: #fff; // This sets the input field background to white
+
+  // If you are using Angular Material, you might also need to set the color of the underline to transparent
+  &.mat-input-element {
+    background-color: #ffffff;
+  }
+
+  // Ensure the underline is also white or transparent
+  .mat-form-field-underline {
+    background-color: transparent;
+  }
+
+  // Ensure the ripple effect (if any) is also white or transparent
+  .mat-form-field-ripple {
+    background-color: transparent;
+  }
 }
