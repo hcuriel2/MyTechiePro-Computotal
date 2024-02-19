@@ -19,12 +19,13 @@ import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
 import emailtransporter from "../../middleware/emailtransporter.middleware";
 import UserNotVerify from "../../exceptions/UserNotVerify";
+
 class AuthenticationController implements Controller {
     public path = "/auth";
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
-    public URL = "http://localhost:8080";
+    public URL = "http://localhost:3333";
 
     constructor() {
         this.initializeRoutes();
