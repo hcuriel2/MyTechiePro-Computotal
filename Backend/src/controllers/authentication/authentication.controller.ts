@@ -26,6 +26,8 @@ class AuthenticationController implements Controller {
     public authenticationService = new AuthenticationService();
     private user = userModel;
     public URL = "http://localhost:3333";
+    public CLIENT_URL = "http://localhost:8080";
+    
 
     constructor() {
         this.initializeRoutes();
@@ -93,18 +95,13 @@ class AuthenticationController implements Controller {
             response.status(200);
             return;
         }
-
-        /*
-        const emailAddress = request.params.emailAddress;
-        const user = await this.user.findOne({ email: emailAddress });
-        */
         
         let setPwEmailOptions  = {
             from: 'noreply.mytechie.pro@gmail.com', // sender address
             to: emailAddress, // list of receivers
             subject: "Reset Password", // Subject line
             html: "<b>Reset Password</b><br/><br/>" +
-            `<p>Please click <a href="${this.URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
+            `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
           }
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
