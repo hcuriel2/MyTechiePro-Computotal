@@ -90,6 +90,7 @@ class AuthenticationController implements Controller {
         console.log(emailAddress);
         const user = await this.user.findOne({ email: emailAddress });
 
+
         if (!user){
             console.log('No user account is associated with the specified email');
             response.status(200);
