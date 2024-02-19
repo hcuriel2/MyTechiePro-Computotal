@@ -27,7 +27,14 @@ a.serviceItem {
 }
 
 #search-text-input {
-  width: 30%;
+  width: 40%;
+  color: white;
+  font-size: 14px !important;
+}
+
+.form-group mat-label {
+  color: white;
+  font-size: 14px !important;
 }
 
 #resultRow {
@@ -37,10 +44,24 @@ a.serviceItem {
 
 #categoryName {
   margin: 15px 0 10px 0;
-  padding: 2px;
+  padding: 0;
 }
 
 #serverItem {
   margin-top: 15px;
   padding: 2px;
+}
+
+.custom-bg-primary {
+  background-color: #3f51b5;
+  color: #fff;
+}
+
+.custom-bg-primary-lighter {
+  background-color: #b3c6ff;
+  color: #000;
+}
+
+#banner {
+  height: 400px;
 }

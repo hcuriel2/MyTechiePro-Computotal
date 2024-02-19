@@ -1,72 +1,108 @@
 <div class="flex-column d-flex h-100">
-    <mat-toolbar color="primary" id="app-toolbar">
-        <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
-            <h5>{{ 'App.Title' | translate }}</h5>
+  <mat-toolbar id="app-toolbar">
+    <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
+      <h5>{{ "App.Title" | translate }}</h5>
+    </button>
+    <div *ngIf="user" id="app-menu-user-info" class="m-1">
+      <h6>Hello, {{ user?.firstName }}</h6>
+    </div>
+    <div class="d-flex justify-content-end" id="menu-buttons">
+      <button
+        mat-raised-button
+        *ngIf="user"
+        id="app-menu-settings-btn"
+        class="m-1"
+        (click)="settings()"
+      >
+        {{ "Dictionary.Settings" | translate }}
+      </button>
+      <div class="d-flex justify-content-end mx-5" id="menu-buttons">
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="signIn()">
+            {{ "Dictionary.SignIn" | translate }}
+          </button>
+          <button mat-menu-item (click)="signUp()">
+            {{ "Dictionary.SignUp" | translate }}
+          </button>
+        </mat-menu>
+
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <span>{{ "Dictionary.SignIn" | translate }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
-        <div *ngIf="user" id="app-menu-user-info" class="m-1">
-            <h6>Hello, {{ user?.firstName }}</h6>
-        </div>
+      </div>
 
-        <button mat-raised-button *ngIf="user" id="app-menu-settings-btn" class="m-1" (click)="settings()">
-            {{'Dictionary.Settings' | translate}}
-        </button>
-        <button mat-raised-button *ngIf="!user" id="app-menu-signin-btn" class="m-1" (click)="signIn()">
-            {{ 'Dictionary.SignIn' | translate }}
-        </button>
+      <button
+        mat-raised-button
+        *ngIf="user"
+        id="app-menu-signout-btn"
+        class="m-1"
+        (click)="signOut()"
+      >
+        {{ "Dictionary.SignOut" | translate }}
+      </button>
 
-        <button mat-raised-button *ngIf="user" id="app-menu-signout-btn" class="m-1" (click)="signOut()">
-            {{ 'Dictionary.SignOut' | translate }}
-        </button>
-        <button mat-raised-button id="app-menu-signup-btn" class="m-1" (click)="signUp()">
-            {{ 'Dictionary.SignUp' | translate }}
-        </button>
+      <button
+        mat-raised-button
+        *ngIf="user"
+        id="app-menu-signout-btn"
+        class="m-1"
+        (click)="signOut()"
+      >
+        {{ "Dictionary.SignOut" | translate }}
+      </button>
 
-        <button mat-raised-button id="app-menu-join-btn" class="m-1" (click)="joinPro()">
-            {{ 'Label.JoinPro' | translate }}
-        </button>
+      <button
+        mat-raised-button
+        id="app-menu-join-btn"
+        class="m-1"
+        (click)="joinPro()"
+      >
+        {{ "Label.JoinPro" | translate }}
+      </button>
 
-        <button mat-raised-button id="app-menu-project-btn" class="m-1" (click)="renderProjectsList()"
-            style="display: none;">
-            MyProjects
-        </button>
+      <button
+        mat-raised-button
+        id="app-menu-project-btn"
+        class="m-1"
+        (click)="renderProjectsList()"
+        style="display: none"
+      >
+        MyProjects
+      </button>
+    </div>
+  </mat-toolbar>
 
+  <router-outlet></router-outlet>
 
-
-        <!-- <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            aria-label="Example icon-button with a menu"
-        >
-            <mat-icon>more_vert</mat-icon>
-        </button> -->
-
-
-        <!-- <mat-menu #menu="matMenu" xPosition="before">
-            <button mat-menu-item (click)="renderProjectsList()">
-                <span>My Projects</span>
-            </button>
-
-            <button mat-menu-item disabled>
-                <span>Sign Out</span>
-            </button>
-        </mat-menu> -->
-    </mat-toolbar>
-
-    <router-outlet></router-outlet>
-
-    <footer class="footer mt-auto py-1" id="footer">
-        <span class="fill-remaining-space"></span>
-        <button mat-button id="app-footer-about-btn" class="m-1 text-white" (click)="routeBasedOnUser()">
-            {{ 'Dictionary.Home' | translate }}
-        </button>
-        <span class="fill-remaining-space"></span>
-        <button mat-button id="app-footer-about-btn" class="m-1 text-white" (click)="routeToAboutPage()">
-            {{ 'Dictionary.About' | translate }}
-        </button>
-        <span class="fill-remaining-space"></span>
-        <button mat-button id="app-footer-about-btn" class="m-1 text-white" (click)="routeToContactUsPage()">
-            {{ 'Dictionary.ContactUs' | translate }}
-        </button>
-        <span class="fill-remaining-space"></span>
-    </footer>
+  <footer class="footer mt-auto py-1" id="footer">
+    <span class="fill-remaining-space"></span>
+    <button
+      mat-button
+      id="app-footer-about-btn"
+      class="m-1 text-white"
+      (click)="routeBasedOnUser()"
+    >
+      {{ "Dictionary.Home" | translate }}
+    </button>
+    <span class="fill-remaining-space"></span>
+    <button
+      mat-button
+      id="app-footer-about-btn"
+      class="m-1 text-white"
+      (click)="routeToAboutPage()"
+    >
+      {{ "Dictionary.About" | translate }}
+    </button>
+    <span class="fill-remaining-space"></span>
+    <button
+      mat-button
+      id="app-footer-about-btn"
+      class="m-1 text-white"
+      (click)="routeToContactUsPage()"
+    >
+      {{ "Dictionary.ContactUs" | translate }}
+    </button>
+    <span class="fill-remaining-space"></span>
+  </footer>
 </div>
