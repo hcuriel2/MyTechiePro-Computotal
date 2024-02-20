@@ -61,11 +61,12 @@ class AuthenticationController implements Controller {
             `${this.path}/verifyMfa`,
             this.verifyMfa
         );
-        // this.router.post(
-        //     `${this.path}/professional/register`,
-        //     validationMiddleware(CreateUserDto),
-        //     this.registration
-        // );
+        
+        this.router.post(
+          `${this.path}/professional/register`,
+            validationMiddleware(CreateUserDto),
+            this.registration
+        );
 
         this.router.post(
             `${this.path}/login`,
