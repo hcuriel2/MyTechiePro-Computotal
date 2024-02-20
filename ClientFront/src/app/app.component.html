@@ -1,42 +1,56 @@
 <div class="flex-column d-flex h-100">
   <mat-toolbar [class.pro-navbar]="isProfessional" id="app-toolbar">
-    
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
-      <h5>{{ "App.Title" | translate }}</h5>
+      <h5 id="app-title">{{ "App.Title" | translate }}</h5>
     </button>
-    <span *ngIf="isProfessional" class="pro-greeting" style="color: white; margin-left: 565px;">
-      Welcome back, {{ user?.firstName }}
+    <span
+      *ngIf="isProfessional"
+      class="pro-greeting"
+      style="color: white; margin-left: 580px"
+    >
+      Welcome back, {{ user?.firstName }}.
     </span>
 
     <!-- User Menu Dropdown when logged in as a Client-->
-<div *ngIf="user" class="d-flex justify-content-end">
-  <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
-    <mat-icon [ngStyle]="{'color': isProfessional ? 'white' : 'black'}" 
-              style="font-size: 40px; height: 40px; width: 40px; margin-top: 10px; margin-bottom: 10px;">
-      account_circle
-    </mat-icon>
-  </button>  
-  <mat-menu #userMenu="matMenu">
-    <!-- My Projects button always visible for logged-in users -->
-    <button mat-menu-item (click)="renderProjectsList()">
-      My Projects
-    </button>
-    <button mat-menu-item (click)="settings()">
-      {{ "Dictionary.Settings" | translate }}
-    </button>
-    <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
-      {{ "Label.JoinPro" | translate }}
-    </button>
-    <button mat-menu-item (click)="signOut()">
-      {{ "Dictionary.SignOut" | translate }}
-    </button>
-  </mat-menu>
-</div>
-
+    <div *ngIf="user" class="d-flex justify-content-end">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="userMenu"
+        aria-label="User menu"
+      >
+        <mat-icon
+          [ngStyle]="{ color: isProfessional ? 'white' : 'black' }"
+          style="
+            font-size: 40px;
+            height: 40px;
+            width: 40px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+          "
+        >
+          account_circle
+        </mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <!-- My Projects button always visible for logged-in users -->
+        <button mat-menu-item (click)="renderProjectsList()">
+          My Projects
+        </button>
+        <button mat-menu-item (click)="settings()">
+          {{ "Dictionary.Settings" | translate }}
+        </button>
+        <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
+          {{ "Label.JoinPro" | translate }}
+        </button>
+        <button mat-menu-item (click)="signOut()">
+          {{ "Dictionary.SignOut" | translate }}
+        </button>
+      </mat-menu>
+    </div>
 
     <!-- Original Sign in Dropdown when not logged in -->
-    <div *ngIf="!user" class="d-flex justify-content-end mx-5">
-      <mat-menu #menu="matMenu" style="margin-left: 20px !important;">
+    <div *ngIf="!user" class="d-flex justify-content-end">
+      <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="signIn()">
           {{ "Dictionary.SignIn" | translate }}
         </button>
@@ -45,11 +59,11 @@
         </button>
       </mat-menu>
 
-      <button mat-icon-button [matMenuTriggerFor]="menu">
+      <button mat-icon-button [matMenuTriggerFor]="menu" id="dropdownButton">
         <span>{{ "Dictionary.SignIn" | translate }}</span>
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
-      <button mat-raised-button (click)="joinPro()" style="margin-left: 50px;">
+      <button mat-stroked-button (click)="joinPro()">
         {{ "Label.JoinPro" | translate }}
       </button>
     </div>
@@ -59,14 +73,14 @@
 
   <footer class="footer mt-auto py-1" id="footer">
     <span class="fill-remaining-space"></span>
-    <button
+    <!-- <button
       mat-button
       id="app-footer-about-btn"
       class="m-1 text-white"
       (click)="routeBasedOnUser()"
     >
       {{ "Dictionary.Home" | translate }}
-    </button>
+    </button> -->
     <span class="fill-remaining-space"></span>
     <button
       mat-button

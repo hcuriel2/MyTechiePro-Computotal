@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  AfterViewInit,
   OnDestroy,
   OnInit,
 } from "@angular/core";
@@ -51,8 +52,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.authService.user.subscribe(user => {
-      this.isProfessional = user?.userType === 'Professional' ?? false;
+    this.authService.user.subscribe((user) => {
+      this.isProfessional = user?.userType === "Professional" ?? false;
     });
     let userCookie = localStorage.getItem("user");
 
@@ -62,19 +63,35 @@ export class AppComponent implements OnInit, OnDestroy {
     // Checks the usertype so that clients and techies cannot go to unnecessary pages.
     if (localStorage.getItem("user")) {
       const user = JSON.parse(localStorage.getItem("user")!);
-    this.isProfessional = user.userType === "Professional";
-      document.getElementById("app-menu-signup-btn")!.style.display = "none";
-      document.getElementById("app-menu-join-btn")!.style.display = "none";
-      document.getElementById("app-menu-project-btn")!.style.display = "block";
-      document.getElementById("app-menu-user-info")!.style.display = "block";
-      if (
-        JSON.parse(localStorage.getItem("user")!).userType == "Professional"
-      ) {
-        document.getElementById("app-toolbar")!.style.backgroundColor =
-          "#ef0078";
-        document.getElementById("footer")!.style.background = "#ef0078";
+      this.isProfessional = user.userType === "Professional";
+
+      const signupBtn = document.getElementById("app-menu-signup-btn");
+      const joinBtn = document.getElementById("app-menu-join-btn");
+      const projectBtn = document.getElementById("app-menu-project-btn");
+      const userInfo = document.getElementById("app-menu-user-info");
+      const toolbar = document.getElementById("app-toolbar");
+      const footer = document.getElementById("footer");
+
+      if (signupBtn) {
+        signupBtn.style.display = "none";
+      }
+      if (joinBtn) {
+        joinBtn.style.display = "none";
+      }
+      if (projectBtn) {
+        projectBtn.style.display = "block";
+      }
+      if (userInfo) {
+        userInfo.style.display = "block";
+      }
+      if (toolbar && footer) {
+        if (user.userType === "Professional") {
+          toolbar.style.backgroundColor = "#ef0078";
+          footer.style.background = "#ef0078";
+        }
       }
     }
+
     console.log("ngOnInit");
   }
 
