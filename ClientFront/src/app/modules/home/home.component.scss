@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   margin: 0;
+  width: 100%;
 }
 
 .flex-align-top {
@@ -26,57 +27,56 @@ a.serviceItem {
   display: none;
 }
 
-#search-text-input {
-  width: 40%;
-  color: white;
-  font-size: 14px !important;
-}
-
 .search-container {
   position: relative;
 }
 
-.form-group {
-  color:#fff;
-}
-
 .search-input {
-  border: 1px solid #ccc;
-  color:#ccc;
-  padding: 8px 12px;
+  background-color: #fff; // This sets the input field background to white
+  border-radius: 50px;
+  color: black;
+  height: 50px;
   width: 100%;
-  // Additional styles to match the screenshot
+  border: 1px solid #ccc;
+  padding: 8px 20px;
+
+  // If you are using Angular Material, you might also need to set the color of the underline to transparent
+  &.mat-input-element {
+    background-color: #ffffff;
+  }
+
+  // Ensure the ripple effect (if any) is also white or transparent
+  .mat-form-field-ripple {
+    background-color: transparent;
+  }
 }
 
 .search-button {
-  background-color: red; // Change to the color used in the screenshot
+  background-color: #f94144; // Change to the color used in the screenshot
   color: white;
-  margin-bottom: 24px !important;
-  margin-left: 20px !important;
-  // Additional styles to match the screenshot
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  padding: 0;
+  transform: translateY(-50%);
 }
 
-.search-input::placeholder {
-  content: url('/ClientFront/src/app/modules/home/lens.png'); // Update with the correct path
-  padding-right: 8px;
-  vertical-align: middle;
+.mat-form-field-appearance-legacy .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
 }
 
-
-.h1{
+.h1 {
   color: white;
+  font-weight: bold;
 }
 
 .h6 {
   color: white;
 }
 
-// Adjustments for the mat-form-field if necessary
 mat-form-field {
-  width: 100%; // Ensure full width for the input field
-  // Additional styling as necessary
+  width: 100%;
 }
-
 
 .form-group mat-label {
   color: rgb(31, 63, 160);
@@ -109,48 +109,27 @@ mat-form-field {
 }
 
 #banner {
-  height: 400px;
+  height: 45vh;
+  padding: 2em;
 }
-
 
 .black-text {
-  color: #000; 
+  color: #000;
 }
-
 
 .h6 {
   margin-top: 20px;
 }
 
 .user-greeting {
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
   color: #fff;
- 
 }
 
 .client-banner-color {
   background-color: #105081; // Replace with the color you want for the client
 }
 
-
-
-
-
-.search-input {
-  background-color: #fff; // This sets the input field background to white
-
-  // If you are using Angular Material, you might also need to set the color of the underline to transparent
-  &.mat-input-element {
-    background-color: #ffffff;
-  }
-
-  // Ensure the underline is also white or transparent
-  .mat-form-field-underline {
-    background-color: transparent;
-  }
-
-  // Ensure the ripple effect (if any) is also white or transparent
-  .mat-form-field-ripple {
-    background-color: transparent;
-  }
+.default-banner-color {
+  background-color: #eef2f6;
 }

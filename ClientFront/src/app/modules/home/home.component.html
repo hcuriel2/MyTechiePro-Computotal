@@ -1,46 +1,48 @@
-<div class="container-fluid py-5" 
-[ngClass]="{'client-banner-color': isCustomer, 'custom-bg-pro': !isCustomer}" id="banner">
+<div
+  class="container-fluid row align-items-center pt-5 pb-5"
+  [ngClass]="{
+    'client-banner-color': isCustomer,
+    'custom-bg-pro': !isCustomer,
+    'default-banner-color': !user
+  }"
+  id="banner"
+>
   <div class="row align-items-center justify-content-center">
     <div class="col-auto text-center">
       <p class="h1 d-inline" *ngIf="user">
         Welcome back, {{ user.firstName }}.
       </p>
-      <p class="h1 d-inline" [ngClass]="{'black-text': !user}">
+      <br />
+      <p class="h1 d-inline" [ngClass]="{ 'black-text': !user }">
         {{ "Message.HowCanWeHelp" | translate }}
       </p>
-      <p class="h6" [ngClass]="{'black-text': !user}">
+      <p class="h6" [ngClass]="{ 'black-text': !user }">
         {{ "Message.GetStarted" | translate }}
-      </p>      
+      </p>
     </div>
   </div>
 
-  <div class="row mt-3 justify-content-center">
-    <div class="col-md-6">
-      <div class="search-container d-flex align-items-center justify-content-center mt-5">
-        <mat-form-field class="form-group">
-          <mat-label>{{ "Dictionary.Search" | translate }}</mat-label>
-          <input
-            matInput
-            class="search-input" 
-            type="text"
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="showResults = searchQuery !== ''"
-            placeholder="{{ 'Dictionary.SearchPlaceholder' | translate }}"
-          />
-        </mat-form-field>
-        
-        <button
-          mat-raised-button
+  <div class="row justify-content-center" id="search-row">
+    <div class="col-12 col-md-8 col-lg-5">
+      <div class="search-container w-100">
+        <input
+          class="form-control search-input"
+          type="text"
+          placeholder="Search"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="showResults = searchQuery !== ''"
+        /><button
+          mat-icon-button
+          matSuffix
           class="search-button"
           (click)="showResults = !showResults"
         >
-          {{ (!showResults ? "Dictionary.Go" : "Dictionary.Hide") | translate }}
+          <mat-icon>{{ !showResults ? "search" : "clear" }}</mat-icon>
         </button>
       </div>
     </div>
   </div>
 </div>
-
 
 <div
   *ngIf="showResults"
