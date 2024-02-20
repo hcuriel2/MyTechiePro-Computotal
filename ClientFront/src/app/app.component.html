@@ -3,11 +3,7 @@
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
       <h5 id="app-title">{{ "App.Title" | translate }}</h5>
     </button>
-    <span
-      *ngIf="isProfessional"
-      class="pro-greeting"
-      style="color: white; margin-left: 580px"
-    >
+    <span *ngIf="isProfessional" id="pro-greeting">
       Welcome back, {{ user?.firstName }}.
     </span>
 
@@ -20,13 +16,7 @@
       >
         <mat-icon
           [ngStyle]="{ color: isProfessional ? 'white' : 'black' }"
-          style="
-            font-size: 40px;
-            height: 40px;
-            width: 40px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-          "
+          id="user-icon"
         >
           account_circle
         </mat-icon>

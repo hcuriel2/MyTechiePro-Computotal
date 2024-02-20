@@ -341,12 +341,20 @@ mat-toolbar {
   justify-content: space-between;
   align-items: center;
   background-color: white !important;
+  // position: relative;
 }
 
-#user-icon mat-icon {
+#user-icon {
   font-size: 35px;
 }
 
 #dropdownButton {
   margin-right: 45px;
+}
+
+#pro-greeting {
+  color: white;
+  align-items: end;
+  position: absolute;
+  right: 100px;
 }
