@@ -5,6 +5,7 @@ import mongoose = require("mongoose");
 import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
 import cors from "cors";
+import 'reflect-metadata';
 
 class App {
     public app: express.Application;
