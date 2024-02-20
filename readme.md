@@ -20,6 +20,15 @@
 
 We have "ClientFront", "AdminFront", and "Backend" directories and you will need to install all the dependencies for each of the directories seperately. 
 
+### General
+```
+$ In order to run this project you'll need:
+    $ Node version: Node Versions less than or equal to 16.*  (We're using 16.20.2)
+    $ Node Version Manager - This will allow you to configure the required Node version for this project
+
+$ Use the following command to set the correct Node version: nvm use 16.20.2
+```
+
 ### Backend 
 
 ```shell
