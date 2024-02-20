@@ -4,8 +4,8 @@
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
       <h5>{{ "App.Title" | translate }}</h5>
     </button>
-    <span *ngIf="isProfessional" class="pro-greeting" style="color: white; margin-left: 580px;">
-      Welcome back, {{ user?.firstName }}.
+    <span *ngIf="isProfessional" class="pro-greeting" style="color: white; margin-left: 565px;">
+      Welcome back, {{ user?.firstName }}
     </span>
 
     <!-- User Menu Dropdown when logged in as a Client-->
@@ -17,12 +17,12 @@
     </mat-icon>
   </button>  
   <mat-menu #userMenu="matMenu">
-    <button mat-menu-item (click)="settings()">
-      {{ "Dictionary.Settings" | translate }}
-    </button>
     <!-- My Projects button always visible for logged-in users -->
     <button mat-menu-item (click)="renderProjectsList()">
       My Projects
+    </button>
+    <button mat-menu-item (click)="settings()">
+      {{ "Dictionary.Settings" | translate }}
     </button>
     <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
       {{ "Label.JoinPro" | translate }}
