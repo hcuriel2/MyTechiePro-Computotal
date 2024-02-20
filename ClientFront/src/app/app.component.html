@@ -20,15 +20,15 @@
     <button mat-menu-item (click)="settings()">
       {{ "Dictionary.Settings" | translate }}
     </button>
-    <button mat-menu-item (click)="signOut()">
-      {{ "Dictionary.SignOut" | translate }}
-    </button>
     <!-- My Projects button always visible for logged-in users -->
     <button mat-menu-item (click)="renderProjectsList()">
       My Projects
     </button>
     <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
       {{ "Label.JoinPro" | translate }}
+    </button>
+    <button mat-menu-item (click)="signOut()">
+      {{ "Dictionary.SignOut" | translate }}
     </button>
   </mat-menu>
 </div>
