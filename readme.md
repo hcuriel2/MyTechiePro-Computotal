@@ -47,3 +47,12 @@ $ npm start
 $ cd ../ClientFront        // or AdminFront
 $ ng serve                 // or npm start
 ```
+
+### Run the front end app (Launching locally)
+
+```shell
+$ cd ../ClientFront
+$ ng serve --port <specified port>
+
+$ Example: ng serve --port 8080
+```
