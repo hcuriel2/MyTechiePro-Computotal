@@ -25,8 +25,8 @@ class AuthenticationController implements Controller {
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
-    public URL = "http://localhost:3333";
-    public CLIENT_URL = "http://localhost:8080";
+    public URL = process.env.SERVER_URL;
+    public CLIENT_URL = process.env.CLIENT_URL;
     
 
     constructor() {

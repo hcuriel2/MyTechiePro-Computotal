@@ -10,8 +10,8 @@ import emailtransporter from "../../middleware/emailtransporter.middleware";
 
 class AuthenticationService {
     public user = userModel;
-    public API_URL = "http://localhost:3333";
-    public CLIENT_URL = "http://localhost:8080";
+    public API_URL = process.env.SERVER_URL;
+    public CLIENT_URL = process.env.CLIENT_URL;
 
     public async register(userData: CreateUserDto) {
         if (await this.user.findOne({ email: userData.email })) {
