@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 class CreateAddressDto {
     @IsString()
@@ -10,8 +10,10 @@ class CreateAddressDto {
     @IsString()
     public postalCode:string;
 
+    @IsNumber()
     public lat:number;
 
+    @IsNumber()
     public lng:number;
 
 

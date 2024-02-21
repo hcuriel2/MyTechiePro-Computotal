@@ -19,12 +19,15 @@ import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
 import emailtransporter from "../../middleware/emailtransporter.middleware";
 import UserNotVerify from "../../exceptions/UserNotVerify";
+
 class AuthenticationController implements Controller {
     public path = "/auth";
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
-    public URL = "https://mytechie.pro";
+    public URL = process.env.SERVER_URL;
+    public CLIENT_URL = process.env.CLIENT_URL;
+    
 
     constructor() {
         this.initializeRoutes();
@@ -58,11 +61,12 @@ class AuthenticationController implements Controller {
             `${this.path}/verifyMfa`,
             this.verifyMfa
         );
-        // this.router.post(
-        //     `${this.path}/professional/register`,
-        //     validationMiddleware(CreateUserDto),
-        //     this.registration
-        // );
+        
+        this.router.post(
+          `${this.path}/professional/register`,
+            validationMiddleware(CreateUserDto),
+            this.registration
+        );
 
         this.router.post(
             `${this.path}/login`,
@@ -71,7 +75,7 @@ class AuthenticationController implements Controller {
         );
         this.router.post(`${this.path}/logout`, this.loggingOut);
         
-        this.router.get(`${this.path}/resetPassword/:emailAddress`, this.sendResetPwEmail)
+        this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail)
     }
     
 
@@ -80,20 +84,34 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        const emailAddress = request.params.emailAddress;
+        
+        console.log('Reset email function called');
+
+        const { emailAddress } = request.body;
+        console.log(emailAddress);
         const user = await this.user.findOne({ email: emailAddress });
+
+
+        if (!user){
+            console.log('No user account is associated with the specified email');
+            response.status(200);
+            return;
+        }
+        
         let setPwEmailOptions  = {
-            from: 'noreplytechie@gmail.com', // sender address
+            from: 'noreply.mytechie.pro@gmail.com', // sender address
             to: emailAddress, // list of receivers
             subject: "Reset Password", // Subject line
             html: "<b>Reset Password</b><br/><br/>" +
-            `<p>Please click <a href="${this.URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
+            `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
           }
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
             console.log(error);
+            response.status(500); // Error sending email - set status code
         } else {
             console.log('Email sent: ' + info.response);
+            response.status(200); // Email sent successfully
         }
         });
     };

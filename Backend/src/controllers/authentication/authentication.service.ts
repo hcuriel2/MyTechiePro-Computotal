@@ -10,7 +10,8 @@ import emailtransporter from "../../middleware/emailtransporter.middleware";
 
 class AuthenticationService {
     public user = userModel;
-    public API_URL = "https://api.mytechie.pro";
+    public API_URL = process.env.SERVER_URL;
+    public CLIENT_URL = process.env.CLIENT_URL;
 
     public async register(userData: CreateUserDto) {
         if (await this.user.findOne({ email: userData.email })) {
@@ -29,11 +30,11 @@ class AuthenticationService {
         });
         //send email verification
         let verifyEmailOptions  = {
-                from: 'noreplytechie@gmail.com', // sender address
+                from: 'noreply.mytechie.pro@gmail.com', // sender address
                 to: user.email, // list of receivers
                 subject: "Verification of email address", // Subject line
                 html: "<b>Verify your email</b><br/><br/>" +
-                `<p>Please click <a href="${this.API_URL}/users/verify/${user._id}">here</a> to verify your email.</p> <br/>`
+                `<p>Please click <a href="${this.CLIENT_URL}/users/verify/${user._id}">here</a> to verify your email.</p> <br/>`
               }
         emailtransporter.sendMail(verifyEmailOptions , function(error, info){
             if (error) {
@@ -49,7 +50,7 @@ class AuthenticationService {
             if(admins) {
                 const adminEmails = admins.map((admin) => admin.email)
                 let mailOptions  = {
-                    from: 'noreplytechie@gmail.com', // sender address
+                    from: 'noreply.mytechie.pro@gmail.com', // sender address
                     to: adminEmails, // list of receivers - adminEmails
                     subject: "Verification for new a professional account", // Subject line
                     html: "<b>New professional registered account needs to be verified: </b><br/><br/>" +
