@@ -105,7 +105,7 @@ class AuthenticationController implements Controller {
           }
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
-            console.log(error);
+            console.log(error, "\n");
             response.status(500); // Error sending email - set status code
         } else {
             console.log(`Email recipient: ${emailAddress}`);
