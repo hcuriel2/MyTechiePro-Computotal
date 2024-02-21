@@ -85,10 +85,8 @@ class AuthenticationController implements Controller {
         next: NextFunction
     ) => {
         
-        console.log('Reset email function called');
-
+        console.log('\nReset email function called');
         const { emailAddress } = request.body;
-        console.log(emailAddress);
         const user = await this.user.findOne({ email: emailAddress });
 
 
@@ -110,7 +108,8 @@ class AuthenticationController implements Controller {
             console.log(error);
             response.status(500); // Error sending email - set status code
         } else {
-            console.log('Email sent: ' + info.response);
+            console.log(`Email recipient: ${emailAddress}`);
+            console.log('Email successfully sent: ' + info.response);
             response.status(200); // Email sent successfully
         }
         });
