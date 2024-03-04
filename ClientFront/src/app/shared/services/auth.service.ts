@@ -65,13 +65,12 @@ export class AuthService {
         );
     }
 
-    public sendEmailResetPw(emailAddress: string): Observable<User> {
-        return this.httpClient.get<User>(`${this.API_URL}/resetPassword/${emailAddress}`).pipe(
-            map((user: User) => {
-                return user;
-            })
-        );
+    // Modified the function - it needs to be a POST request in order to be secure
+    public sendEmailResetPw(emailAddress: string): Observable<any> {
+        const body = { emailAddress };
+        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body);
     }
+
 
     public signOut(): void {
         localStorage.removeItem('user');
