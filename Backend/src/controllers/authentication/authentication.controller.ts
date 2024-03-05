@@ -97,7 +97,7 @@ class AuthenticationController implements Controller {
         let clientName = null;
 
 
-        // Update job review and rating in the stored job
+        // Retrieve project object
         try {
             projectObj = await this.project.findOne({ _id: projectID });
             console.log("found project");
@@ -105,8 +105,10 @@ class AuthenticationController implements Controller {
             console.error(e);
         }
         
+        // Take the clientID from the project object
+        // Use this value to search for a client object
+        // Assign the first and last name to clientName - this is used for the author value for the review comment
         clientID = projectObj.client;
-
         try {
             let clientObj = await this.user.findOne({ _id: clientID });
             let fName = clientObj.firstName;
@@ -115,10 +117,7 @@ class AuthenticationController implements Controller {
         } catch (e) {
             console.error(e);
         }
-        console.log("\n\n\n\n")
-        console.log(clientName);
-        console.log(clientID);
-        console.log("\n\n\n\n")
+        
 
 
         // Object to hold Review and Rating
@@ -132,7 +131,8 @@ class AuthenticationController implements Controller {
             $set: {rating: rating }
         }
 
-        
+
+        // Update the project object 
         try {
             const result = await this.project.updateOne({ _id: projectID }, updateOperation);
             console.log("Project review successfully added: ", result);
@@ -165,7 +165,6 @@ class AuthenticationController implements Controller {
             `
 
             this.sendEmail("willondrik@outlook.com", "Notification of Negative Review", html);
-
         }
     }
 
