@@ -3,40 +3,36 @@
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
       <h5 id="app-title">{{ "App.Title" | translate }}</h5>
     </button>
-    <span *ngIf="isProfessional" id="pro-greeting">
-      Welcome back, {{ user?.firstName }}.
+    <span *ngIf="isProfessional" class="pro-greeting" style="color: white; margin-left: 950px;">
+      Welcome back, {{ user?.firstName }}
     </span>
 
     <!-- User Menu Dropdown when logged in as a Client-->
-    <div *ngIf="user" class="d-flex justify-content-end">
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="userMenu"
-        aria-label="User menu"
-      >
-        <mat-icon
-          [ngStyle]="{ color: isProfessional ? 'white' : 'black' }"
-          id="user-icon"
-        >
-          account_circle
-        </mat-icon>
-      </button>
-      <mat-menu #userMenu="matMenu">
-        <!-- My Projects button always visible for logged-in users -->
-        <button mat-menu-item (click)="renderProjectsList()">
-          My Projects
-        </button>
-        <button mat-menu-item (click)="settings()">
-          {{ "Dictionary.Settings" | translate }}
-        </button>
-        <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
-          {{ "Label.JoinPro" | translate }}
-        </button>
-        <button mat-menu-item (click)="signOut()">
-          {{ "Dictionary.SignOut" | translate }}
-        </button>
-      </mat-menu>
-    </div>
+<div *ngIf="user" class="d-flex justify-content-end">
+  <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
+<mat-icon [ngStyle]="{'color': isProfessional ? 'white' : 'black'}" 
+          style="font-size: 40px; height: 40px; width: 40px; margin-top: 10px; margin-bottom: 10px;">
+  arrow_drop_down
+</mat-icon>
+
+  </button>  
+  <mat-menu #userMenu="matMenu">
+    <!-- My Projects button always visible for logged-in users -->
+    <button mat-menu-item (click)="renderProjectsList()">
+      My Projects
+    </button>
+    <button mat-menu-item (click)="settings()">
+      {{ "Dictionary.Settings" | translate }}
+    </button>
+    <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
+      {{ "Label.JoinPro" | translate }}
+    </button>
+    <button mat-menu-item (click)="signOut()">
+      {{ "Dictionary.SignOut" | translate }}
+    </button>
+  </mat-menu>
+</div>
+
 
     <!-- Original Sign in Dropdown when not logged in -->
     <div *ngIf="!user" class="d-flex justify-content-end">
