@@ -10,6 +10,7 @@ import adminMiddleware from "../../middleware/admin.middleware";
 import CreateUserDto from "../user/user.dto";
 import User from "../../models/user/user.interface";
 import userModel from "../../models/user/user.model";
+import projectModel from "../../models/project/project.model";
 import AuthenticationService from "./authentication.service";
 import AuthMiddleware from "../../middleware/auth.middleware"
 import LogInDto from "./logIn.dto";
@@ -25,6 +26,7 @@ class AuthenticationController implements Controller {
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
+    private project = projectModel;
     public URL = process.env.SERVER_URL;
     public CLIENT_URL = process.env.CLIENT_URL;
     
@@ -75,9 +77,127 @@ class AuthenticationController implements Controller {
         );
         this.router.post(`${this.path}/logout`, this.loggingOut);
         
-        this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail)
+        this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
+
+
+        this.router.post(`${this.path}/reviews`, this.projectReview);
     }
     
+
+    private projectReview = async (
+        request: Request,
+        response: Response
+    ) => {
+        console.log(request.body);
+        const projectID = request.body.projectID; 
+        const review = request.body.review;
+        const rating = request.body.rating;
+        let projectObj = null;
+        let clientID = null;
+        let clientName = null;
+
+
+        // Update job review and rating in the stored job
+        try {
+            projectObj = await this.project.findOne({ _id: projectID });
+            console.log("found project");
+        } catch (e) {
+            console.error(e);
+        }
+        
+        clientID = projectObj.client;
+
+        try {
+            let clientObj = await this.user.findOne({ _id: clientID });
+            let fName = clientObj.firstName;
+            let lName = clientObj.lastName;
+            clientName = `${fName} ${lName}`;
+        } catch (e) {
+            console.error(e);
+        }
+        console.log("\n\n\n\n")
+        console.log(clientName);
+        console.log(clientID);
+        console.log("\n\n\n\n")
+
+
+        // Object to hold Review and Rating
+        const updateOperation = {
+            $push: { comments: {
+                text: review,
+                authorId: clientID,
+                authorName: clientName
+            } 
+        },
+            $set: {rating: rating }
+        }
+
+        
+        try {
+            const result = await this.project.updateOne({ _id: projectID }, updateOperation);
+            console.log("Project review successfully added: ", result);
+            response.json({ message: "Project updated successfully", result: result })
+
+        } catch (e) {
+            console.error(e);
+            response.status(500).json({ message: "Failed to update project object" });
+        }
+
+
+
+        // If the rating is below 3, a notification needs to be sent to the admin
+        if (rating < 3) {
+            console.log('\n\n\n\n\n Negative review detected\n\n\n\n\n')
+            let admins =  await this.findUsersByType('Admin');
+            let emailList = null;
+
+            for (let admin of admins){
+                emailList += `${admin.email}, `
+                
+            }
+            console.log(emailList);
+
+            let html = `
+                <h1>Unsatisfied Customer</h1>
+                <p>Please contact the customer immediately</p>
+                <p>Client: ${clientName}
+                ClientID: ${clientID}</p>
+            `
+
+            this.sendEmail("willondrik@outlook.com", "Notification of Negative Review", html);
+
+        }
+    }
+
+
+    private async findUsersByType(userType){
+        let users = null;
+        try {
+            users = await this.user.find({ userType: userType });
+            console.log("findUsersByType was successful.")
+        } catch (e) {
+            console.error('findUsersByTpe failed.', e);
+        }
+        return users;
+    }
+
+    private async sendEmail(recipients, subject, message){
+        let email = {
+            from: 'noreply.mytechie.pro@gmail.com',
+            to: recipients,
+            subject: subject,
+            html: message
+        }
+        emailtransporter.sendMail(email, function(error, info) {
+            if (error){
+                console.log(error);
+                
+            } else {
+                console.log("Poor review notification sent to admins.");
+            }
+        })
+    }
+
 
     private sendResetPwEmail = async (
         request: Request,
