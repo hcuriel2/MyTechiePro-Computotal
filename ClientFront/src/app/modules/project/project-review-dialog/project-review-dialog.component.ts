@@ -1,32 +1,48 @@
-// Dialog box for Techie review. Client submits star rating as well as feedback comment.
-
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-    selector: 'app-project--dialog',
-    templateUrl: './project-review-dialog.component.html',
-    styleUrls: ['./project-review-dialog.component.scss'],
+  selector: 'app-project-review-dialog',
+  templateUrl: './project-review-dialog.component.html',
+  styleUrls: ['./project-review-dialog.component.scss'],
 })
 export class ProjectReviewDialogComponent implements OnInit {
-    public clientComment: FormControl;
-    public formGroup: FormGroup;
+  reviewForm: FormGroup;
+  hoverState = 0; // Set the initial star rating to 0
+  clickedState = 0;
 
-    starRating = 0;
-    constructor(public dialogRef: MatDialogRef<ProjectReviewDialogComponent>) {}
+  constructor(public dialogRef: MatDialogRef<ProjectReviewDialogComponent>) {}
 
-    public ngOnInit(): void {
-        this.clientComment = new FormControl(null, Validators.email);
-        this.formGroup = new FormGroup({ Comment: this.clientComment });
-    }
+  ngOnInit(): void {
+    this.reviewForm = new FormGroup({
+      comment: new FormControl('', Validators.required),
+      rating: new FormControl(0, [Validators.required, Validators.min(1), Validators.max(5)]),
+    });
+  }
 
-    public onSubmit(): void {
-        console.log(this.starRating);
-        console.log("Form comment is: " + this.clientComment.value);
-        this.dialogRef.close(JSON.stringify({rating: this.starRating, comment: this.clientComment.value}));
+  onRate(rating: number): void {
+    this.reviewForm.controls['rating'].setValue(rating);
+  }
+
+  hoveredOver(rate: number): void {
+    this.hoverState = rate;
+  }
+
+  hoveredLeave(): void {
+    this.hoverState = 0;
+  }
+  
+  onSubmit(): void {
+    if (this.reviewForm.valid) {
+      this.dialogRef.close(this.reviewForm.value);
     }
-    public onCancel(): void {
-        this.dialogRef.close(false);
-    }
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+
+
 }
