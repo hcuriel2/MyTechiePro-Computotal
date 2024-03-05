@@ -283,4 +283,12 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                 });
         }
     }
+
+
+    // Review Dialog Modal
+    openReviewDialog(): void {
+        this.dialog.open(ProjectReviewDialogComponent, {
+            width: '75%'
+        })
+    }
 }
