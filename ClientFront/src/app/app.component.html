@@ -4,17 +4,18 @@
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
       <h5>{{ "App.Title" | translate }}</h5>
     </button>
-    <span *ngIf="isProfessional" class="pro-greeting" style="color: white; margin-left: 565px;">
+    <span *ngIf="isProfessional" class="pro-greeting" style="color: white; margin-left: 950px;">
       Welcome back, {{ user?.firstName }}
     </span>
 
     <!-- User Menu Dropdown when logged in as a Client-->
 <div *ngIf="user" class="d-flex justify-content-end">
   <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
-    <mat-icon [ngStyle]="{'color': isProfessional ? 'white' : 'black'}" 
-              style="font-size: 40px; height: 40px; width: 40px; margin-top: 10px; margin-bottom: 10px;">
-      account_circle
-    </mat-icon>
+<mat-icon [ngStyle]="{'color': isProfessional ? 'white' : 'black'}" 
+          style="font-size: 40px; height: 40px; width: 40px; margin-top: 10px; margin-bottom: 10px;">
+  arrow_drop_down
+</mat-icon>
+
   </button>  
   <mat-menu #userMenu="matMenu">
     <!-- My Projects button always visible for logged-in users -->
