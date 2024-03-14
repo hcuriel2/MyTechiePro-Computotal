@@ -1,47 +1,34 @@
-<button class="backBtn" href="/service-tech-select" onclick="location.href='/service-tech-select'">
-  <!-- <mat-icon>keyboard_backspace</mat-icon> -->
-  <p>back</p>
-</button>
+<div class="container m-4">
+  <div class="row">
+    <div class="pl-2">
+      <button
+        class="backBtn btn btn-primary mb-3"
+        onclick="location.href='/service-tech-select'"
+      >
+        <p>Back</p>
+      </button>
+    </div>
+  </div>
 
-<div>
-  <ng-template [ngIf]="avgRating >= 0" [ngIfElse]="none">
-    <p class="textStyle">{{alias + " (" + rating + " stars)"}}</p>
-  </ng-template>
-
-  <ng-template #none>
-    <p class="textStyle">{{name + " (" + rating + " stars)" }}</p>
-  </ng-template>
-
-  <p>Company Name: {{companyName}}</p>
-  <p>Name: {{name}}</p>
-  <p>Email: {{email}}</p>
-  <p>Phone Number: {{phoneNumber}}</p>
-  <p>Address: {{address}}</p>
-  <p>Skills: {{skills}}</p>
-  <p>Unit Price: {{unitPrice}}</p>
-  <p>Pro ID: {{id}}</p>
-
-  
-  <button class="tabopen" (click)="techSelect(id)">Create a Project</button>
+  <div class="row mt-3">
+    <div class="col-md-12 pl-2">
+      <ng-template [ngIf]="avgRating >= 0" [ngIfElse]="none">
+        <p class="textStyle">{{ alias + " (" + rating + " stars)" }}</p>
+      </ng-template>
+      <ng-template #none>
+        <p class="textStyle">{{ name + " (" + rating + " stars)" }}</p>
+      </ng-template>
+      <p><strong>Company Name:</strong> {{ companyName }}</p>
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Phone Number:</strong> {{ phoneNumber }}</p>
+      <p><strong>Address:</strong> {{ address }}</p>
+      <p><strong>Skills:</strong> {{ skills }}</p>
+      <p><strong>Unit Price:</strong> {{ unitPrice }}</p>
+      <p><strong>Pro ID:</strong> {{ id }}</p>
+      <button class="tabopen btn btn-primary mt-3" (click)="techSelect(id)">
+        Create a Project
+      </button>
+    </div>
+  </div>
 </div>
-
-<!-- <div>this.alias = history.state.alias;
-  this.name = history.state.firstName + ' ' + history.state.lastName;
-  this.companyName = history.state.company;
-  this.email = history.state.email;
-  this.phoneNumber = history.state.phoneNumber;
-  this.address =
-    history.state.address.street +
-    '\n' +
-    history.state.address.city +
-    ' ' +
-    history.state.address.postalCode +
-    ' ' +
-    history.state.address.country;
-  this.skills = history.state.skills;
-  this.unitPrice =
-    '$' + history.state.unitPrice + '/' + history.state.unitType;
-  this.bio = history.state.bio;
-  this.status = history.state.proStatus;
-  this.rating = history.state.ratingSum / history.state.ratingCount
-  this.website = history.state.website;</div> -->

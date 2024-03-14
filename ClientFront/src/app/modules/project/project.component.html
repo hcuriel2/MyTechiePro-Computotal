@@ -53,6 +53,12 @@
                             {{ 'Dictionary.Email' | translate }}:
                             {{ project.professional.email }}
                         </h3>
+
+                        <!-- Adding Button to trigger modal -->
+                        <!-- Inside project.component.html -->
+                        <button mat-raised-button color="primary" (click)="openReviewDialog()">Complete Job</button>
+
+
                     </div>
 
                     <div *ngIf="!isCustomer">
