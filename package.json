@@ -13,6 +13,7 @@
         "build": "cd ./AdminFront/ && ng build && cd ./ClientFront/ && ng build"
     },
     "dependencies": {
+        "@angular-devkit/build-angular": "^12.0.0",
         "@angular/cli": "^12.2.7"
     }
 }
