@@ -12,6 +12,6 @@
         "startall": "cd ./AdminFront/ && ng build && cd ./ClientFront/ && ng build && cd .. && npm start"
     },
     "dependencies": {
-        "@angular/cli": "^17.2.0"
+        "@angular/cli": "^12.2.7"
     }
 }

@@ -1,28 +1,118 @@
+
 mat-card {
     padding: 30px;
     margin: auto;
     max-width: 600px;
-    mat-card-content {
-        .row {
-            margin: 0;
-        }
+    box-shadow: none; 
+  }
+  
+  mat-card-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: normal;
+  }
+
+  h2 {
+    color: #333;
+    font-weight: normal;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+
+  mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #0097A7; 
+  }
+  
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: #B0BEC5; 
+  }
+  
+
+  mat-form-field.ng-invalid.ng-touched .mat-form-field-outline {
+    color: #E53935; 
+  }
+
+  ::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: #0097A7; 
+  }
+  
+
+  ::ng-deep .mat-form-field-underline {
+    display: none;
+  }
+  
+
+  mat-error {
+    color: #E53935; 
+    font-size: 0.75em;
+    margin-top: 4px;
+  }
+  
+
+  .mat-form-field-label {
+    color: #757575;
+  }
+  
+  
+
+  .mat-input-element {
+    color: #212121; 
+    padding: 8px 0; 
+  }
+  
+
+  ::ng-deep .mat-form-field-underline {
+    display: none;
+  }
+  
+
+  ::ng-deep .mat-form-field-ripple {
+    display: none;
+  }
+  
+
+  button.mat-raised-button {
+    color: white;
+    background-color: #0288D1; 
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 16px;
+    border-radius: 4px;
+    width: 100%; 
+    transition: background-color 0.3s ease; 
+  
+    &:hover {
+      background-color: darken(#055b89, 10%);
     }
-}
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .login-link a {
+    color: #0288D1; 
+    text-decoration: none;
+  }
+  
 
-h3 {
-    margin: 0;
-}
+  mat-error {
+    color: #D32F2F;
+    font-size: 0.8rem;
+  }
+  
 
-.row {
-    display: grid;
-}
-
-.skill-box {
-    display: flex;
-    flex-direction: column;
-}
-
-.skill-container {
-    margin-left: 10px;
-}
-
+  .my-3 {
+    margin-bottom: 1rem;
+  }
+  
