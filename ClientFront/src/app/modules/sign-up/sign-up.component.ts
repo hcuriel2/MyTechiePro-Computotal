@@ -181,7 +181,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
             });
 
             newUser.bio = this.bio.value;
-            newUser.unitPrice = this.unitPrice.value;
+            newUser.unitPrice = Number(this.unitPrice.value);
             newUser.unitType = this.unitType.value;
             newUser.website = this.website.value;
         }
