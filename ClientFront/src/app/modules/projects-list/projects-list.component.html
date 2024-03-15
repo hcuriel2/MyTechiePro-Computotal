@@ -1,7 +1,7 @@
 <div class="content-container">
     <div *ngIf="isCustomer">
         <h1 class="mat-display-1 header">
-            {{ 'Dictionary.MyProjects' | translate }}
+          <strong>  {{ user?.firstName }}'s Projects </strong>
         </h1>
         <div class="border rounded center">
             <mat-tab-group mat-align-tabs="start">

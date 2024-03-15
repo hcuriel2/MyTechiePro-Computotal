@@ -5,6 +5,7 @@ import mongoose = require("mongoose");
 import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
 import cors from "cors";
+import 'reflect-metadata';
 
 class App {
     public app: express.Application;
@@ -31,7 +32,9 @@ class App {
     private initializeMiddlewares() {
         this.app.use(bodyParser.json());
         this.app.use(cookieParser());
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: 'http://localhost:8080'
+        }));
     }
 
     private initializeErrorHandling() {
@@ -45,6 +48,8 @@ class App {
     }
 
     private connectToTheDatabase() {
+        console.log('Connecting to the database...');
+
         const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH } = process.env;
         mongoose.connect(
             `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,
@@ -55,6 +60,8 @@ class App {
                 useFindAndModify: false,
               },
         );
+
+        console.log('Database successfully connected.');
     }
 }
 
