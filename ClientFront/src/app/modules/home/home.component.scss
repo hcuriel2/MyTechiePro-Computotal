@@ -1,27 +1,135 @@
-@use '../../../assets/scss/computotal-theme.scss' as theme;
+@use "../../../assets/scss/computotal-theme.scss" as theme;
 
 .row {
-    align-items: center;
-    justify-content: center;
-    margin: 0;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  width: 100%;
 }
 
 .flex-align-top {
-    align-items: normal;
+  align-items: normal;
 }
 
 .bg-primary-lighter {
-    background-color: map-get(theme.$computotal-app-primary, 'lighter');
+  background-color: map-get(theme.$computotal-app-primary, "lighter");
 }
 
 a.serviceItem {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .noItems {
-    color: dimgrey;
+  color: dimgrey;
 }
 
 .noItems:not(:last-child) {
-    display: none;
+  display: none;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  background-color: #fff; // This sets the input field background to white
+  border-radius: 50px;
+  color: black;
+  height: 50px;
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 8px 20px;
+
+  // If you are using Angular Material, you might also need to set the color of the underline to transparent
+  &.mat-input-element {
+    background-color: #ffffff;
+  }
+
+  // Ensure the ripple effect (if any) is also white or transparent
+  .mat-form-field-ripple {
+    background-color: transparent;
+  }
+}
+
+.search-button {
+  background-color: #f94144; // Change to the color used in the screenshot
+  color: white;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  padding: 0;
+  transform: translateY(-50%);
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+.h1 {
+  color: white;
+  font-weight: bold;
+}
+
+.h6 {
+  color: white;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.form-group mat-label {
+  color: rgb(31, 63, 160);
+  font-size: 14px !important;
+}
+
+#resultRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+#categoryName {
+  margin: 15px 0 10px 0;
+  padding: 0;
+}
+
+#serverItem {
+  margin-top: 15px;
+  padding: 2px;
+}
+
+.custom-bg-primary {
+  //background-color: #3f51b5;
+  color: #0e5968;
+}
+
+.custom-bg-primary-lighter {
+  background-color: #2b50c0;
+  color: #0a4c5e;
+}
+
+#banner {
+  height: 45vh;
+  padding: 2em;
+}
+
+.black-text {
+  color: #000;
+}
+
+.h6 {
+  margin-top: 20px;
+}
+
+.user-greeting {
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.client-banner-color {
+  background-color: #105081; // Replace with the color you want for the client
+}
+
+.default-banner-color {
+  background-color: #eef2f6;
 }

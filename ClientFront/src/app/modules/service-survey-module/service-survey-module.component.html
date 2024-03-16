@@ -1,20 +1,24 @@
 <div class="survey-container">
-  <div class="searchbardiv" *ngIf="isFirstModule">
+  <div class="search-container" *ngIf="isFirstModule">
     <input
       type="text"
       placeholder="{{ 'Message.helpSurvey' | translate }}"
+      [(ngModel)]="searchQuery"
+      (input)="updateSearch(searchQuery)"
       aria-label="Search"
-      class="searchbar"
+      class="search-input"
     />
-    <button
-      mat-raised-button
-      aria-label="Search"
-      class="search-btn"
-      color="primary"
-    >
+    <button class="search-button" aria-label="Search">
       <mat-icon>search</mat-icon>
     </button>
+    <!-- Dropdown for filtered choices -->
+    <div class="search-results" *ngIf="searchQuery">
+      <div *ngFor="let choice of filteredChoices" class="search-result-item" (click)="selectChoice(choice)">
+        {{ choice }}
+      </div>
+    </div>
   </div>
+
 
   <div class="border rounded" id="survey">
     <button

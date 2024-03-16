@@ -1,12 +1,113 @@
-import {
-    IsOptional,
-    IsString,
-    ValidateNested,
-    IsEnum,
-    isNotEmpty,
-    isEmail
-} from "class-validator";
+import { IsOptional, IsString, ValidateNested, IsEnum, IsNotEmpty, IsNumber, IsEmail } from "class-validator";
+
 import CreateAddressDto from "./address.dto";
+import { Type } from 'class-transformer';
+
+
+    enum UserType {
+        Client = "Client",
+        Professional = "Professional",
+        // Add other user types as needed
+    }
+    
+    class CreateUserDto {
+        @IsString()
+        public firstName: string;
+    
+        @IsString()
+        public lastName: string;
+    
+        @IsString()
+        public phoneNumber: string;
+    
+        @IsEmail()
+        public email: string;
+    
+        @IsString()
+        public password: string;
+    
+        @IsEnum(UserType)
+        readonly userType: UserType;
+    
+        @IsOptional()
+        readonly proStatus?: string; // Assuming this is specific to professionals
+    
+        @IsOptional()
+        public company?: string; // Assuming this might be specific to professionals or optional for clients
+    
+        @IsOptional()
+        public alias?: string;
+    
+        // Assuming rating, unitPrice, etc., are specific to professional users
+        @IsOptional()
+        @IsNumber()
+        public rating?: number;
+    
+        @IsOptional()
+        @IsNumber()
+        public unitPrice?: number;
+    
+        @IsOptional()
+        @IsString()
+        public unitType?: string;
+    
+        @IsOptional()
+        @IsString()
+        public bio?: string;
+    
+        @IsOptional()
+        @IsString()
+        public website?: string;
+    
+        @IsOptional()
+        @IsString()
+        public inquiry?: string;
+    
+        @IsOptional()
+        @IsNumber()
+        public ratingSum?: number;
+    
+        @IsOptional()
+        @IsNumber()
+        public ratingCount?: number;
+    
+        @IsOptional()
+        @IsNumber()
+        public lat?: number;
+    
+        @IsOptional()
+        @IsNumber()
+        public lng?: number;
+    
+        @IsOptional()
+        @IsString()
+        public placeid?: string;
+    
+        @IsOptional()
+        @ValidateNested()
+        @Type(() => CreateAddressDto) // Ensure nested validation for address
+        public address?: CreateAddressDto;
+    
+        @IsOptional()
+        @IsString()
+        public secret?: string;
+    
+        @IsOptional()
+        @IsString()
+        public tempsecret?: string;
+    }
+    
+    export default CreateUserDto;
+
+
+
+
+    /*
+
+import { IsOptional, IsString, ValidateNested, IsEnum, IsNotEmpty, IsEmail } from "class-validator";
+
+import CreateAddressDto from "./address.dto";
+import { Type } from 'class-transformer';
 
 class CreateUserDto {
     @IsString()
@@ -18,7 +119,7 @@ class CreateUserDto {
     @IsString()
     public phoneNumber: string;
 
-    @IsString()
+    @IsEmail()
     public email: string;
 
     @IsString()
@@ -85,3 +186,6 @@ class CreateUserDto {
 }
 
 export default CreateUserDto;
+
+
+    */
