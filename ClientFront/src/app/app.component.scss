@@ -37,6 +37,7 @@ button {
   padding: 5px;
   height: 40px;
   border: none;
+  margin-bottom: 12px;
 }
 
 p {
@@ -270,12 +271,27 @@ svg#clouds {
   background-color: #2b9b6a !important;
 }
 
+
+.pro-greeting {
+  color: white;
+  position: absolute;
+  right: 100px; 
+  font-size: 1.5rem; 
+  white-space: nowrap; 
+}
+
+
+
 /* Responsive Styles */
 @media screen and (max-width: 767px) {
   .card-container > *:not(.circle-link),
   .terminal {
     width: 100%;
   }
+  .toolbar img {
+    display: none; 
+  }
+  
 
   .card:not(.highlight-card) {
     height: 16px;
@@ -290,6 +306,15 @@ svg#clouds {
     right: 120px;
     transform: rotate(-5deg);
   }
+
+
+  .pro-greeting {
+    font-size: 0.8rem; 
+    right: 120px; 
+    font-size: 1rem; // Default font size
+
+  }
+
 }
 
 @media screen and (max-width: 575px) {
@@ -297,7 +322,9 @@ svg#clouds {
     display: none;
     visibility: hidden;
   }
+
 }
+
 
 #app-menu-title-btn {
   color: #3f51b5;
@@ -316,7 +343,7 @@ mat-toolbar {
   justify-content: space-between;
   align-items: center;
   background-color: white !important;
-  // position: relative;
+  position: relative;
 }
 
 #user-icon {
@@ -327,9 +354,3 @@ mat-toolbar {
   margin-right: 45px;
 }
 
-#pro-greeting {
-  color: white;
-  align-items: end;
-  position: absolute;
-  right: 100px;
-}
