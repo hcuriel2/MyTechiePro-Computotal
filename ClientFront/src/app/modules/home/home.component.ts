@@ -47,8 +47,22 @@ export class HomeComponent implements OnInit {
         return true; // Found a matching result
       }
     }
-
     return false; // No matching results found for this category
+  }
+
+  public noResult(): boolean {
+    for (const category of this.categories) {
+      if (this.hasMatchingResults(category)) {
+        return false; // Found a matching result in at least one category
+      }
+    }
+    return true; // No matching results found in any category
+  }
+
+  // Function to clear the search input
+  public clearSearchInput(): void {
+    this.searchQuery = "";
+    this.showResults = false;
   }
 
   /**
