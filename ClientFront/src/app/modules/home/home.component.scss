@@ -74,6 +74,12 @@ a.serviceItem {
   color: white;
 }
 
+h3.category-name {
+  padding: 0 0 0 10px;
+  margin: 0;
+  color: #2b50c0;
+}
+
 mat-form-field {
   width: 100%;
 }
@@ -132,4 +138,43 @@ mat-form-field {
 
 .default-banner-color {
   background-color: #eef2f6;
+}
+
+#search-row {
+  padding: 0 !important;
+}
+
+.search-results-container {
+  padding: 0;
+  max-height: 300px;
+  position: absolute;
+  top: calc(100%);
+  left: 0;
+  z-index: 999;
+}
+
+.search-results {
+  background-color: white;
+  border: 10px solid #ffffff;
+  border-radius: 25px;
+  margin-top: 8px;
+  overflow-y: auto;
+  max-height: 300px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.category-container {
+  margin-bottom: 10px;
+}
+
+.service-item {
+  display: block;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+  color: #333;
+}
+
+.service-item:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
 }
