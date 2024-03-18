@@ -20,6 +20,7 @@ import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
 import emailtransporter from "../../middleware/emailtransporter.middleware";
 import UserNotVerify from "../../exceptions/UserNotVerify";
+import authMiddleware from "../../middleware/auth.middleware";
 
 class AuthenticationController implements Controller {
     public path = "/auth";
@@ -75,12 +76,23 @@ class AuthenticationController implements Controller {
             validationMiddleware(LogInDto),
             this.loggingIn
         );
-        this.router.post(`${this.path}/logout`, this.loggingOut);
+
+        this.router.post(
+            `${this.path}/logout`, 
+            this.loggingOut
+        );
         
-        this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
+        this.router.post(
+            `${this.path}/resetPassword`, 
+            this.sendResetPwEmail
+        );
 
 
-        this.router.post(`${this.path}/reviews`, this.projectReview);
+        this.router.post(
+            `${this.path}/reviews`, 
+            authMiddleware, 
+            this.projectReview
+        );
     }
     
 
