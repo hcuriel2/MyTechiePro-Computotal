@@ -6,9 +6,8 @@ import { Category } from "src/app/shared/models/category";
 import { Service } from "src/app/shared/models/service";
 import { CategoryService } from "src/app/shared/services/category.service";
 import { Ng2SearchPipe } from "ng2-search-filter";
-import { User } from 'src/app/shared/models/user';
+import { User } from "src/app/shared/models/user";
 import { AuthService } from "src/app/shared/services/auth.service";
-
 
 @Component({
   selector: "app-home",
@@ -17,7 +16,7 @@ import { AuthService } from "src/app/shared/services/auth.service";
 })
 export class HomeComponent implements OnInit {
   public user: User | null = null;
-  public isCustomer: boolean | null = null; 
+  public isCustomer: boolean | null = null;
   isProfessional: boolean = false;
   public categories: Category[];
   public readonly CATEGORY_ENUM: typeof CategoryEnum;
@@ -52,36 +51,32 @@ export class HomeComponent implements OnInit {
     return false; // No matching results found for this category
   }
 
-/**
- * Initialize the component by subscribing to user updates and
- * routing based on the user's role.
- */
-public ngOnInit(): void {
-  // Fetch static data needed for the component.
-  this.getStaticData();
+  /**
+   * Initialize the component by subscribing to user updates and
+   * routing based on the user's role.
+   */
+  public ngOnInit(): void {
+    // Fetch static data needed for the component.
+    this.getStaticData();
 
-  // Subscribe to the AuthService to get the user data
-  this.authService.user.subscribe((userData: User | null) => {
-    if (userData) {
-      this.user = userData;
-      this.isProfessional = userData.userType === "Professional";
-      this.isCustomer = userData.userType === "Client";
+    // Subscribe to the AuthService to get the user data
+    this.authService.user.subscribe((userData: User | null) => {
+      if (userData) {
+        this.user = userData;
+        this.isProfessional = userData.userType === "Professional";
+        this.isCustomer = userData.userType === "Client";
 
-      // Use setTimeout to delay redirection logic to the end of the event loop,
-      // allowing the initial view to render first.
-      setTimeout(() => {
-        // Redirect professionals to the projects page
-        if (this.isProfessional) {
-          this.router.navigate(["/projects"]);
-        }
-      });
-    }
-  });
-}
-
-
-
-  
+        // Use setTimeout to delay redirection logic to the end of the event loop,
+        // allowing the initial view to render first.
+        setTimeout(() => {
+          // Redirect professionals to the projects page
+          if (this.isProfessional) {
+            this.router.navigate(["/projects"]);
+          }
+        });
+      }
+    });
+  }
 
   // Search bar method, redirects to tech select when category is selected
   public selectService(
