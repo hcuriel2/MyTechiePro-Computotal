@@ -13,16 +13,20 @@
     <div>
       <p>Email: {{ userProfile.email }}</p>
       <p>Location: {{ userProfile.address.city }}, {{ userProfile.address.country }}</p>   
+
       <!-- Skills Section -->
-<div *ngIf="userProfile.skills && userProfile.skills.length > 0" class="skills-section">
+<div *ngIf="userProfile?.skills?.length > 0" class="skills-section">
     <h3>Your Skills:</h3>
     <div id="skills" class="skills-container">
-        <div *ngFor="let skill of userProfile.skills" class="skill-tag" [ngStyle]="{'background-color': getRandomHSLColor()}">
-            <span>{{ skill }}</span>
-          </div>
-          
+      <div *ngFor="let skill of userProfile.skills; let i = index" 
+           class="skill-tag" 
+           [ngStyle]="{'background-color': getSkillColor(i)}">
+        <span>{{ skill }}</span>
       </div>
     </div>
+  </div>
+  
+  
   </div>
   
   
