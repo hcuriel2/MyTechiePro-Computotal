@@ -24,6 +24,9 @@
     <button mat-menu-item (click)="settings()">
       {{ "Dictionary.Settings" | translate }}
     </button>
+    <button *ngIf="isProfessional" mat-menu-item (click)="navigateToProProfile()">
+      My Profile
+    </button>
     <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
       {{ "Label.JoinPro" | translate }}
     </button>
@@ -57,7 +60,7 @@
 
   <router-outlet></router-outlet>
 
-  <footer class="footer mt-auto py-1" id="footer">
+  <footer class="footer mt-auto py-1" id="footer" [class.pro-footer]="isProfessional">
     <span class="fill-remaining-space"></span>
     <!-- <button
       mat-button

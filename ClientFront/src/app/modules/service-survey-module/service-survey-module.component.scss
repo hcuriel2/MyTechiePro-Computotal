@@ -1,21 +1,41 @@
+/* Survey Container */
 .survey-container {
-  height: 85vw;
+  height: auto;
   width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 50px;
+  margin: 30px auto;
 }
-// Search Bar start
-.searchbardiv {
+
+/* Search Bar */
+.search-container {
+  position: relative;
   width: 100%;
-  margin-bottom: 1vh;
+  margin-bottom: 20px;
 }
-.searchbar {
-  width: 80%;
-  margin-right: 2%;
+
+.search-input {
+  width: 100%;
+  height: 50px;
+  border-radius: 25px;
+  padding: 0 20px;
+  padding-right: 60px; 
+  border: 1px solid #ccc;
 }
-.search-btn {
-  width: 5%;
+
+.search-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background-color: #1432f9; 
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px; 
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 // Search Bar end
 
@@ -49,4 +69,25 @@ mat-radio-button {
 }
 .back-arrow {
   margin-left: 2vw;
+}
+
+
+.search-results {
+  position: absolute;
+  width: calc(100% - 20px); 
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  max-height: 200px; 
+  overflow-y: auto;
+  border-radius: 0 0 4px 4px;
+  z-index: 100; 
+}
+
+.search-result-item {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.search-result-item:hover {
+  background-color: #f0f0f0;
 }

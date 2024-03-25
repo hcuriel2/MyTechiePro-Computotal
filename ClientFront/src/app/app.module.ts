@@ -29,6 +29,7 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { ProjectReviewDialogComponent } from './modules/project/project-review-dialog/project-review-dialog.component';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ContactUsDialogComponent } from './modules/contact-us/contact-us-dialog/contact-us-dialog/contact-us-dialog.component';
+import { ProProfileComponent } from './modules/pro-profile/pro-profile.component';
 
 @NgModule({
     declarations: [
@@ -51,6 +52,7 @@ import { ContactUsDialogComponent } from './modules/contact-us/contact-us-dialog
         SettingsComponent,
         ResetPasswordComponent,
         ContactUsDialogComponent,
+        ProProfileComponent,
     ],
     imports: [
         BrowserModule,

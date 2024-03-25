@@ -1,6 +1,21 @@
 @import "../../../assets/scss/computotal-theme.scss";
 
-$primary-color: mat-color($computotal-app-primary);
+// $primary-color: mat-color($computotal-app-primary);
+
+* {
+  box-sizing: border-box;
+}
+
+
+.custom-primary-color {
+  background-color: rgb(22, 76, 139) !important;
+  color: white !important; 
+}
+
+.custom-text-color {
+  color: rgb(22, 76, 139) !important; 
+}
+
 
 mat-nav-list.list-horizontal {
   padding: 0;
@@ -17,28 +32,54 @@ mat-nav-list.list-horizontal {
 
 .title-tech {
   margin-top: 2%;
+  text-align: center;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  width: 100%;
 }
 
 .tech-container {
-  margin: auto;
-  width: 50em;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
 }
 
+.tech-container, .mat-form-field, .submit-button, .contact-tech-btn {
+  padding: 15px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+
+.submit-button, .contact-tech-btn {
+  margin: 10px 0;
+}
+
+
 .selected {
-  background-color: $primary-color;
+  background-color: rgb(22, 76, 139);
   color: white;
   @include mat-elevation(8);
 }
 
 .center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-.submit-button {
-  margin: 1% auto;
-  display: block;
+
+.submit-button, .contact-tech-btn {
+  margin-top: 20px;
 }
 
 #search-feedback {
@@ -70,7 +111,7 @@ button {
   margin: 1% auto;
   text-align: center;
   font-size: 1.5em;
-  color: $primary-color;
+  color: rgb(22, 76, 139);
   font-family: "Helvetica", "Arial", sans-serif;
   margin-bottom: 2em;
 }
@@ -142,8 +183,21 @@ ngb-rating {
 }
 
 .contact-tech-btn {
-  margin-left: auto;
-  margin-top: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%; 
+  max-width: 100%; 
+  font-size: 0.875rem; 
+}
+
+.selected {
+  background-color: #164C8B;
+  color: white;
 }
 
 .pro-bio,
@@ -167,4 +221,41 @@ ngb-rating {
   font-style: italic;
   margin-left: auto;
   margin-right: 10px;
+}
+
+
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .tech-container {
+    flex: 0 1 calc(50% - 40px); 
+  }
+}
+
+@media (max-width: 576px) {
+  .tech-container {
+    flex: 0 1 calc(100% - 40px); 
+  }
+}
+
+body, html {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
+// Utilities
+.mb-3, .mb-4 {
+  margin-bottom: 1rem; 
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-100 {
+  width: 100%;
 }

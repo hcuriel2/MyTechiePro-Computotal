@@ -45,8 +45,8 @@ export class ServiceTechnicianSelectComponent implements OnInit {
     public latitude: number = 0;
     public longitude: number = 0;
     public areaCode: string;
-    public canadaPostalCodeRegex: RegExp = new RegExp('^[ABCEGHJ-NPRSTVXY][0-9][ABCEGHJ-NPRSTV-Z][ -]?[0-9]??[ABCEGHJ-NPRSTV-Z]??[0-9]??$', 'im');
-    public usZipCodeRegex: RegExp = new RegExp('^[0-9]{5}(?:[ -][0-9]{4})?$', 'im');
+    // public canadaPostalCodeRegex: RegExp = new RegExp('^[ABCEGHJ-NPRSTVXY][0-9][ABCEGHJ-NPRSTV-Z][ -]?[0-9]??[ABCEGHJ-NPRSTV-Z]??[0-9]??$', 'im');
+   //  public usZipCodeRegex: RegExp = new RegExp('^[0-9]{5}(?:[ -][0-9]{4})?$', 'im');
     public googleMapApiUrl: string = 'https://maps.googleapis.com/maps/api/geocode/json'; 
     private googleMapApiKey: string = 'AIzaSyDS_bEoW2tmdRW-WyWaZIS_gnsbWQ1stUU';
 
