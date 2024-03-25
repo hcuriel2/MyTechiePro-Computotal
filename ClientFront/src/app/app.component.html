@@ -24,6 +24,9 @@
     <button mat-menu-item (click)="settings()">
       {{ "Dictionary.Settings" | translate }}
     </button>
+    <button mat-menu-item (click)="navigateToProProfile()">
+      My Profile
+    </button>
     <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
       {{ "Label.JoinPro" | translate }}
     </button>
