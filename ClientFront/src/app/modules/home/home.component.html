@@ -84,7 +84,7 @@
   </div>
 </div>
 
-<div class="container-fluid mt-5 mb-5">
+<div class="container-fluid mt-5 mb-5 px-4">
   <div class="row justify-content-around align-items-start">
     <div class="col-md-1" *ngFor="let category of categories">
       <div class="row justify-content-center align-items-center">
@@ -98,9 +98,23 @@
         </button>
       </div>
       <div class="row justify-content-center">
-        <span class="mt-2 h7">{{ category.name }}</span>
+        <span class="mt-2 h7 text-center">{{ category.name }}</span>
       </div>
     </div>
   </div>
 </div>
+
+<mat-card id="aboutUs">
+  <mat-card-title>About Us</mat-card-title>
+  <mat-card-content>
+    Computotal provides quality advice and support to its clients regarding
+    network and computing systems by proactively planning, designing,
+    installing, and maintaining computer networks. Computotal wants to provide a
+    single platform for the clients to directly connect with the right IT
+    technicians to provide them with the services they need. Additionally, the
+    technicians/service providers should also be able to join the IT Pros
+    network by registering through the platform.
+  </mat-card-content>
+</mat-card>
+
 <router-outlet></router-outlet>
