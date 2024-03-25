@@ -214,7 +214,17 @@ export class AppComponent implements OnInit, OnDestroy {
   public settings(): void {
     this.router.navigateByUrl("/settings");
   }
+
+
+public navigateToProProfile(): void {
+  this.router.navigateByUrl("/pro-profile");
 }
+
+
+}
+
+
+
 
 function getCookie(cname: string) {
   let name = cname + "=";

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { plainToClass } from 'class-transformer';
 import { Observable } from 'rxjs';
@@ -47,39 +47,54 @@ export class UserService {
             );
     }
 
-    public getAllProfessionalsBySkill(skill: string, rnge: number, lat: number, lng:number): Observable<User[]> {   
-        //Create object for filtering users by SKILL and LOCATION
-        let filterReq = {
-            skill: "",
-            lat: 0,
-            lng: 0,
-            rnge: 10
-        };
-        filterReq.skill = skill;
-        filterReq.rnge = rnge;
-        filterReq.lat = lat;
-        filterReq.lng = lng;
-        let userObj = JSON.parse(localStorage.getItem("user")!);
-        //receive the techie range selected by the user from local storage.
-        // if (localStorage.getItem("range")) {
-        //     console.log("list of range");
-        //     console.log(localStorage.getItem("range"));
-        //     filterReq.rnge = parseInt(localStorage.getItem("range")!, 10);
 
-        // }
-        // if (userObj.address.lat) {
-        //     filterReq.lat = userObj.address.lat;
-        //     filterReq.lng = userObj.address.lng;
-        // }
-        let filterString = JSON.stringify(filterReq)
-        //send created filter object to backend and recieve list of filtered techies.
-        return this.httpClient
-            .get<User[]>(`${this.API_URL}/professionals/${filterString}`)
+    public getAllProfessionalsBySkill(skill: string, rnge: number, lat: number, lng: number): Observable<User[]> {   
+        const params = new HttpParams()
+            .set('skill', skill)
+            .set('range', rnge.toString())
+            .set('lat', lat.toString())
+            .set('lng', lng.toString());
+    
+        return this.httpClient.get<User[]>(`${this.API_URL}/professionals`, { params })
             .pipe(
                 first(),
                 map((users: User[]) => plainToClass(User, users))
             );
     }
+    
+    // public getAllProfessionalsBySkill(skill: string, rnge: number, lat: number, lng:number): Observable<User[]> {   
+    //     //Create object for filtering users by SKILL and LOCATION
+    //     let filterReq = {
+    //         skill: "",
+    //         lat: 0,
+    //         lng: 0,
+    //         rnge: 10
+    //     };
+    //     filterReq.skill = skill;
+    //     filterReq.rnge = rnge;
+    //     filterReq.lat = lat;
+    //     filterReq.lng = lng;
+    //     let userObj = JSON.parse(localStorage.getItem("user")!);
+    //     //receive the techie range selected by the user from local storage.
+    //     // if (localStorage.getItem("range")) {
+    //     //     console.log("list of range");
+    //     //     console.log(localStorage.getItem("range"));
+    //     //     filterReq.rnge = parseInt(localStorage.getItem("range")!, 10);
+
+    //     // }
+    //     // if (userObj.address.lat) {
+    //     //     filterReq.lat = userObj.address.lat;
+    //     //     filterReq.lng = userObj.address.lng;
+    //     // }
+    //     let filterString = JSON.stringify(filterReq)
+    //     //send created filter object to backend and recieve list of filtered techies.
+    //     return this.httpClient
+    //         .get<User[]>(`${this.API_URL}/professionals/${filterString}`)
+    //         .pipe(
+    //             first(),
+    //             map((users: User[]) => plainToClass(User, users))
+    //         );
+    // }
 
     public resetPassword(password: ResetPassword, userId: string): Observable<ResetPassword> {
         return this.httpClient.put<ResetPassword>(`${this.API_URL}/reset/${userId}`, password).pipe(

@@ -1,0 +1,34 @@
+<br><br><br>
+<div *ngIf="userProfile" class="user-profile profile-form">
+    <div class="profile-top">
+      <div class="profile-top-names">
+        <div class="profile-details">
+          <h1 class="profile-name">{{ userProfile.firstName }} {{ userProfile.lastName }}</h1>
+        </div>
+      </div>
+    </div>
+    <br>
+  
+    <!-- PROFILE DETAILS -->
+    <div>
+      <p>Email: {{ userProfile.email }}</p>
+      <p>Location: {{ userProfile.address.city }}, {{ userProfile.address.country }}</p>   
+
+      <!-- Skills Section -->
+<div *ngIf="userProfile?.skills?.length > 0" class="skills-section">
+    <h3>Your Skills:</h3>
+    <div id="skills" class="skills-container">
+      <div *ngFor="let skill of userProfile.skills; let i = index" 
+           class="skill-tag" 
+           [ngStyle]="{'background-color': getSkillColor(i)}">
+        <span>{{ skill }}</span>
+      </div>
+    </div>
+  </div>
+  
+  
+  </div>
+  
+  
+  </div>
+  
