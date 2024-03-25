@@ -182,3 +182,23 @@ mat-form-field {
 .no-results {
   padding: 5px 10px 5px 10px;
 }
+
+#aboutUs {
+  width: 90%;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mat-card-title {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.mat-card-content {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+}
