@@ -21,6 +21,12 @@ h6 {
   margin: 8px 0;
 }
 
+.container {
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 100%;
+}
+
 #app-title {
   font-weight: bold;
 }
@@ -29,15 +35,10 @@ h6 {
   color: white;
 }
 
-#app-toolbar {
-  padding: 0 60px;
-}
-
 button {
   padding: 5px;
   height: 40px;
   border: none;
-  margin-bottom: 12px;
 }
 
 p {
@@ -249,16 +250,12 @@ footer {
   display: flex;
   align-items: center;
   line-height: 20px;
-  background: $primary-color;
+  background: white !important;
 }
 
 footer a {
   display: flex;
   align-items: center;
-}
-
-.pro-footer {
-  background-color: #8496b4eb !important;
 }
 
 svg#clouds {
@@ -270,63 +267,8 @@ svg#clouds {
 }
 
 .pro-navbar {
-  background-color: #8496b4eb !important;
+  background-color: #2b9b6a !important;
 }
-
-
-.pro-greeting {
-  color: white;
-  position: absolute;
-  right: 100px; 
-  font-size: 1.5rem; 
-  white-space: nowrap; 
-}
-
-
-
-/* Responsive Styles */
-@media screen and (max-width: 767px) {
-  .card-container > *:not(.circle-link),
-  .terminal {
-    width: 100%;
-  }
-  .toolbar img {
-    display: none; 
-  }
-  
-
-  .card:not(.highlight-card) {
-    height: 16px;
-    margin: 8px 0;
-  }
-
-  .card.highlight-card span {
-    margin-left: 72px;
-  }
-
-  svg#rocket-smoke {
-    right: 120px;
-    transform: rotate(-5deg);
-  }
-
-
-  .pro-greeting {
-    font-size: 0.8rem; 
-    right: 120px; 
-    font-size: 1rem; // Default font size
-
-  }
-
-}
-
-@media screen and (max-width: 575px) {
-  svg#rocket-smoke {
-    display: none;
-    visibility: hidden;
-  }
-
-}
-
 
 #app-menu-title-btn {
   color: #3f51b5;
@@ -345,7 +287,6 @@ mat-toolbar {
   justify-content: space-between;
   align-items: center;
   background-color: white !important;
-  position: relative;
 }
 
 #user-icon {
@@ -353,6 +294,29 @@ mat-toolbar {
 }
 
 #dropdownButton {
-  margin-right: 45px;
+  margin: 0.25rem 45px 0.25rem 0;
 }
 
+#pro-greeting {
+  color: white !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+}
+
+#hamburger-btn .material-icons {
+  font-size: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+  #pro-greeting,
+  h5,
+  #app-title {
+    font-size: 16px;
+  }
+}
