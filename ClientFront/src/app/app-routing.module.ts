@@ -12,6 +12,8 @@ import { ContactUsComponent } from './modules/contact-us/contact-us.component';
 import { SettingsComponent } from './modules/settings/settings.component';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ProDetailsComponent } from './modules/pro-details/pro-details.component';
+import { ProProfileComponent } from './modules/pro-profile/pro-profile.component';
+
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -19,6 +21,7 @@ const routes: Routes = [
     { path: 'contact-us', component: ContactUsComponent },
     { path: 'sign-up', component: SignUpComponent },
     { path: 'service-survey', component: ServiceSurveyComponent },
+    { path: 'pro-profile', component: ProProfileComponent },
     { path: 'service-survey-module', component: ServiceSurveyModuleComponent },
     {
         path: 'service-tech-select',

@@ -22,6 +22,7 @@ class UserController implements Controller {
     private initializeRoutes() {
         // reset password
         this.router.put(`${this.path}/reset/:id`, this.resetPassword);
+        this.router.get(`${this.path}/profile/:id`, this.getProUserProfile);
         this.router
             // //auth version
             // .all(`${this.path}/*`, adminMiddleware)
@@ -46,6 +47,22 @@ class UserController implements Controller {
             .get(`${this.path}/verify/:id`, this.verifyUserEmail)
         // this.router.get(`${this.path}/:id/posts`, authMiddleware, this.getAllPostsOfUser);
     }
+
+
+    // endpoint to fetch Pro User info
+    private getProUserProfile = async (request: Request, response: Response, next: NextFunction) => {
+        const id = request.params.id;
+        try {
+            const user = await this.user.findById(id, 'firstName lastName email address skills').populate('skills');
+            if (!user) {
+                next(new UserNotFoundException(id));
+            } else {
+                response.json(user);
+            }
+        } catch (error) {
+            next(error);
+        }
+    };
 
     private getUserById = async (
         request: Request,
