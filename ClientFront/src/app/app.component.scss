@@ -35,10 +35,6 @@ h6 {
   color: white;
 }
 
-#app-toolbar {
-  padding: 0 60px;
-}
-
 button {
   padding: 5px;
   height: 40px;
@@ -254,7 +250,7 @@ footer {
   display: flex;
   align-items: center;
   line-height: 20px;
-  background: white;
+  background: white !important;
 }
 
 footer a {
@@ -302,22 +298,25 @@ mat-toolbar {
 }
 
 #pro-greeting {
-  color: white;
-  align-items: end;
-  position: absolute;
-  right: 100px;
+  color: white !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
 }
 
-@media (max-width: 600px) {
-  .menu-items {
-    display: none;
-  }
+#hamburger-btn .material-icons {
+  font-size: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .menu-items.hidden {
-    display: flex;
-  }
-
-  .mat-icon-button {
-    display: block;
+@media screen and (max-width: 768px) {
+  #pro-greeting,
+  h5,
+  #app-title {
+    font-size: 16px;
   }
 }
