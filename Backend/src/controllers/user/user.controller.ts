@@ -20,8 +20,30 @@ class UserController implements Controller {
     }
 
     private initializeRoutes() {
+        
+        
+        //User routes - No authentication needed 
+        this.router.put(`${this.path}/reset/:id`, this.resetPassword);
+        this.router.get(`${this.path}/verify/:id`, this.verifyUserEmail);
+        this.router.get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill);
+        this.router.get(`${this.path}/professionals`, this.getAllProfessionals)
+        this.router.delete(`${this.path}/:id`, this.deleteUser)
+
+        //Admin routes - Admin authentication needed (only admins can access these)
+        this.router.get(`${this.path}`, adminMiddleware, this.getAllUsers)
+        this.router.get(`${this.path}/clients`, adminMiddleware, this.getAllClients)
+        this.router.get(`${this.path}/admins`, adminMiddleware, this.getAllAdmins)
+        this.router.put(`${this.path}/approve/:id`, adminMiddleware, this.approveUser)
+        this.router.get(`${this.path}/:id`, adminMiddleware, this.getUserById)
+        this.router.patch(`${this.path}/:id`, adminMiddleware, this.changeStatus)
+
+        
+
+        /*
+
         // reset password
         this.router.put(`${this.path}/reset/:id`, this.resetPassword);
+        
         this.router.get(`${this.path}/profile/:id`, this.getProUserProfile);
         this.router
             // //auth version
@@ -40,13 +62,16 @@ class UserController implements Controller {
 
             .get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill)
             // get user by id
-            .get(`${this.path}/:id`, this.getUserById)
-            .patch(`${this.path}/:id`, this.changeStatus)
-            .delete(`${this.path}/:id`, this.deleteUser)
-            .put(`${this.path}/approve/:id`, this.approveUser)
+            .get(`${this.path}/:id`, [authMiddleware, adminMiddleware], this.getUserById)
+            .patch(`${this.path}/:id`, [authMiddleware, adminMiddleware], this.changeStatus)
+            .delete(`${this.path}/:id`, [authMiddleware, adminMiddleware], this.deleteUser)
+            .put(`${this.path}/approve/:id`, [authMiddleware, adminMiddleware], this.approveUser)
             .get(`${this.path}/verify/:id`, this.verifyUserEmail)
         // this.router.get(`${this.path}/:id/posts`, authMiddleware, this.getAllPostsOfUser);
+        
+        */
     }
+
 
 
     // endpoint to fetch Pro User info
@@ -150,6 +175,9 @@ class UserController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
+        console.log('getAllProfessionalsBySkill called with params:', request.params);
+
+
         //given object with filtering requirements
         let givenUser = JSON.parse(request.params.skill)
         const skill = givenUser.skill;

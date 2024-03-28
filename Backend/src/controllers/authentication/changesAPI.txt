@@ -1,0 +1,45 @@
+/* authentication.controller.ts */
+
+sendResetPwEmail
+    - different functions for resetting passwords for admin, pro and user
+    - this way I don't have to check each collection to find the correct user
+
+
+registration
+    - the changes will come from the authenticationService 
+        - modify them there
+
+
+loggingIn
+    - different functions/checks for each user userType
+    - that way i dont have to call multiple collections
+
+
+
+loggingOut 
+    - no changes
+
+
+createCookie
+    - no changes
+
+
+createToken
+    - need to modify for the different user types
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+/* authentication.service.ts */
+
+
+register -- TIES IN WITH registration FROM ABOVE
+    - this needs to be modified to handle registration of different user types
+        - they will need to be inserted into their associated collection
+
+
+
+createToken
+    - this may need to be modified to handle different users --> investigate tbh

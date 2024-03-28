@@ -30,7 +30,7 @@ export class AuthService {
 
     public registerUser(user: User): Observable<User> {
         return this.httpClient
-            .post<User>(`${this.API_URL}/register`, user)
+            .post<User>(`${this.API_URL}/register`, user, { withCredentials: true })
             .pipe(
                 map((user: User) => {
                     localStorage.setItem('user', JSON.stringify(user));
@@ -56,7 +56,7 @@ export class AuthService {
     }
 
     public signIn(user: User): Observable<User> {
-        return this.httpClient.post<User>(`${this.API_URL}/login`, user).pipe(
+        return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
             map((user: User) => {
                 localStorage.setItem('user', JSON.stringify(user));
                 this.userSubject.next(user);
@@ -68,12 +68,17 @@ export class AuthService {
     // Modified the function - it needs to be a POST request in order to be secure
     public sendEmailResetPw(emailAddress: string): Observable<any> {
         const body = { emailAddress };
-        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body);
+        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body, { withCredentials: true });
     }
 
 
     public signOut(): void {
         localStorage.removeItem('user');
         this.userSubject.next(null);
+    }
+
+
+    getUserInfo(): Observable<any> {
+        return this.httpClient.get(`${this.API_URL}/userInfo`, { withCredentials: true });
     }
 }

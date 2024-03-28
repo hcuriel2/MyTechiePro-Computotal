@@ -1,0 +1,47 @@
+/* project.controller.ts */
+
+
+getAllProjects
+    - unchanged
+
+
+getProjectsByClientId
+    - needs to interact with client collection
+
+
+getProjectsProfessionalById
+    - needs to interact with pro collection
+
+
+createproject
+    - needs to interact with client collection
+    - needs to interact with servicecategory collection
+    - needs to needs to interact with pro collection
+    - needs to interact with project/job collection
+
+startProject
+    - needs to interact with pro collection
+    - needs to interact with project/job collection
+
+completeProject
+    - needs to interact with project/job collection
+
+reviewProject
+    - needs to interact with project/job collection
+        - needs to interact with pro collection
+
+
+
+payProject
+    - needs to interact with client collection
+    - needs to interact with project/job collection
+
+
+commentProject
+    - needs to interact with client and pro collections
+    - needs to interact with project/job collection
+
+
+
+deleteproject
+    - needs to interact with project/job collection

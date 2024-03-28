@@ -80,7 +80,7 @@ class AuthenticationService {
     }
 
     public createCookie(tokenData: TokenData) {
-        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+        return `Authorization=${tokenData.token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${tokenData.expiresIn}`;
     }
 
     public createToken(user: User): TokenData {
@@ -88,6 +88,7 @@ class AuthenticationService {
         const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
+            userType: user.userType
         };
         return {
             expiresIn,
