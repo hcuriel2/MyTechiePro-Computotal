@@ -175,9 +175,7 @@ export class ProDetailsComponent implements OnInit {
     //  console.log(serviceName + " " + this.categorySelection + " " + history.state.serviceId);
   }
 
-  /**
-   * Create a project listing with selected techie and redirect user to project page.
-   */
+  // Create a project listing with selected techie and redirect user to project page.
   public createProject(): void {
     this.authService.getUserInfo().subscribe({
       next: (user: User | null) => {
@@ -186,16 +184,6 @@ export class ProDetailsComponent implements OnInit {
         const serviceName = history.state.serviceName;
         const categoryId = this.categorySelection;
         const serviceId = history.state.serviceId;
-            
-        let obj = {
-          client: clientId,
-          proID: professionalId,
-          serviceName: serviceName,
-          categoryId: categoryId,
-          serviceId: serviceId
-        }
-
-        console.log('curr obj: ', obj);
 
         if (!clientId) {
             console.warn(
