@@ -60,6 +60,28 @@ public ngOnInit(): void {
   // Fetch static data needed for the component.
   this.getStaticData();
 
+
+
+  this.authService.getUserInfo().subscribe({
+    next: (user: User | null) => {
+      if (user) {
+        this.user = user;
+        this.isProfessional = user.userType === 'Professional';
+        this.isCustomer = user.userType === 'Client';
+
+
+        setTimeout(() => {
+          if (this.isProfessional) {
+            this.router.navigate(['/projects']);
+          }
+        })
+      }
+
+    }
+
+  })
+  /*
+  
   // Subscribe to the AuthService to get the user data
   this.authService.user.subscribe((userData: User | null) => {
     if (userData) {
@@ -77,6 +99,8 @@ public ngOnInit(): void {
       });
     }
   });
+  
+  */
 }
 
 
