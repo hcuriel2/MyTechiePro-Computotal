@@ -1,0 +1,56 @@
+/* category.controller.ts */
+
+
+
+getAllCategories
+    - needs to interact with serviceCategory/service
+
+
+
+getCategoryById
+    - needs to interact with serviceCategory/service
+
+
+getServiceById
+    - needs to interact with serviceCategory/service
+
+
+modifyCategory
+    - needs to interact with serviceCategory/service
+
+
+
+
+addServiceKeywords
+    - needs to interact with serviceCategory/service
+
+
+
+modifyKeywordsByServiceId
+    - needs to interact with serviceCategory/service
+
+
+createCategory
+    - needs to interact with serviceCategory/service
+    - searching for a user must interact with the specified user collections (pro/admin/client)
+
+
+
+
+deleteCategory
+    - needs to interact with serviceCategory/service
+
+    
+
+deleteService
+    - needs to interact with serviceCategory/service
+
+
+
+admin
+customer
+job
+pro
+service
+serviceCategory
+
