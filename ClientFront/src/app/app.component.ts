@@ -52,26 +52,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    // Subscribe to the user observable provided by AuthService
     this.authService.user.subscribe((user) => {
+      // Update isProfessional flag based on user's userType
       this.isProfessional = user?.userType === "Professional" ?? false;
-    });
-    let userCookie = localStorage.getItem("user");
-
-    if (!userCookie) {
-      this.authService.signOut();
-    }
-    // Checks the usertype so that clients and techies cannot go to unnecessary pages.
-    if (localStorage.getItem("user")) {
-      const user = JSON.parse(localStorage.getItem("user")!);
-      this.isProfessional = user.userType === "Professional";
-
+  
+      // Checks the userType to adjust UI elements accordingly
       const signupBtn = document.getElementById("app-menu-signup-btn");
       const joinBtn = document.getElementById("app-menu-join-btn");
       const projectBtn = document.getElementById("app-menu-project-btn");
       const userInfo = document.getElementById("app-menu-user-info");
       const toolbar = document.getElementById("app-toolbar");
       const footer = document.getElementById("footer");
-
+  
       if (signupBtn) {
         signupBtn.style.display = "none";
       }
@@ -85,16 +78,16 @@ export class AppComponent implements OnInit, OnDestroy {
         userInfo.style.display = "block";
       }
       if (toolbar && footer) {
-        if (user.userType === "Professional") {
+        if (this.user?.userType === "Professional") {
           toolbar.style.backgroundColor = "#ef0078";
           footer.style.background = "#ef0078";
         }
       }
-    }
-
+    });
+  
     console.log("ngOnInit");
   }
-
+  
   /**
    * Assigns the user's latitude, longitude, and formatted address.
    * @param address
@@ -125,6 +118,20 @@ export class AppComponent implements OnInit, OnDestroy {
           console.log("sign-in failed");
         }
       });
+
+      this.fetchUserInfo();
+  }
+
+  private fetchUserInfo(): void {
+    this.authService.getUserInfo().subscribe({
+      next: (validatedUser) => {
+        this.user = validatedUser;
+        this.isProfessional = this.user?.userType === 'Professional' ?? false;
+      },
+      error: () => {
+        this.user = null;
+      }
+    })
   }
 
   // Signs out the user and redirects to homepage
@@ -144,6 +151,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/").then(() => {
       window.location.reload();
     });
+
+    this.user = null;
   }
 
   public routeToHomePage(): void {
