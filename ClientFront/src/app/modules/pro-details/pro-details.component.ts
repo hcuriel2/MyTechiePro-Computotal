@@ -179,44 +179,70 @@ export class ProDetailsComponent implements OnInit {
    * Create a project listing with selected techie and redirect user to project page.
    */
   public createProject(): void {
-    this.authService.user.pipe(first()).subscribe((user: User | null) => {
-      const clientId = user?._id;
-      const professionalId = this.id;
-      const serviceName = history.state.serviceName;
-      const categoryId = this.categorySelection;
-      const serviceId = history.state.serviceId;
+    this.authService.getUserInfo().subscribe({
+      next: (user: User | null) => {
+        const clientId = user?._id;
+        const professionalId = this.selectedTechID;
+        const serviceName = history.state.serviceName;
+        const categoryId = this.categorySelection;
+        const serviceId = history.state.serviceId;
+            
+        let obj = {
+          client: clientId,
+          proID: professionalId,
+          serviceName: serviceName,
+          categoryId: categoryId,
+          serviceId: serviceId
+        }
 
-      if (!clientId) {
-        console.warn("You're not logged in, please log in and try it again");
+        console.log('curr obj: ', obj);
 
-        this.translateService
-          .get("Message.SignInFirst")
-          .pipe(first())
-          .subscribe((translation) => {
-            const config = new MatSnackBarConfig();
-            config.duration = Constants.ShortDuration;
+        if (!clientId) {
+            console.warn(
+              "You're not logged in, please log in and try it again"
+            );
 
-            this.snackBar.open(translation, "OK", config);
-          });
-      } else if (
-        clientId &&
-        professionalId &&
-        serviceName &&
-        categoryId &&
-        serviceId
-      ) {
-        this.projectService
-          .create(categoryId, serviceId, serviceName, professionalId, clientId)
-          .subscribe((project: Project) => {
-            this.router.navigateByUrl(`/project/${project._id}`);
-          });
-      } else {
-        console.warn(
-          "ServiceTechnicianSelectComponent: createProject: some data is missing"
-        );
-      }
+            this.translateService
+              .get('Message.SignInFirst')
+              .pipe(first())
+              .subscribe((translation) => {
+                const config = new MatSnackBarConfig();
+                config.duration = Constants.ShortDuration;
+
+                this.snackBar.open(translation, 'OK', config);
+                });
+        } else if (
+            clientId &&
+            professionalId &&
+            serviceName &&
+            categoryId &&
+            serviceId
+          ) {
+            this.projectService
+              .create(
+                categoryId,
+                serviceId,
+                serviceName,
+                professionalId,
+                clientId
+              )
+                .subscribe((project: Project) => {
+                  this.router.navigateByUrl(`/project/${project._id}`);
+                  });
+        } else {
+                console.warn(
+                    'ServiceTechnicianSelectComponent: createProject: some data is missing'
+                );
+            }
+        },
+        error: (err) => {
+            console.error('Error fetching user info:', err);
+            // Handle the error appropriately
+        }
     });
-  }
+}
+
+
 
   public view_projects() {
     this.projectService
