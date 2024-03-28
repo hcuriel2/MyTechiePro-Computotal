@@ -39,7 +39,7 @@ class ProjectController implements Controller {
         this.router.get(`${this.path}/:id`,this.getprojectById);
         this.router.delete(`${this.path}/:id`, this.deleteproject);
         this.router.all(`${this.path}/*`)
-                    .post(this.path, this.createproject)
+                    .post(this.path, authMiddleware, this.createproject)
                     .patch(`${this.path}/comment/:id`, this.commentProject)
                     .patch(`${this.path}/start/:id`,this.startProject)
                     .patch(`${this.path}/feedback/:id`,this.reviewProject)
