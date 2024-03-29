@@ -18,30 +18,12 @@ class ContactusController implements Controller {
     }
 
     private initializeRoutes() {
-        this.router.get(this.path, this.getAllContacts);
-        // this.router.get(this.path,adminMiddleware, this.getAllContacts);
+        this.router.get(this.path, adminMiddleware, this.getAllContacts);
         this.router.post(this.path, this.postContact);
-        // this.router.delete(`${this.path}/:id`, adminMiddleware,this.deleteContactusById);
-        this.router.delete(`${this.path}/:id`,this.deleteContactusById);
+        this.router.delete(`${this.path}/:id`,adminMiddleware, this.deleteContactusById);
     }
 
-    private getAllContacts = async (request: Request, response: Response) => {
-        const contactus = await this.contactus.find()
-        response.send(contactus);
-    };
-
-    private postContact = async (
-        request: RequestWithUser,
-        response: Response
-    ) => {
-        const contactusData: CreatecontactusDto = request.body;
-        const createdcontactus = new this.contactus({
-            ...contactusData
-        });
-        const savedcontactus = await createdcontactus.save();
-        response.send(savedcontactus);
-    };
-
+    // Deletes a ContactUs object by ID
     private deleteContactusById = async (
         request: Request,
         response: Response,
@@ -54,6 +36,25 @@ class ContactusController implements Controller {
         } else {
             next(new NotFoundcontactusException(id));
         }
+    };
+
+    // Retrieves all ContactUs submissions
+    private getAllContacts = async (request: Request, response: Response) => {
+        const contactus = await this.contactus.find()
+        response.send(contactus);
+    };
+
+    // Creates a new ContactUs object from User submission
+    private postContact = async (
+        request: RequestWithUser,
+        response: Response
+    ) => {
+        const contactusData: CreatecontactusDto = request.body;
+        const createdcontactus = new this.contactus({
+            ...contactusData
+        });
+        const savedcontactus = await createdcontactus.save();
+        response.send(savedcontactus);
     };
 }
 
