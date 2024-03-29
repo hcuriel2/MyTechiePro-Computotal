@@ -68,8 +68,8 @@ export class ContactUsComponent implements OnInit {
                     this.dialog
                         .open(ContactUsDialogComponent, dialogConfig)
                         .afterClosed().subscribe(() => {
-                            this.formGroup.disable();
-                            this.isSubmitted = true;
+                            this.formGroup.disable(); // Disables input fields
+                            this.isSubmitted = true; // Disables submission button
                         })
                 }
             );
