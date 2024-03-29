@@ -83,6 +83,34 @@ class AuthenticationController implements Controller {
 
         this.router.get(`${this.path}/userInfo`, authMiddleware, this.getUserInfo);
 
+        this.router.patch(`${this.path}/settings/:userId`, authMiddleware, this.updateUserSettings);
+
+
+    }
+
+
+    private updateUserSettings = async (
+        request: Request,
+        response: Response,
+    ) => {
+        const userId = request.params._id;
+        const updates = request.body;
+        console.log('Updating user...\n\n');
+        try {
+            
+            const result = await this.user.updateOne({ _id: userId }, { $set: updates });
+            
+            if (result.nModified === 0) {
+                response.send('No changes were made');
+            }
+
+            response.send('Update successful');
+            console.log('User updated successfully');
+
+        } catch (error) {
+            console.error('Error updating user:', error);
+            response.status(500).send('Failed to update user');
+        }
     }
 
     private getUserInfo = async (
