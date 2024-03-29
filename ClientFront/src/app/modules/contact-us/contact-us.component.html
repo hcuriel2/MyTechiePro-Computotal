@@ -63,6 +63,7 @@
                 id="contact-us-submit-btn"
                 color="primary"
                 (click)="onSubmit()"
+                [disabled]="isSubmitted"
             >
                 {{ 'Dictionary.Submit' | translate }}
             </button>
