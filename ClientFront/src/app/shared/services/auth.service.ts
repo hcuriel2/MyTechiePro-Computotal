@@ -22,6 +22,7 @@ export class AuthService {
         this.user = this.userSubject.asObservable();
 
         this.API_URL = `${environment.apiEndpoint}/auth`;
+        
     }
 
     public get userValue(): User | null {
@@ -80,5 +81,9 @@ export class AuthService {
 
     getUserInfo(): Observable<any> {
         return this.httpClient.get(`${this.API_URL}/userInfo`, { withCredentials: true });
+    }
+
+    updateUserSettings(userId: string, updates: any): Observable<any> {
+        return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates);
     }
 }
