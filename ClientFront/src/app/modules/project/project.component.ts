@@ -81,11 +81,20 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
         this.projectId = this.route.snapshot.params.id;
 
+        this.authService.getUserInfo().subscribe({
+            next: (user: User | null) => {
+                this.isCustomer = user?.userType === UserType.Client;
+                this.user = user;
+            }
+        })
+
+        /*
         this.authService.user.subscribe((u: User | null) => {
             this.isCustomer = u?.userType === UserType.Client;
             this.user = u;
         });
-
+        */
+       
         this.messageInput = new FormControl(null);
         this.formGroup = new FormGroup({
             messageInput: this.messageInput,
