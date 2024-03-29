@@ -44,7 +44,7 @@ class ContactusController implements Controller {
         response.send(contactus);
     };
 
-    // Creates a new ContactUs object from User submission
+    // Creates a new ContactUs object from User submission 
     private postContact = async (
         request: RequestWithUser,
         response: Response
