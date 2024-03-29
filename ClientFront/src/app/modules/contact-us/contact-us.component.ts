@@ -23,6 +23,7 @@ export class ContactUsComponent implements OnInit {
     public emailAddress!: FormControl;
     public message!: FormControl;
     public confirmationMessage: string;
+    public isSubmitted: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -46,8 +47,7 @@ export class ContactUsComponent implements OnInit {
     // if email is valid it will post to mongo and give a thank you message
     // if email is not valid it will give a enter valid email address message
     public onSubmit(): void {
-        console.log('onSubmit');
-
+        
         // contact us confirmation logic
         const dialogConfig = new MatDialogConfig();
         dialogConfig.autoFocus = true;
@@ -64,11 +64,13 @@ export class ContactUsComponent implements OnInit {
         if (regexTester.test(this.emailAddress.value)) {
             this.contactService.sendContactInfo(clientRequest).subscribe(
                 (clientRequest: ClientRequest) => {
-                    console.log(clientRequest);
-                    this.newMessage("Thank you")
+                    this.newMessage("Submitted successfully")
                     this.dialog
                         .open(ContactUsDialogComponent, dialogConfig)
-                        .afterClosed()
+                        .afterClosed().subscribe(() => {
+                            this.formGroup.disable();
+                            this.isSubmitted = true;
+                        })
                 }
             );
         } else {
