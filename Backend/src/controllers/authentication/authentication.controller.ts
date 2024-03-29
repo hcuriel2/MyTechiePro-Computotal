@@ -36,83 +36,46 @@ class AuthenticationController implements Controller {
         this.initializeRoutes();
     }
 
+    // Routes for the base '/auth' route
+    // Middleware is applied to ensure valid users/DTO objects (data transfer objects)
+    // Last parameter is a function (listed below alphabetically)
     private initializeRoutes() {
-        this.router.post(
-            `${this.path}/register`,
-            validationMiddleware(CreateUserDto),
-            this.registration
-        );
-
-        this.router.post(
-            `${this.path}/admin/register`,
-            adminMiddleware,
-            validationMiddleware(CreateUserDto),
-            this.registration
-        );
-        
-        this.router.post(
-            `${this.path}/resetMfa`,
-            this.resetMfa
-        )
-
-        this.router.post(
-            `${this.path}/setupMfa`,
-            this.setupMfa
-        );
-
-        this.router.post(
-            `${this.path}/verifyMfa`,
-            this.verifyMfa
-        );
-        
-        this.router.post(
-          `${this.path}/professional/register`,
-            validationMiddleware(CreateUserDto),
-            this.registration
-        );
-
-        this.router.post(
-            `${this.path}/login`,
-            validationMiddleware(LogInDto),
-            this.loggingIn
-        );
+        this.router.post(`${this.path}/admin/register`, adminMiddleware,validationMiddleware(CreateUserDto), this.registration);
+        this.router.post(`${this.path}/login`,validationMiddleware(LogInDto),this.loggingIn);
         this.router.post(`${this.path}/logout`, this.loggingOut);
-        
+        this.router.post(`${this.path}/professional/register`,validationMiddleware(CreateUserDto),this.registration);
+        this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto),this.registration);
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
-
-
-        this.router.get(`${this.path}/userInfo`, authMiddleware, this.getUserInfo);
-
         this.router.patch(`${this.path}/settings/:userId`, authMiddleware, this.updateUserSettings);
-
-
+        this.router.get(`${this.path}/userInfo`, authMiddleware, this.getUserInfo);
     }
 
-
-    private updateUserSettings = async (
-        request: Request,
-        response: Response,
-    ) => {
-        const userId = request.params._id;
-        const updates = request.body;
-        console.log('Updating user...\n\n');
-        try {
-            
-            const result = await this.user.updateOne({ _id: userId }, { $set: updates });
-            
-            if (result.nModified === 0) {
-                response.send('No changes were made');
-            }
-
-            response.send('Update successful');
-            console.log('User updated successfully');
-
-        } catch (error) {
-            console.error('Error updating user:', error);
-            response.status(500).send('Failed to update user');
-        }
+    // Creates an HttpOnly cookie
+    // Used to enable secure sessions
+    // Expires after an hour
+    private createCookie(tokenData: TokenData) {
+        return `Authorization=${tokenData.token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${tokenData.expiresIn}`;
     }
 
+    // Creates a JWT token
+    // This token's data is inserted into a HttpOnly cookie
+    // Expires after an hour
+    private createToken(user: User): TokenData {
+        const expiresIn = 60 * 60; // an hour
+        const secret = process.env.JWT_SECRET;
+        const dataStoredInToken: DataStoredInToken = {
+            _id: user._id,
+            userType: user.userType
+            
+        };
+        return {
+            expiresIn,
+            token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
+        };
+    }
+
+    // Returns User information
+    // This route is called to retrieve User information the the front-end
     private getUserInfo = async (
         request: RequestWithUser,
         response: Response,
@@ -148,154 +111,9 @@ class AuthenticationController implements Controller {
         }
     }
 
-    private sendResetPwEmail = async (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
-        
-        // Needs to check for admin, pro, or techie usertype before calling the database
-        // This is due to the schema changes
-        console.log('Reset email function called');
-        const { emailAddress } = request.body;
-        console.log(emailAddress);
-        const user = await this.user.findOne({ email: emailAddress });
-
-
-        if (!user){
-            console.log('No user account is associated with the specified email');
-            response.status(200);
-            return;
-        }
-        
-        let setPwEmailOptions  = {
-            from: 'noreply.mytechie.pro@gmail.com', // sender address
-            to: emailAddress, // list of receivers
-            subject: "Reset Password", // Subject line
-            html: "<b>Reset Password</b><br/><br/>" +
-            `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
-          }
-        emailtransporter.sendMail(setPwEmailOptions , function(error, info){
-        if (error) {
-            console.log(error);
-            response.status(500); // Error sending email - set status code
-        } else {
-            console.log('Email sent: ' + info.response);
-            response.status(200); // Email sent successfully
-        }
-        });
-    };
-
-    private registration = async (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
-        const userData: CreateUserDto = request.body;
-        console.log(userData);
-        try {
-            const { cookie, user } = await this.authenticationService.register(userData);
-            response.setHeader("Set-Cookie", [cookie]);
-            response.send({ message: 'Registration successful', userType: user.userType });
-        } catch (error) {
-            next(error);
-        }
-    };
-    // private registrationPro = async (request: Request, response: Response, next: NextFunction) => {
-    //     const userData: CreateUserDto = request.body;
-    //     try {
-    //         const { cookie, user } = await this.authenticationService.register(
-    //             userData
-    //         );
-    //         response.setHeader("Set-Cookie", [cookie]);
-    //         response.send(user);
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // };
-
-    private resetMfa = async (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
-        const {id} = request.body;
-        await this.user.findByIdAndUpdate(id, {
-            secret: '',
-            tempSecret: ''
-        });
-        return response.sendStatus(200);
-    };
-
-    private verifyMfa = async (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
-        const {id, token} = request.body;
-        let user = await this.user.findById(id);
-        let sec = user.get("tempSecret");
-        if (!sec) {
-            next(new MfaVerificationInvalidException())
-        }
-        
-        let isVerified = speakeasy.totp.verify({
-            secret: sec,
-            encoding: 'base32',
-            token: token
-        });
-    
-        if (isVerified) {
-            await this.user.findByIdAndUpdate(id, {
-                secret: sec,
-                tempSecret: ''
-            });
-
-            return response.sendStatus(200)
-        } else {
-            next(new MfaVerificationInvalidException());
-        }
-    };
-
-    private setupMfa = async (
-        request: Request,
-        response: Response,
-        next: NextFunction
-    ) => {
-        const {id, email} = request.body;
-        const ISSUER = 'Computotal';
-        
-        const secret = speakeasy.generateSecret({
-            length: 10,
-            name: email,
-            issuer: ISSUER
-        });
-    
-        var url = speakeasy.otpauthURL({
-            secret: secret.base32,
-            label: email,
-            issuer: ISSUER,
-            encoding: 'base32'
-        });
-        
-        try {
-            await this.user.findByIdAndUpdate(id, {
-                secret: '',
-                tempSecret: secret.base32
-            });
-
-            qrcode.toDataURL(url, (err, dataURL) => {
-                return response.json({
-                    secret: secret.base32,
-                    dataURL,
-                    issuer: ISSUER
-                });
-            });
-        } catch (e) {
-            next(e);
-        }
-    };
-
+    // Logs the User in
+    // Searches the database for the User
+    // Decrypts password and issues an HttpOnly cookie on successful login
     private loggingIn = async (
         request: Request,
         response: Response,
@@ -340,29 +158,96 @@ class AuthenticationController implements Controller {
             next(new WrongCredentialsException());
         }
     };
-    
 
+    // Logs the User out
+    // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
-        response.setHeader("Set-Cookie", ["Authorization=;Max-age=0"]);
+        response.setHeader("Set-Cookie", ["Authorization=; Path=/; HttpOnly; Secure; Max-age=0 Expires=Thu, 01 Jan 1970 00:00:00 GMT"]);
         response.send(200);
     };
 
-    private createCookie(tokenData: TokenData) {
-        return `Authorization=${tokenData.token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${tokenData.expiresIn}`;
-    }
+    // Registers a new User
+    // Generates a new account
+    // Issues a verification email to the User
+    private registration = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const userData: CreateUserDto = request.body;
+        console.log(userData);
+        try {
+            const { cookie, user } = await this.authenticationService.register(userData);
+            response.setHeader("Set-Cookie", [cookie]);
+            response.send({ message: 'Registration successful', userType: user.userType });
+        } catch (error) {
+            next(error);
+        }
+    };
 
-    private createToken(user: User): TokenData {
-        const expiresIn = 60 * 60; // an hour
-        const secret = process.env.JWT_SECRET;
-        const dataStoredInToken: DataStoredInToken = {
-            _id: user._id,
-            userType: user.userType
+    // Sends a password reset email to a User's email
+    // Works with the 'Forgot Password' option on the initial login page
+    // Sends a link which enables the User to modify their password
+    private sendResetPwEmail = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        
+        console.log('Reset email function called');
+        const { emailAddress } = request.body;
+        console.log(emailAddress);
+        const user = await this.user.findOne({ email: emailAddress });
+
+        if (!user){
+            console.log('No user account is associated with the specified email');
+            response.status(200);
+            return;
+        }
+        
+        let setPwEmailOptions  = {
+            from: 'noreply.mytechie.pro@gmail.com',
+            to: emailAddress,
+            subject: "Reset Password",
+            html: "<b>Reset Password</b><br/><br/>" +
+            `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
+          }
+
+        emailtransporter.sendMail(setPwEmailOptions , function(error, info){
+        if (error) {
+            console.log(error);
+            response.status(500);
+        } else {
+            console.log('Email sent: ' + info.response);
+            response.status(200);
+        }
+        });
+    };
+
+// Updates User's information in the frontend '/settings' route
+// Modifies existing information in the database
+private updateUserSettings = async (
+        request: Request,
+        response: Response,
+    ) => {
+        const userId = request.params._id;
+        const updates = request.body;
+        console.log('Updating user...\n\n');
+        try {
             
-        };
-        return {
-            expiresIn,
-            token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
-        };
+            const result = await this.user.updateOne({ _id: userId }, { $set: updates });
+            
+            if (result.nModified === 0) {
+                response.send('No changes were made');
+            }
+
+            response.send('Update successful');
+            console.log('User updated successfully');
+
+        } catch (error) {
+            console.error('Error updating user:', error);
+            response.status(500).send('Failed to update user');
+        }
     }
 }
 
