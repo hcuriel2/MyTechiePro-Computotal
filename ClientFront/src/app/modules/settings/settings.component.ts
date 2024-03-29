@@ -28,6 +28,9 @@ export class SettingsComponent implements OnInit {
     private user: User;
     public verifyStatus= '';
     public mfaRequested= false;
+    public formDisabled = true;
+    public userId = '';
+    
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -40,55 +43,58 @@ export class SettingsComponent implements OnInit {
 
     // Displays homepage to client, if user is technician projects page is displayed instead
     public ngOnInit(): void {
-        this.user = this.authService.userValue ?? this.user;
-        if (!this.user) {
-            console.error("err user not loaded");
-            return;
-        }
+        this.populateForm();
     }
 
-    public setupMfa(): void {
-        this.mfaRequested = true;
-        this.authService.setupMFA(this.user._id, this.user.email).subscribe((mfa) => {
-            console.log(mfa);
-            this.mfa = mfa;
-            this.changeDetectorRef.detectChanges();
+    public populateForm() {
+        this.authService.getUserInfo().subscribe({
+            next: (user: User | null) => {
+                if (user) {
+                    this.userId = user._id;
+                    const firstName = document.getElementById('firstName') as HTMLInputElement;
+                    const lastName = document.getElementById('lastName') as HTMLInputElement;
+                    const email = document.getElementById('email') as HTMLInputElement;
+                    const street = document.getElementById('street') as HTMLInputElement;
+                    const city = document.getElementById('city') as HTMLInputElement;
+                    const country = document.getElementById('country') as HTMLInputElement;
+                    const postalCode = document.getElementById('postalCode') as HTMLInputElement;
+                    
+                    if (firstName) firstName.value = user.firstName || '';
+                    if (lastName) lastName.value = user.lastName || '';
+                    if (email) email.value = user.email || '';
+                    if (street) street.value = user.address?.street;
+                    if (city) city.value = user.address?.city;
+                    if (country) country.value = user.address?.country;
+                    if (postalCode) postalCode.value = user.address?.postalCode;
+                }
+
+
+            }
         })
     }
 
-    public verify(): void {
-        this.authService.verifyMFA(this.user._id, this.token).subscribe(
-            res => console.log(res),
-            err => {
-                if (err.status == 200) {
-                    this.authService.signOut();
-                    this.router.navigateByUrl('/')
-                        .then(() => {
-                            window.location.reload();
-                        });
-                    alert("Sucessfully added 2-Factor Authentication. You will now be logged out.");
-                } else {
-                    alert("Authentication failed.");
-                }
-            }
-        )
+    enableForm(): void {
+         this.formDisabled = false;
     }
 
-    public resetMFA(): void {
-        this.authService.resetMFA(this.user._id).subscribe(
-            res => {
-                console.log(res);
+    submitForm(): void {
+        const updatedUserInfo = {
+            firstName: (document.getElementById('firstName') as HTMLInputElement).value,
+            lastName: (document.getElementById('lastName') as HTMLInputElement).value,
+            email: (document.getElementById('email') as HTMLInputElement).value,
+            street: (document.getElementById('street') as HTMLInputElement).value,
+            city: (document.getElementById('city') as HTMLInputElement).value,
+            country: (document.getElementById('country') as HTMLInputElement).value,
+            postalCode: (document.getElementById('postalCode') as HTMLInputElement).value,
+        }
+
+        this.authService.updateUserSettings(this.userId, updatedUserInfo).subscribe({
+            next: (response) => {
+                console.log('Update successful', response);
             },
-            err => {
-                if (err.status == 200) {
-                    this.authService.signOut();
-                    this.router.navigateByUrl('/')
-                        .then(() => {
-                            window.location.reload();
-                        });
-                    alert("Sucessfully reset 2-Factor Authentication. You will now be logged out.");
-                }
+            error: (error) => {
+                console.error('Error updating user info', error);
             }
-        );
+        })
     }
 }
