@@ -8,6 +8,7 @@ import userModel from "../../models/user/user.model";
 import UserNotFoundException from "../../exceptions/UserNotFoundException";
 import ResetPasswordDto from "../authentication/resetPassword.dto";
 import * as bcrypt from "bcryptjs";
+import CreateUserDto from "./user.dto";
 
 class UserController implements Controller {
     public path = "/users";
@@ -28,6 +29,10 @@ class UserController implements Controller {
         this.router.get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill);
         this.router.get(`${this.path}/professionals`, this.getAllProfessionals)
         this.router.delete(`${this.path}/:id`, this.deleteUser)
+
+
+        // User routes - Authentication needed
+        this.router.patch(`${this.path}/settings/:userId`, authMiddleware, this.updateUserSettings);
 
         //Admin routes - Admin authentication needed (only admins can access these)
         this.router.get(`${this.path}`, adminMiddleware, this.getAllUsers)
@@ -72,7 +77,29 @@ class UserController implements Controller {
         */
     }
 
+    private updateUserSettings = async (
+        request: Request,
+        response: Response,
+    ) => {
+        const userId = request.params._id;
+        const updates = request.body;
+        console.log('Updating user...\n\n');
+        try {
+            
+            const result = await this.user.updateOne({ _id: userId }, { $set: updates });
+            
+            if (result.nModified === 0) {
+                response.send('No changes were made');
+            }
 
+            response.send('Update successful');
+            console.log('User updated successfully');
+
+        } catch (error) {
+            console.error('Error updating user:', error);
+            response.status(500).send('Failed to update user');
+        }
+    }
 
     // endpoint to fetch Pro User info
     private getProUserProfile = async (request: Request, response: Response, next: NextFunction) => {
