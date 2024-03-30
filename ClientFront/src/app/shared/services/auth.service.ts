@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user';
 import { MfaDto } from '../models/mfaDto';
@@ -16,53 +16,31 @@ export class AuthService {
     private readonly API_URL: string;
 
     constructor(private httpClient: HttpClient) {
-        this.userSubject = new BehaviorSubject<User | null>(
-            JSON.parse(localStorage.getItem('user') || '{}')
-        );
+        this.userSubject = new BehaviorSubject<User | null>(null);
         this.user = this.userSubject.asObservable();
-
         this.API_URL = `${environment.apiEndpoint}/auth`;
-        
     }
 
+    // Retrieves the current User's values
     public get userValue(): User | null {
         return this.userSubject.value;
     }
 
+    // Register a new User
     public registerUser(user: User): Observable<User> {
-        return this.httpClient
-            .post<User>(`${this.API_URL}/register`, user, { withCredentials: true })
-            .pipe(
-                map((user: User) => {
-                    localStorage.setItem('user', JSON.stringify(user));
-                    this.userSubject.next(user);
-                    return user;
-                })
-            );
+        return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
     }
-
-    public verifyMFA(id: string, token: string): Observable<Boolean> {
-        return this.httpClient
-            .post<Boolean>(`${this.API_URL}/verifyMfa`, {id, token});
-    }
-
-    public setupMFA(id: string, email: string): Observable<MfaDto> {
-        return this.httpClient
-            .post<MfaDto>(`${this.API_URL}/setupMfa`, {id, email});
-    }
-
-    public resetMFA(id: string): Observable<MfaDto> {
-        return this.httpClient
-            .post<MfaDto>(`${this.API_URL}/resetMfa`, {id});
-    }
-
+    
+    // Signs in a User
+    // Assigns the User's values to the UserSubject
+    // It's then accessible through the 'this.user' value
     public signIn(user: User): Observable<User> {
-        return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
-            map((user: User) => {
-                localStorage.setItem('user', JSON.stringify(user));
-                this.userSubject.next(user);
-                return user;
-            })
+         console.log('Attempting to sign in user', user);
+         return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
+          tap((user: User) => {
+            console.log('SignIn: User signed in', user);
+            this.userSubject.next(user);
+          })
         );
     }
 
@@ -72,17 +50,32 @@ export class AuthService {
         return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body, { withCredentials: true });
     }
 
-
-    public signOut(): void {
-        localStorage.removeItem('user');
-        this.userSubject.next(null);
+    // Signs out the User
+    // Updates the userSubject null, so no User values remain
+    public signOut(): Observable<any> {
+        return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
+            tap(() => {
+                console.log('Signout: user signed out');
+                this.userSubject.next(null);
+            })
+        )
     }
 
+    // Retrieves the User information from the database
+    // Passes it into the userSubject - which allows the UI to be applied from the User values
+    public getUserInfo(): Observable<User> {
+        console.log('Fetching user info');
+        return this.httpClient.get<User>(`${this.API_URL}/userInfo`, { withCredentials: true }).pipe(
+  tap((user: User) => {
+    console.log('UserInfo: Received user info', user);
+    this.userSubject.next(user);
+  })
+);
+      }
+      
 
-    getUserInfo(): Observable<any> {
-        return this.httpClient.get(`${this.API_URL}/userInfo`, { withCredentials: true });
-    }
-
+    // Updates the User's information on the 'settings' page
+    // All changes will update the User entry in the database
     updateUserSettings(userId: string, updates: any): Observable<any> {
         return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates);
     }

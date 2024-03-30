@@ -15,6 +15,7 @@ import { first } from "rxjs/operators";
 import { AuthService } from "./shared/services/auth.service";
 import { SignInComponent } from "./modules/sign-in/sign-in.component";
 import { Options } from "ngx-google-places-autocomplete/objects/options/options";
+import { Message } from "./shared/models/message";
 
 @Component({
   selector: "app-root",
@@ -51,10 +52,12 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("ngOnDestroy");
   }
 
+  // Initialize the component
   public ngOnInit(): void {
-    // Subscribe to the user observable provided by AuthService
+    
+    // Subscribe to the user observable (within AuthService)
     this.authService.user.subscribe((user) => {
-      // Update isProfessional flag based on user's userType
+      this.user = user;
       this.isProfessional = user?.userType === "Professional" ?? false;
   
       // Checks the userType to adjust UI elements accordingly
@@ -83,6 +86,8 @@ export class AppComponent implements OnInit, OnDestroy {
           footer.style.background = "#ef0078";
         }
       }
+
+      this.changeDetectorRef.detectChanges();
     });
   
     console.log("ngOnInit");
@@ -102,26 +107,67 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("something");
   }
 
-  // Opens sign-in dialog, logs user in if information is valid, logs an error if information is invalid
+  /*
+  // Signs in a User
+  // Opens sign-in dialog
+  // Display pop-up on success or fail
   public signIn(): void {
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
 
-    this.dialog
-      .open(SignInComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((user: User) => {
-        if (user != null) {
+    this.dialog.open(SignInComponent, dialogConfig).afterClosed().subscribe((result) => {
+        if (result === 'success') {
+          this.snackbar.open('Sign in successful', 'Close', {
+            duration: 2000
+          });
         } else {
-          console.log("sign-in failed");
+            this.snackbar.open('Sign in failed', 'Close', {
+              duration: 2000
+            });
         }
-      });
-
-      this.fetchUserInfo();
+    });
   }
+*/
 
+public signIn(): void {
+  const dialogConfig = new MatDialogConfig();
+
+  dialogConfig.disableClose = true;
+  dialogConfig.autoFocus = true;
+
+  this.dialog
+    .open(SignInComponent, dialogConfig)
+    .afterClosed()
+    .subscribe((user: User) => {
+      if (user != null) {
+      } else {
+        console.log("sign-in failed");
+      }
+    });
+}
+
+
+public signOut(): void {
+  const keys = ["Message.LoggedOut", "Dictionary.OK"];
+  document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  this.translateService
+    .get(keys)
+    .pipe(first())
+    .subscribe((translations) => {
+      this.snackbar.open(translations[keys[0]], translations[keys[1]]);
+    });
+
+  this.authService.signOut();
+
+  this.router.navigateByUrl("/").then(() => {
+    window.location.reload();
+  });
+}
+
+  // Delete this -- say that after modifying the auth.service.ts to use the getUserInfo function to access the '/userInfo' endpoint to retrieve user information and assigning it to userSubject
+  /*
+  // Returns user information
   private fetchUserInfo(): void {
     this.authService.getUserInfo().subscribe({
       next: (validatedUser) => {
@@ -133,35 +179,46 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     })
   }
+  */
 
-  // Signs out the user and redirects to homepage
+  /*
+  // Signs out a User
+  // Handle the successful sign out by resetting User state
+  // Displays pop-ups on signout success/failure
   public signOut(): void {
-    const keys = ["Message.LoggedOut", "Dictionary.OK"];
-    let cookie = getCookie("user");
-    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    this.translateService
-      .get(keys)
-      .pipe(first())
-      .subscribe((translations) => {
-        this.snackbar.open(translations[keys[0]], translations[keys[1]]);
-      });
+    this.authService.signOut().subscribe({
+      next: () => {
+        this.user = null;
+        this.isProfessional = false;
+        this.changeDetectorRef.detectChanges();
 
-    this.authService.signOut();
-
-    this.router.navigateByUrl("/").then(() => {
-      window.location.reload();
+        this.router.navigateByUrl('/').then(() => {
+          this.snackbar.open('Sign out successful', 'Close', {
+            duration: 2000
+          });
+        });
+      },
+      error: (error) => {
+        this.snackbar.open('Sign out failed', 'Close', {
+          duration: 2000
+        });
+      }
     });
-
-    this.user = null;
   }
+  */
 
+  // Navigates to the Home page
   public routeToHomePage(): void {
     this.router.navigateByUrl("/");
   }
 
-  /**
-   * Navigates to the URL based on the user type stored inside of localstorage.
-   */
+
+
+
+  /* DELETE THIS - commit msg -- removed dependencies on localStorage -- rewrote the function to access the User's information which is store in the this.user and userSubject. I also removed the window.location.reload() from the navigation as its redundant. NavigateByURL changes the UI without having to refresh the page - better user experience. Also removed redundant redirects.
+    NEW FUNCTION BELOW
+
+  /Navigates to the URL based on the user type stored inside of localstorage.
   public routeBasedOnUser(): void {
     if (localStorage.getItem("user") == null) {
       this.router.navigateByUrl("/").then(() => {
@@ -177,6 +234,17 @@ export class AppComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl("/").then(() => {
         //window.location.reload();
       });
+    }
+  }
+*/
+
+   // Handles page routing
+  // Dependent on the userType value of the current User
+  public routeBasedOnUser(): void {
+    if (this.user?.userType === 'Professional'){
+      this.router.navigateByUrl('/projects');
+    } else {
+      this.router.navigateByUrl('/');
     }
   }
 
@@ -207,7 +275,7 @@ export class AppComponent implements OnInit, OnDestroy {
         window.location.reload();
       });
   }
-  // Redirect to sign up page for technichian
+  // Redirect to sign up page for professional
   public joinPro(): void {
     this.router
       .navigate(["/sign-up"], {
@@ -220,21 +288,22 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Navigates to the User's settings page
   public settings(): void {
     this.router.navigateByUrl("/settings");
   }
 
+  // Navigates to Professional's profile
+  public navigateToProProfile(): void {
+    this.router.navigateByUrl("/pro-profile");
+  }
 
-public navigateToProProfile(): void {
-  this.router.navigateByUrl("/pro-profile");
+
 }
 
 
-}
 
-
-
-
+/* DELETE THIS -- commit msg -- Deleted unused code. The new implementation used httpOnly cookies, which cannot be accessed by client-side javascript
 function getCookie(cname: string) {
   let name = cname + "=";
   let ca = document.cookie.split(";");
@@ -249,3 +318,4 @@ function getCookie(cname: string) {
   }
   return "";
 }
+*/
