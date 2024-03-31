@@ -16,7 +16,7 @@ class App {
         this.connectToTheDatabase();
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
-        this.initializeErrorHandling();
+        //this.initializeErrorHandling();
     }
 
     public listen() {
@@ -33,13 +33,14 @@ class App {
         this.app.use(bodyParser.json());
         this.app.use(cookieParser());
         this.app.use(cors({
-            origin: 'http://localhost:8080'
+            origin: 'http://localhost:8080',
+            credentials: true
         }));
     }
 
-    private initializeErrorHandling() {
-        this.app.use(errorMiddleware);
-    }
+    //private initializeErrorHandling() {
+     //   this.app.use(errorMiddleware);
+    //}
 
     private initializeControllers(controllers: Controller[]) {
         controllers.forEach((controller) => {
