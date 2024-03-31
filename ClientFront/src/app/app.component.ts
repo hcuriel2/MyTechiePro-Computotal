@@ -148,26 +148,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/");
   }
 
-  /**
-   * Navigates to the URL based on the user type stored inside of localstorage.
-   */
-  public routeBasedOnUser(): void {
-    if (localStorage.getItem("user") == null) {
-      this.router.navigateByUrl("/").then(() => {
-        //window.location.reload();
-      });
-    } else if (
-      JSON.parse(localStorage.getItem("user")!).userType == "Professional"
-    ) {
-      this.router.navigateByUrl("/projects").then(() => {
-        //window.location.reload();
-      });
-    } else {
-      this.router.navigateByUrl("/").then(() => {
-        //window.location.reload();
-      });
-    }
-  }
 
   // Redirect to about page
   public routeToAboutPage(): void {
