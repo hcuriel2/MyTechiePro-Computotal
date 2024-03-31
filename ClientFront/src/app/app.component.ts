@@ -52,15 +52,15 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("ngOnDestroy");
   }
 
-   // Initialize the component
-   public ngOnInit(): void {
-    
+  // Initialize the component
+  public ngOnInit(): void {
+
     // Subscribe to the user observable (within AuthService)
     this.authService.user.subscribe((user) => {
       this.user = user;
       this.changeDetectorRef.detectChanges();
       this.isProfessional = user?.userType === "Professional" ?? false;
-  
+
       // Checks the userType to adjust UI elements accordingly
       const signupBtn = document.getElementById("app-menu-signup-btn");
       const joinBtn = document.getElementById("app-menu-join-btn");
@@ -68,7 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const userInfo = document.getElementById("app-menu-user-info");
       const toolbar = document.getElementById("app-toolbar");
       const footer = document.getElementById("footer");
-  
+
       if (signupBtn) {
         signupBtn.style.display = "none";
       }
@@ -90,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this.changeDetectorRef.detectChanges();
     });
-  
+
     console.log("ngOnInit");
   }
 
@@ -111,10 +111,10 @@ export class AppComponent implements OnInit, OnDestroy {
   // Opens sign-in dialog, logs user in if information is valid, logs an error if information is invalid
   public signIn(): void {
     const dialogConfig = new MatDialogConfig();
-  
+
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-  
+
     this.dialog
       .open(SignInComponent, dialogConfig)
       .afterClosed()
@@ -136,9 +136,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe((translations) => {
         this.snackbar.open(translations[keys[0]], translations[keys[1]]);
       });
-  
+
     this.authService.signOut();
-  
+
     this.router.navigateByUrl("/").then(() => {
       window.location.reload();
     });
@@ -152,7 +152,7 @@ export class AppComponent implements OnInit, OnDestroy {
   // Dependent on the userType value of the current User
   public routeBasedOnUser(): void {
     console.log('i got you now')
-    if (this.user?.userType === 'Professional'){
+    if (this.user?.userType === 'Professional') {
       this.router.navigateByUrl('/projects');
     } else {
       this.router.navigateByUrl('/');
@@ -204,9 +204,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 
-public navigateToProProfile(): void {
-  this.router.navigateByUrl("/pro-profile");
-}
-
-
+  public navigateToProProfile(): void {
+    this.router.navigateByUrl("/pro-profile");
+  }
 }
