@@ -111,10 +111,10 @@ export class AppComponent implements OnInit, OnDestroy {
   // Opens sign-in dialog, logs user in if information is valid, logs an error if information is invalid
   public signIn(): void {
     const dialogConfig = new MatDialogConfig();
-
+  
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-
+  
     this.dialog
       .open(SignInComponent, dialogConfig)
       .afterClosed()
@@ -129,7 +129,6 @@ export class AppComponent implements OnInit, OnDestroy {
   // Signs out the user and redirects to homepage
   public signOut(): void {
     const keys = ["Message.LoggedOut", "Dictionary.OK"];
-    let cookie = getCookie("user");
     document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     this.translateService
       .get(keys)
@@ -137,9 +136,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe((translations) => {
         this.snackbar.open(translations[keys[0]], translations[keys[1]]);
       });
-
+  
     this.authService.signOut();
-
+  
     this.router.navigateByUrl("/").then(() => {
       window.location.reload();
     });
