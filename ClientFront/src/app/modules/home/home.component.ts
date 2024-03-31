@@ -72,32 +72,35 @@ export class HomeComponent implements OnInit {
     this.showResults = false;
   }
 
-  /**
-   * Initialize the component by subscribing to user updates and
-   * routing based on the user's role.
-   */
-  public ngOnInit(): void {
-    // Fetch static data needed for the component.
-    this.getStaticData();
+/**
+ * Initialize the component by subscribing to user updates and
+ * routing based on the user's role.
+ */
+public ngOnInit(): void {
+  // Fetch static data needed for the component.
+  this.getStaticData();
 
-    // Subscribe to the AuthService to get the user data
-    this.authService.user.subscribe((userData: User | null) => {
-      if (userData) {
-        this.user = userData;
-        this.isProfessional = userData.userType === "Professional";
-        this.isCustomer = userData.userType === "Client";
+  
+  // Subscribe to the AuthService to get the user data
+  this.authService.user.subscribe((userData: User | null) => {
+    if (userData) {
+      this.user = userData;
+      this.isProfessional = userData.userType === "Professional";
+      this.isCustomer = userData.userType === "Client";
 
-        // Use setTimeout to delay redirection logic to the end of the event loop,
-        // allowing the initial view to render first.
-        setTimeout(() => {
-          // Redirect professionals to the projects page
-          if (this.isProfessional) {
-            this.router.navigate(["/projects"]);
-          }
-        });
-      }
-    });
-  }
+      this.changeDetectorRef.detectChanges();
+
+      // Use setTimeout to delay redirection logic to the end of the event loop,
+      // allowing the initial view to render first.
+      setTimeout(() => {
+        // Redirect professionals to the projects page
+        if (this.isProfessional) {
+          this.router.navigate(["/projects"]);
+        }
+      });
+    }
+  });
+}
 
   @HostListener("document:click", ["$event"])
   onClick(event: MouseEvent) {
