@@ -11,7 +11,6 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { first, map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer';
 import { Router } from '@angular/router';
-//import { userInfo } from 'os';
 
 @Component({
     selector: 'app-sign-in',
@@ -76,6 +75,7 @@ export class SignInComponent implements OnInit {
     }
 
     public signIn(): void {
+        console.log('SignInComponent: starting sign-in process....');
         const user: User = new User();
         user.email = this.emailAddress.value;
         user.password = this.password.value;
@@ -89,19 +89,18 @@ export class SignInComponent implements OnInit {
          */
         this.authService.signIn(user).subscribe(
             (user: User) => {
-                this.authService.user.subscribe((currentUser) => {
-                    if (!currentUser) return;
-                    console.log(currentUser);
+                user = user;
+                this.authService.user.subscribe((user) => {
+                    if (!user) return;
+                    console.log('Signin component user value: ', user);
 
-                    if (currentUser.userType == 'Professional') {
-                        this.dialogRef.close(currentUser);
+                    if (user.userType == 'Professional') {
+                        this.dialogRef.close(user);
                         this.router.navigateByUrl('/projects').then(() => {
-                            window.location.reload();
                         })
-                    } else if (currentUser.userType == 'Client') {
-                        this.dialogRef.close(currentUser);
+                    } else if (user.userType == 'Client') {
+                        this.dialogRef.close(user);
                         this.router.navigateByUrl('/').then(() => {
-                            window.location.reload();
                         })
                     } else {
                         window.location.href = 'https://admin.mytechie.pro';
@@ -162,8 +161,8 @@ export class SignInComponent implements OnInit {
     }
 
 
-    private getUserInfo(): void {
-        this.authService.getUserInfo().subscribe((userInfo) => {
+    private checkSession(): void {
+        this.authService.checkSession().subscribe((userInfo) => {
             let userType = userInfo.userType;
 
             if (userType == 'Professional') {

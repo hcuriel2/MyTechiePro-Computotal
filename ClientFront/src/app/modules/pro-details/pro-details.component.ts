@@ -177,7 +177,7 @@ export class ProDetailsComponent implements OnInit {
 
   // Create a project listing with selected techie and redirect user to project page.
   public createProject(): void {
-    this.authService.getUserInfo().subscribe({
+    this.authService.checkSession().subscribe({
       next: (user: User | null) => {
         const clientId = user?._id;
         const professionalId = this.selectedTechID;

@@ -60,27 +60,6 @@ public ngOnInit(): void {
   // Fetch static data needed for the component.
   this.getStaticData();
 
-
-
-  this.authService.getUserInfo().subscribe({
-    next: (user: User | null) => {
-      if (user) {
-        this.user = user;
-        this.isProfessional = user.userType === 'Professional';
-        this.isCustomer = user.userType === 'Client';
-
-
-        setTimeout(() => {
-          if (this.isProfessional) {
-            this.router.navigate(['/projects']);
-          }
-        })
-      }
-
-    }
-
-  })
-  /*
   
   // Subscribe to the AuthService to get the user data
   this.authService.user.subscribe((userData: User | null) => {
@@ -88,6 +67,12 @@ public ngOnInit(): void {
       this.user = userData;
       this.isProfessional = userData.userType === "Professional";
       this.isCustomer = userData.userType === "Client";
+
+      this.changeDetectorRef.detectChanges();
+
+      if (!userData){
+        console.log('no user data in authservice sub in home component')
+      } 
 
       // Use setTimeout to delay redirection logic to the end of the event loop,
       // allowing the initial view to render first.
@@ -99,8 +84,6 @@ public ngOnInit(): void {
       });
     }
   });
-  
-  */
 }
 
 

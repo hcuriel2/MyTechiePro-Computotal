@@ -47,7 +47,7 @@ export class SettingsComponent implements OnInit {
     }
 
     public populateForm() {
-        this.authService.getUserInfo().subscribe({
+        this.authService.checkSession().subscribe({
             next: (user: User | null) => {
                 if (user) {
                     this.userId = user._id;

@@ -57,7 +57,9 @@ export class AppComponent implements OnInit, OnDestroy {
     
     // Subscribe to the user observable (within AuthService)
     this.authService.user.subscribe((user) => {
+      console.log('APP COMPONENT TS SUBSCRIBER', user)
       this.user = user;
+      this.changeDetectorRef.detectChanges();
       this.isProfessional = user?.userType === "Professional" ?? false;
   
       // Checks the userType to adjust UI elements accordingly
@@ -241,6 +243,7 @@ public signOut(): void {
    // Handles page routing
   // Dependent on the userType value of the current User
   public routeBasedOnUser(): void {
+    console.log('i got you now')
     if (this.user?.userType === 'Professional'){
       this.router.navigateByUrl('/projects');
     } else {

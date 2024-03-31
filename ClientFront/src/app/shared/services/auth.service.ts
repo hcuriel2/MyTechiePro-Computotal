@@ -35,12 +35,13 @@ export class AuthService {
     // Assigns the User's values to the UserSubject
     // It's then accessible through the 'this.user' value
     public signIn(user: User): Observable<User> {
-         console.log('Attempting to sign in user', user);
+        console.log('AUTH SERVICE - sign in called');
          return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
           tap((user: User) => {
-            console.log('SignIn: User signed in', user);
+            console.log('AUTH SERVICESignIn: User signed in', user);
             this.userSubject.next(user);
-          })
+          }),
+          switchMap(() => this.checkSession())
         );
     }
 
@@ -63,15 +64,15 @@ export class AuthService {
 
     // Retrieves the User information from the database
     // Passes it into the userSubject - which allows the UI to be applied from the User values
-    public getUserInfo(): Observable<User> {
-        console.log('Fetching user info');
-        return this.httpClient.get<User>(`${this.API_URL}/userInfo`, { withCredentials: true }).pipe(
-  tap((user: User) => {
-    console.log('UserInfo: Received user info', user);
-    this.userSubject.next(user);
-  })
-);
-      }
+    public checkSession(): Observable<User> {
+        console.log('CHECK SESSION - Fetching user info');
+        return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
+            tap((user: User) => {
+                console.log('CHECK SESSION UserInfo: Received user info', user);
+                this.userSubject.next(user);
+            })
+        );
+    }
       
 
     // Updates the User's information on the 'settings' page

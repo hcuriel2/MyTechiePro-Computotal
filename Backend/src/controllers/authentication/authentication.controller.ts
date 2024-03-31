@@ -40,14 +40,14 @@ class AuthenticationController implements Controller {
     // Middleware is applied to ensure valid users/DTO objects (data transfer objects)
     // Last parameter is a function (listed below alphabetically)
     private initializeRoutes() {
-        this.router.post(`${this.path}/admin/register`, adminMiddleware,validationMiddleware(CreateUserDto), this.registration);
+        this.router.post(`${this.path}/admin/register`, adminMiddleware, validationMiddleware(CreateUserDto), this.registration);
         this.router.post(`${this.path}/login`,validationMiddleware(LogInDto),this.loggingIn);
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(`${this.path}/professional/register`,validationMiddleware(CreateUserDto),this.registration);
         this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto),this.registration);
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
         this.router.patch(`${this.path}/settings/:userId`, authMiddleware, this.updateUserSettings);
-        this.router.get(`${this.path}/userInfo`, authMiddleware, this.getUserInfo);
+        this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
     }
 
     // Creates an HttpOnly cookie
@@ -76,7 +76,7 @@ class AuthenticationController implements Controller {
 
     // Returns User information
     // This route is called to retrieve User information the the front-end
-    private getUserInfo = async (
+    private checkSession = async (
         request: RequestWithUser,
         response: Response,
         next: NextFunction
@@ -87,26 +87,12 @@ class AuthenticationController implements Controller {
         }
 
         try {
-            const userInfo = {
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                phoneNumber: user.phoneNumber,
-                email: user.email,
-                userType: user.userType,
-                address: user.address,
-                company: user.company,
-                ratingSum: user.ratingSum,
-                ratingCount: user.ratingCount,
-                rating: user.rating,
-                performance: user.performance
-    
-            }
-    
-            response.json(userInfo);
+            console.log('\n\n\nCheck session response value:', user);
+            response.json(user);
+            console.log('\n\nCheck session response sent')
 
         } catch (error) {
-            next(error);
+            next(new Error('Check session response failed'));
 
         }
     }
