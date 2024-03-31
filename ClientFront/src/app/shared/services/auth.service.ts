@@ -41,6 +41,7 @@ public registerUser(user: User): Observable<User> {
           switchMap(() => this.checkSession())
         );
     }
+    
     // Modified the function - it needs to be a POST request in order to be secure
     public sendEmailResetPw(emailAddress: string): Observable<any> {
         const body = { emailAddress };
@@ -66,7 +67,6 @@ public registerUser(user: User): Observable<User> {
             })
         );
     }
-      
 
     // Updates the User's information on the 'settings' page
     // All changes will update the User entry in the database
@@ -74,4 +74,3 @@ public registerUser(user: User): Observable<User> {
         return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates);
     }
 }
-
