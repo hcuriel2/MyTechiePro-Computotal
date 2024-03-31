@@ -2,28 +2,43 @@
     {{'Dictionary.MFA' | translate }}
 </p>
 <div class="full-width mt-5 py-5 mat-toolbar mat-primary text-center">
-    
-    <span *ngIf="!hasMfa">
-        <span *ngIf="!!mfa">
-            <p>Scan QR code or manually enter the information below into the Google Authenticator App. 
-                Verify the setup by entering the Authentication Code.
-                Successful setup will log out your account.
-            </p>
-            <img class="center" id="qr" [src]="mfa?.dataURL" alt=''/>
-            <p>Issuer: {{mfa.issuer}}</p>
-            <p>Secret: {{mfa.secret}}</p>
-            <label>verify with TOTP code: </label>
-            <input id="token" type="text" [(ngModel)]="token">
-            <br>
-            <button (click)="verify()">verify</button>
-        </span>
-        
-        <button *ngIf="!mfa" (click)="setupMfa()">add MFA</button>
-    </span>
-    <span *ngIf="hasMfa">
-        <p>MFA is already set up.</p>
-        <button (click)="resetMFA()">reset MFA</button>
-    </span>
+    <form class="text-center">
+        <label>First Name</label>
+        <br/>
+        <input type="text" id='firstName' [disabled]="formDisabled">
+        <br/>
+        <label>Last Name</label>
+        <br/>
+        <input type="text" id='lastName' [disabled]="formDisabled">
+        <br/>
+        <label>Email</label>
+        <br/>
+        <input type="email" id="email" [disabled]="formDisabled">
+        <br/>
+        <label>Password</label>
+        <br/>
+        <input type="password" [disabled]="formDisabled">
+        <br/>
+        <label>Street</label>
+        <br/>
+        <input type="text" id='street' [disabled]="formDisabled">
+        <br/>
+        <label>City</label>
+        <br/>
+        <input type="text" id='city' [disabled]="formDisabled">
+        <br/>
+        <label>Country</label>
+        <br/>
+        <input type="text" id='country' [disabled]="formDisabled">
+        <br/>
+        <label>Postal Code</label>
+        <br/>
+        <input type="text" id='postalCode' [disabled]="formDisabled">
+        <br/>
+        <button onClick="enableForm()" *ngIf="formDisabled">Edit</button>
+        <button type="submit" [disabled]="formDisabled">Submit</button>
+
+    </form>
 </div>
 
 <router-outlet></router-outlet>
