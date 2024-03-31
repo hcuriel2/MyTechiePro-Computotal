@@ -58,13 +58,15 @@ export class ProjectsListComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-        if(JSON.parse(localStorage.getItem("user")!).userType == "Professional") {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', "red");
-        } else {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', "blue");
-        }
+        this.authService.user.subscribe((user: User | null) => {
+            if (user?.userType == 'Professional') {
+                const root = document.documentElement;
+                root.style.setProperty('--background-color', 'red');
+            } else {
+                const root = document.documentElement;
+                root.style.setProperty('--background-color', 'blue');
+            }
+        })
 
         let observable: Observable<Project[]>;
         if (this.isCustomer) {
