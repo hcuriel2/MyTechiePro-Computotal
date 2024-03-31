@@ -52,27 +52,23 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("ngOnDestroy");
   }
 
-  public ngOnInit(): void {
+   // Initialize the component
+   public ngOnInit(): void {
+    
+    // Subscribe to the user observable (within AuthService)
     this.authService.user.subscribe((user) => {
+      this.user = user;
+      this.changeDetectorRef.detectChanges();
       this.isProfessional = user?.userType === "Professional" ?? false;
-    });
-    let userCookie = localStorage.getItem("user");
-
-    if (!userCookie) {
-      this.authService.signOut();
-    }
-    // Checks the usertype so that clients and techies cannot go to unnecessary pages.
-    if (localStorage.getItem("user")) {
-      const user = JSON.parse(localStorage.getItem("user")!);
-      this.isProfessional = user.userType === "Professional";
-
+  
+      // Checks the userType to adjust UI elements accordingly
       const signupBtn = document.getElementById("app-menu-signup-btn");
       const joinBtn = document.getElementById("app-menu-join-btn");
       const projectBtn = document.getElementById("app-menu-project-btn");
       const userInfo = document.getElementById("app-menu-user-info");
       const toolbar = document.getElementById("app-toolbar");
       const footer = document.getElementById("footer");
-
+  
       if (signupBtn) {
         signupBtn.style.display = "none";
       }
@@ -86,13 +82,15 @@ export class AppComponent implements OnInit, OnDestroy {
         userInfo.style.display = "block";
       }
       if (toolbar && footer) {
-        if (user.userType === "Professional") {
+        if (this.user?.userType === "Professional") {
           toolbar.style.backgroundColor = "#ef0078";
           footer.style.background = "#ef0078";
         }
       }
-    }
 
+      this.changeDetectorRef.detectChanges();
+    });
+  
     console.log("ngOnInit");
   }
 

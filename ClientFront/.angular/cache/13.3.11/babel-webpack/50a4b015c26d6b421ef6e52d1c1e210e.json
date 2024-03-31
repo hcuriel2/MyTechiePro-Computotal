@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var UserType = /*#__PURE__*/(() => {\n  (function (UserType) {\n    UserType[\"Admin\"] = \"Admin\";\n    UserType[\"Professional\"] = \"Professional\";\n    UserType[\"Client\"] = \"Client\";\n  })(UserType || (UserType = {}));\n  return UserType;\n})();","map":null,"metadata":{},"sourceType":"module"}
