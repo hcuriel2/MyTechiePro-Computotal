@@ -16,11 +16,8 @@ export class AuthService {
     private readonly API_URL: string;
 
     constructor(private httpClient: HttpClient) {
-        this.userSubject = new BehaviorSubject<User | null>(
-            JSON.parse(localStorage.getItem('user') || '{}')
-        );
+        this.userSubject = new BehaviorSubject<User | null>(null);
         this.user = this.userSubject.asObservable();
-
         this.API_URL = `${environment.apiEndpoint}/auth`;
     }
 
