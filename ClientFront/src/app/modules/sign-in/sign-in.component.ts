@@ -75,6 +75,7 @@ export class SignInComponent implements OnInit {
     }
 
     public signIn(): void {
+        console.log('SignInComponent: starting sign-in process....');
         const user: User = new User();
         user.email = this.emailAddress.value;
         user.password = this.password.value;
@@ -88,6 +89,24 @@ export class SignInComponent implements OnInit {
          */
         this.authService.signIn(user).subscribe(
             (user: User) => {
+                user = user;
+                this.authService.user.subscribe((user) => {
+                    if (!user) return;
+                    console.log('Signin component user value: ', user);
+
+                    if (user.userType == 'Professional') {
+                        this.dialogRef.close(user);
+                        this.router.navigateByUrl('/projects').then(() => {
+                        })
+                    } else if (user.userType == 'Client') {
+                        this.dialogRef.close(user);
+                        this.router.navigateByUrl('/').then(() => {
+                        })
+                    } else {
+                        window.location.href = 'https://admin.mytechie.pro';
+                    }
+                })
+                /*
                 // window.location.reload();
                 console.log(user);
                 let userType = JSON.parse(localStorage.getItem("user")!).userType
@@ -127,7 +146,7 @@ export class SignInComponent implements OnInit {
                     console.log(document.cookie);
 
                     window.location.href = "https://admin.mytechie.pro";
-                }
+                }*/
             },
             (error) => {
                 if (error.status == 401 && !this.authCode.value) {
@@ -139,5 +158,26 @@ export class SignInComponent implements OnInit {
                 }
             }
         );
+    }
+
+
+    private checkSession(): void {
+        this.authService.checkSession().subscribe((userInfo) => {
+            let userType = userInfo.userType;
+
+            if (userType == 'Professional') {
+                this.router.navigateByUrl('/projects').then(() => {
+                });
+            } else if (userType == 'Client') {
+                this.router.navigateByUrl('/').then(() => {
+                });
+            } else {
+                window.location.href = "https://admin.mytechie.pro";
+            }
+
+            this.dialogRef.close(userInfo);
+        }, (error) => {
+            console.error('Failed to fetch user info', error);
+        })
     }
 }
