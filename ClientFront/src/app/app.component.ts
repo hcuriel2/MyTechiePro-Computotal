@@ -148,6 +148,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/");
   }
 
+  // Handles page routing
+  // Dependent on the userType value of the current User
+  public routeBasedOnUser(): void {
+    console.log('i got you now')
+    if (this.user?.userType === 'Professional'){
+      this.router.navigateByUrl('/projects');
+    } else {
+      this.router.navigateByUrl('/');
+    }
+  }
 
   // Redirect to about page
   public routeToAboutPage(): void {
