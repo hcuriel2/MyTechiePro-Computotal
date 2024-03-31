@@ -15,6 +15,7 @@ import { first } from "rxjs/operators";
 import { AuthService } from "./shared/services/auth.service";
 import { SignInComponent } from "./modules/sign-in/sign-in.component";
 import { Options } from "ngx-google-places-autocomplete/objects/options/options";
+import { Message } from "./shared/models/message";
 
 @Component({
   selector: "app-root",
