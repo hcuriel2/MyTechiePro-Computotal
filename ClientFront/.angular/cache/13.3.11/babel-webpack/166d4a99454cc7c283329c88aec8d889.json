@@ -1,0 +1,1 @@
+{"ast":null,"code":"export class Project {\n  constructor() {\n    this.comments = [];\n  }\n}","map":null,"metadata":{},"sourceType":"module"}

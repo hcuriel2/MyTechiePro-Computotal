@@ -31,7 +31,6 @@ export class SettingsComponent implements OnInit {
     public formDisabled = true;
     public userId = '';
     
-
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private router: Router,

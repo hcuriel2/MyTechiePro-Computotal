@@ -1,0 +1,1 @@
+{"ast":null,"code":"export class ResetPassword {\n  constructor(password, confirmPassword) {\n    this.password = password;\n    this.confirmPassword = confirmPassword;\n  }\n}","map":null,"metadata":{},"sourceType":"module"}

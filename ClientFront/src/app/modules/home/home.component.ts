@@ -68,11 +68,35 @@ public ngOnInit(): void {
       this.isProfessional = userData.userType === "Professional";
       this.isCustomer = userData.userType === "Client";
 
+/**
+ * Initialize the component by subscribing to user updates and
+ * routing based on the user's role.
+ */
+public ngOnInit(): void {
+  // Fetch static data needed for the component.
+  this.getStaticData();
+
+  
+  // Subscribe to the AuthService to get the user data
+  this.authService.user.subscribe((userData: User | null) => {
+    if (userData) {
+      this.user = userData;
+      this.isProfessional = userData.userType === "Professional";
+      this.isCustomer = userData.userType === "Client";
+
       this.changeDetectorRef.detectChanges();
 
-      if (!userData){
-        console.log('no user data in authservice sub in home component')
-      } 
+      // Use setTimeout to delay redirection logic to the end of the event loop,
+      // allowing the initial view to render first.
+      setTimeout(() => {
+        // Redirect professionals to the projects page
+        if (this.isProfessional) {
+          this.router.navigate(["/projects"]);
+        }
+      });
+    }
+  });
+}
 
       // Use setTimeout to delay redirection logic to the end of the event loop,
       // allowing the initial view to render first.

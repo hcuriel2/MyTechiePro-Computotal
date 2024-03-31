@@ -54,14 +54,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Initialize the component
   public ngOnInit(): void {
-    
+
     // Subscribe to the user observable (within AuthService)
     this.authService.user.subscribe((user) => {
-      console.log('APP COMPONENT TS SUBSCRIBER', user)
       this.user = user;
       this.changeDetectorRef.detectChanges();
       this.isProfessional = user?.userType === "Professional" ?? false;
-  
+
       // Checks the userType to adjust UI elements accordingly
       const signupBtn = document.getElementById("app-menu-signup-btn");
       const joinBtn = document.getElementById("app-menu-join-btn");
@@ -89,10 +88,9 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
 
+
       this.changeDetectorRef.detectChanges();
     });
-  
-    console.log("ngOnInit");
   }
   
   /**
@@ -109,31 +107,16 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("something");
   }
 
-  /*
-  // Signs in a User
-  // Opens sign-in dialog
-  // Display pop-up on success or fail
-  public signIn(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-
-    this.dialog.open(SignInComponent, dialogConfig).afterClosed().subscribe((result) => {
-        if (result === 'success') {
-          this.snackbar.open('Sign in successful', 'Close', {
-            duration: 2000
-          });
-        } else {
-            this.snackbar.open('Sign in failed', 'Close', {
-              duration: 2000
-            });
-        }
-    });
-  }
-*/
-
-public signIn(): void {
-  const dialogConfig = new MatDialogConfig();
+  // Signs out the user and redirects to homepage
+  public signOut(): void {
+    const keys = ["Message.LoggedOut", "Dictionary.OK"];
+    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    this.translateService
+      .get(keys)
+      .pipe(first())
+      .subscribe((translations) => {
+        this.snackbar.open(translations[keys[0]], translations[keys[1]]);
+      });
 
   dialogConfig.disableClose = true;
   dialogConfig.autoFocus = true;
@@ -167,78 +150,11 @@ public signOut(): void {
   });
 }
 
-  // Delete this -- say that after modifying the auth.service.ts to use the getUserInfo function to access the '/userInfo' endpoint to retrieve user information and assigning it to userSubject
-  /*
-  // Returns user information
-  private fetchUserInfo(): void {
-    this.authService.getUserInfo().subscribe({
-      next: (validatedUser) => {
-        this.user = validatedUser;
-        this.isProfessional = this.user?.userType === 'Professional' ?? false;
-      },
-      error: () => {
-        this.user = null;
-      }
-    })
-  }
-  */
-
-  /*
-  // Signs out a User
-  // Handle the successful sign out by resetting User state
-  // Displays pop-ups on signout success/failure
-  public signOut(): void {
-    this.authService.signOut().subscribe({
-      next: () => {
-        this.user = null;
-        this.isProfessional = false;
-        this.changeDetectorRef.detectChanges();
-
-        this.router.navigateByUrl('/').then(() => {
-          this.snackbar.open('Sign out successful', 'Close', {
-            duration: 2000
-          });
-        });
-      },
-      error: (error) => {
-        this.snackbar.open('Sign out failed', 'Close', {
-          duration: 2000
-        });
-      }
-    });
-  }
-  */
-
   // Navigates to the Home page
   public routeToHomePage(): void {
     this.router.navigateByUrl("/");
   }
 
-
-
-
-  /* DELETE THIS - commit msg -- removed dependencies on localStorage -- rewrote the function to access the User's information which is store in the this.user and userSubject. I also removed the window.location.reload() from the navigation as its redundant. NavigateByURL changes the UI without having to refresh the page - better user experience. Also removed redundant redirects.
-    NEW FUNCTION BELOW
-
-  /Navigates to the URL based on the user type stored inside of localstorage.
-  public routeBasedOnUser(): void {
-    if (localStorage.getItem("user") == null) {
-      this.router.navigateByUrl("/").then(() => {
-        //window.location.reload();
-      });
-    } else if (
-      JSON.parse(localStorage.getItem("user")!).userType == "Professional"
-    ) {
-      this.router.navigateByUrl("/projects").then(() => {
-        //window.location.reload();
-      });
-    } else {
-      this.router.navigateByUrl("/").then(() => {
-        //window.location.reload();
-      });
-    }
-  }
-*/
 
    // Handles page routing
   // Dependent on the userType value of the current User
@@ -301,24 +217,4 @@ public signOut(): void {
     this.router.navigateByUrl("/pro-profile");
   }
 
-
 }
-
-
-
-/* DELETE THIS -- commit msg -- Deleted unused code. The new implementation used httpOnly cookies, which cannot be accessed by client-side javascript
-function getCookie(cname: string) {
-  let name = cname + "=";
-  let ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == " ") {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-*/

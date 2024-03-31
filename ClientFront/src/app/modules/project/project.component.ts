@@ -42,27 +42,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     private destroyed: Subject<void>;
 
-    // project = {
-    //     state: 'Requested', // Requested, Accepted, Completed
-    //     serviceCategory: 'Hardware',
-    //     serviceSubCategory: 'Personal computers (PCs) repair',
-    //     dateCreated: new Date('2021-05-12T07:58:54.299+00:00'),
-    //     dateCompleted: undefined,
-    //     techID: 124,
-    //     techName: 'Generic Company',
-    //     customerID: 125,
-    //     customerName: 'Generic Customer',
-    //     billingCost: '$50',
-    //     billingType: 'hourly',
-    //     billingStatus: 'Pending',
-    //     messages: [
-    //         { senderID: 100, message: 'Hello' },
-    //         { senderID: 124, message: 'Whaddup' },
-    //         { senderID: 100, message: 'I need help.' },
-    //         { senderID: 124, message: 'Ok sure.' },
-    //     ],
-    // };
-
     message = '';
 
     constructor(
@@ -88,12 +67,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
             }
         })
 
-        /*
-        this.authService.user.subscribe((u: User | null) => {
-            this.isCustomer = u?.userType === UserType.Client;
-            this.user = u;
-        });
-        */
        
         this.messageInput = new FormControl(null);
         this.formGroup = new FormGroup({

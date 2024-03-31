@@ -1,0 +1,1 @@
+{"ast":null,"code":"export let Constants = /*#__PURE__*/(() => {\n  class Constants {}\n  Constants.ShortDuration = 3000;\n  Constants.LongDuration = 6000;\n  return Constants;\n})();","map":null,"metadata":{},"sourceType":"module"}

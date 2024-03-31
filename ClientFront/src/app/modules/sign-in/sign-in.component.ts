@@ -94,6 +94,7 @@ export class SignInComponent implements OnInit {
                     if (!user) return;
                     console.log('Signin component user value: ', user);
 
+
                     if (user.userType == 'Professional') {
                         this.dialogRef.close(user);
                         this.router.navigateByUrl('/projects').then(() => {
@@ -106,47 +107,6 @@ export class SignInComponent implements OnInit {
                         window.location.href = 'https://admin.mytechie.pro';
                     }
                 })
-                /*
-                // window.location.reload();
-                console.log(user);
-                let userType = JSON.parse(localStorage.getItem("user")!).userType
-                if(userType == "Professional") {
-
-                    let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-                    let cookieName = "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-                    document.cookie = cookieName;
-                    console.log(cookieName);
-                    console.log(document.cookie);
-           
-                    this.dialogRef.close(user);
-                    this.router.navigateByUrl('/projects')
-                    .then(() => {
-                        window.location.reload();
-                    });
-                } else if (userType == "Client") {
-
-                    let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-                    let cookieName = "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-                    document.cookie = cookieName;
-                    console.log(cookieName);
-                    console.log(document.cookie);
-                    
-                    this.dialogRef.close(user);
-                    this.router.navigateByUrl('/')
-                    .then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    
-                    let user = JSON.stringify(localStorage.getItem("user"));
-
-                    let cookieName = "user=" + user + ";" + "domain=mytechie.pro;";
-                    document.cookie = cookieName;
-                    console.log(cookieName);
-                    console.log(document.cookie);
-
-                    window.location.href = "https://admin.mytechie.pro";
-                }*/
             },
             (error) => {
                 if (error.status == 401 && !this.authCode.value) {

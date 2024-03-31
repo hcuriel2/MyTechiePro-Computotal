@@ -68,17 +68,6 @@ export class ProjectsListComponent implements OnInit {
             }
         })
 
-        /*
-
-        if(JSON.parse(localStorage.getItem("user")!).userType == "Professional") {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', "red");
-        } else {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', "blue");
-        }
-
-        */
 
         let observable: Observable<Project[]>;
         if (this.isCustomer) {
@@ -150,64 +139,3 @@ export class ProjectsListComponent implements OnInit {
         this.isCustomer = !this.isCustomer;
     }
 }
-
-// export interface Project {
-//     projectID: number;
-//     status?: string;
-//     dateCreated: Date;
-//     dateCompleted?: Date;
-// }
-
-// const PROJECT_DATA: Project[] = [
-//     {
-//         projectID: 1,
-//         status: 'Accepted',
-//         dateCreated: new Date(),
-//         dateCompleted: undefined,
-//     },
-//     {
-//         projectID: 2,
-//         status: 'Accepted',
-//         dateCreated: new Date(),
-//         dateCompleted: undefined,
-//     },
-//     {
-//         projectID: 3,
-//         status: 'Dropped',
-//         dateCreated: new Date(),
-//         dateCompleted: undefined,
-//     },
-//     {
-//         projectID: 4,
-//         status: 'Completed',
-//         dateCreated: new Date(),
-//         dateCompleted: new Date(),
-//     },
-//     {
-//         projectID: 5,
-//         status: 'Completed',
-//         dateCreated: new Date(),
-//         dateCompleted: new Date(),
-//     },
-//     {
-//         projectID: 6,
-//         status: 'Completed',
-//         dateCreated: new Date(),
-//         dateCompleted: new Date(),
-//     },
-// ];
-
-// const PROJECT_DATA_REQUEST: Project[] = [
-//     {
-//         projectID: 1,
-//         dateCreated: new Date(),
-//     },
-//     {
-//         projectID: 2,
-//         dateCreated: new Date(),
-//     },
-//     {
-//         projectID: 3,
-//         dateCreated: new Date(),
-//     },
-// ];

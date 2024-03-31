@@ -26,19 +26,17 @@ export class AuthService {
         return this.userSubject.value;
     }
 
-    // Register a new User
-    public registerUser(user: User): Observable<User> {
-        return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
-    }
-    
-    // Signs in a User
+// Register a new User
+public registerUser(user: User): Observable<User> {
+    return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
+}
+
+// Signs in a User
     // Assigns the User's values to the UserSubject
     // It's then accessible through the 'this.user' value
     public signIn(user: User): Observable<User> {
-        console.log('AUTH SERVICE - sign in called');
          return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
           tap((user: User) => {
-            console.log('AUTH SERVICESignIn: User signed in', user);
             this.userSubject.next(user);
           }),
           switchMap(() => this.checkSession())
@@ -56,7 +54,6 @@ export class AuthService {
     public signOut(): Observable<any> {
         return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
             tap(() => {
-                console.log('Signout: user signed out');
                 this.userSubject.next(null);
             })
         )
@@ -65,10 +62,9 @@ export class AuthService {
     // Retrieves the User information from the database
     // Passes it into the userSubject - which allows the UI to be applied from the User values
     public checkSession(): Observable<User> {
-        console.log('CHECK SESSION - Fetching user info');
+
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
-                console.log('CHECK SESSION UserInfo: Received user info', user);
                 this.userSubject.next(user);
             })
         );

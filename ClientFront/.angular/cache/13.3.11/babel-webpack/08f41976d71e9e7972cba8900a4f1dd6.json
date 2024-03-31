@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { MetadataStorage } from './MetadataStorage';\n/**\n * Default metadata storage is used as singleton and can be used to storage all metadatas.\n */\nexport const defaultMetadataStorage = new MetadataStorage();\n//# sourceMappingURL=storage.js.map","map":null,"metadata":{},"sourceType":"module"}
