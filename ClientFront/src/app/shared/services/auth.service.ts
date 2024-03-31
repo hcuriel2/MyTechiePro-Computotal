@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user';
 import { MfaDto } from '../models/mfaDto';
@@ -25,52 +25,56 @@ export class AuthService {
         return this.userSubject.value;
     }
 
-    public registerUser(user: User): Observable<User> {
-        return this.httpClient
-            .post<User>(`${this.API_URL}/register`, user)
-            .pipe(
-                map((user: User) => {
-                    localStorage.setItem('user', JSON.stringify(user));
-                    this.userSubject.next(user);
-                    return user;
-                })
-            );
-    }
+// Register a new User
+public registerUser(user: User): Observable<User> {
+    return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
+}
 
-    public verifyMFA(id: string, token: string): Observable<Boolean> {
-        return this.httpClient
-            .post<Boolean>(`${this.API_URL}/verifyMfa`, {id, token});
-    }
-
-    public setupMFA(id: string, email: string): Observable<MfaDto> {
-        return this.httpClient
-            .post<MfaDto>(`${this.API_URL}/setupMfa`, {id, email});
-    }
-
-    public resetMFA(id: string): Observable<MfaDto> {
-        return this.httpClient
-            .post<MfaDto>(`${this.API_URL}/resetMfa`, {id});
-    }
-
+// Signs in a User
+    // Assigns the User's values to the UserSubject
+    // It's then accessible through the 'this.user' value
     public signIn(user: User): Observable<User> {
-        return this.httpClient.post<User>(`${this.API_URL}/login`, user).pipe(
-            map((user: User) => {
-                localStorage.setItem('user', JSON.stringify(user));
-                this.userSubject.next(user);
-                return user;
-            })
+         return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
+          tap((user: User) => {
+            this.userSubject.next(user);
+          }),
+          switchMap(() => this.checkSession())
         );
     }
-
     // Modified the function - it needs to be a POST request in order to be secure
     public sendEmailResetPw(emailAddress: string): Observable<any> {
         const body = { emailAddress };
-        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body);
+        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body, { withCredentials: true });
     }
 
+    // Signs out the User
+    // Updates the userSubject null, so no User values remain
+    public signOut(): Observable<any> {
+        return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
+            tap(() => {
+                console.log('Signout: user signed out');
+                this.userSubject.next(null);
+            })
+        )
+    }
 
-    public signOut(): void {
-        localStorage.removeItem('user');
-        this.userSubject.next(null);
+    // Retrieves the User information from the database
+    // Passes it into the userSubject - which allows the UI to be applied from the User values
+    public checkSession(): Observable<User> {
+        console.log('CHECK SESSION - Fetching user info');
+        return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
+            tap((user: User) => {
+                console.log('CHECK SESSION UserInfo: Received user info', user);
+                this.userSubject.next(user);
+            })
+        );
+    }
+      
+
+    // Updates the User's information on the 'settings' page
+    // All changes will update the User entry in the database
+    updateUserSettings(userId: string, updates: any): Observable<any> {
+        return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates);
     }
 }
+
