@@ -1,0 +1,43 @@
+/* user.controller.ts */
+
+
+
+
+getUserById
+    - do I need to perform checks --> look into where this is called and how to properly modify it
+
+
+getAllUsers
+    - not sure what the intended use behind this is
+
+
+
+getAllAdmins
+    - modify to pull from the admin collection
+
+
+getAllProfessionals
+    - modify to pull from the pro collection
+
+
+resetPassword
+    - may need a function for pro, client, admin --> tbd depending on frontend approval
+
+
+
+changeStatus
+    - should pull from pro collection
+
+
+deleteUser
+    - should delete from a specified collection
+
+
+
+approveUser
+    - should approve pro accounts - doesn't need to check customers
+
+
+verifyUserEmail
+    - may need multiple functions to accomplish this
+

@@ -25,23 +25,7 @@ export class ProjectService {
           .pipe(map((project) => plainToClass(Project, project)));
       }
 
-    public create(
-        categoryId: string,
-        serviceId: string,
-        serviceName: string,
-        professionalId: string,
-        clientId: string
-    ): Observable<Project> {
-        return this.httpClient
-            .post<Project>(this.API_URL, {
-                categoryId,
-                serviceId,
-                serviceName,
-                professionalId,
-                clientId,
-            })
-            .pipe(map((project: Project) => plainToClass(Project, project)));
-    }
+    
 
     public getAll(): Observable<Project[]> {
         return this.httpClient
@@ -65,6 +49,24 @@ export class ProjectService {
         return this.httpClient
             .get<Project[]>(`${this.API_URL}/professional/${professionalId}`)
             .pipe(map((projects) => plainToClass(Project, projects)));
+    }
+
+    public create(
+        categoryId: string,
+        serviceId: string,
+        serviceName: string,
+        professionalId: string,
+        clientId: string
+    ): Observable<Project> {
+        return this.httpClient
+            .post<Project>(this.API_URL, {
+                categoryId,
+                serviceId,
+                serviceName,
+                professionalId,
+                clientId,
+            }, { withCredentials: true })
+            .pipe(map((project: Project) => plainToClass(Project, project)));
     }
 
     public startProject(

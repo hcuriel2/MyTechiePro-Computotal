@@ -21,6 +21,7 @@ export class AuthService {
         this.API_URL = `${environment.apiEndpoint}/auth`;
     }
 
+    // Retrieves the current User's values
     public get userValue(): User | null {
         return this.userSubject.value;
     }
@@ -41,7 +42,7 @@ public registerUser(user: User): Observable<User> {
           switchMap(() => this.checkSession())
         );
     }
-    
+
     // Modified the function - it needs to be a POST request in order to be secure
     public sendEmailResetPw(emailAddress: string): Observable<any> {
         const body = { emailAddress };
@@ -61,12 +62,14 @@ public registerUser(user: User): Observable<User> {
     // Retrieves the User information from the database
     // Passes it into the userSubject - which allows the UI to be applied from the User values
     public checkSession(): Observable<User> {
+
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
                 this.userSubject.next(user);
             })
         );
     }
+      
 
     // Updates the User's information on the 'settings' page
     // All changes will update the User entry in the database

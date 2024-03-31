@@ -68,7 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const userInfo = document.getElementById("app-menu-user-info");
       const toolbar = document.getElementById("app-toolbar");
       const footer = document.getElementById("footer");
-
+  
       if (signupBtn) {
         signupBtn.style.display = "none";
       }
@@ -88,12 +88,11 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
 
+
       this.changeDetectorRef.detectChanges();
     });
-
-    console.log("ngOnInit");
   }
-
+  
   /**
    * Assigns the user's latitude, longitude, and formatted address.
    * @param address
@@ -108,24 +107,6 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("something");
   }
 
-  // Opens sign-in dialog, logs user in if information is valid, logs an error if information is invalid
-  public signIn(): void {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-
-    this.dialog
-      .open(SignInComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((user: User) => {
-        if (user != null) {
-        } else {
-          console.log("sign-in failed");
-        }
-      });
-  }
-
   // Signs out the user and redirects to homepage
   public signOut(): void {
     const keys = ["Message.LoggedOut", "Dictionary.OK"];
@@ -137,22 +118,49 @@ export class AppComponent implements OnInit, OnDestroy {
         this.snackbar.open(translations[keys[0]], translations[keys[1]]);
       });
 
-    this.authService.signOut();
+  dialogConfig.disableClose = true;
+  dialogConfig.autoFocus = true;
 
-    this.router.navigateByUrl("/").then(() => {
-      window.location.reload();
+  this.dialog
+    .open(SignInComponent, dialogConfig)
+    .afterClosed()
+    .subscribe((user: User) => {
+      if (user != null) {
+      } else {
+        console.log("sign-in failed");
+      }
     });
-  }
+}
 
+
+public signOut(): void {
+  const keys = ["Message.LoggedOut", "Dictionary.OK"];
+  document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  this.translateService
+    .get(keys)
+    .pipe(first())
+    .subscribe((translations) => {
+      this.snackbar.open(translations[keys[0]], translations[keys[1]]);
+    });
+
+  this.authService.signOut();
+
+  this.router.navigateByUrl("/").then(() => {
+    window.location.reload();
+  });
+}
+
+  // Navigates to the Home page
   public routeToHomePage(): void {
     this.router.navigateByUrl("/");
   }
 
-  // Handles page routing
+
+   // Handles page routing
   // Dependent on the userType value of the current User
   public routeBasedOnUser(): void {
     console.log('i got you now')
-    if (this.user?.userType === 'Professional') {
+    if (this.user?.userType === 'Professional'){
       this.router.navigateByUrl('/projects');
     } else {
       this.router.navigateByUrl('/');
@@ -186,7 +194,7 @@ export class AppComponent implements OnInit, OnDestroy {
         window.location.reload();
       });
   }
-  // Redirect to sign up page for technichian
+  // Redirect to sign up page for professional
   public joinPro(): void {
     this.router
       .navigate(["/sign-up"], {
@@ -199,12 +207,14 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Navigates to the User's settings page
   public settings(): void {
     this.router.navigateByUrl("/settings");
   }
 
-
+  // Navigates to Professional's profile
   public navigateToProProfile(): void {
     this.router.navigateByUrl("/pro-profile");
   }
+
 }

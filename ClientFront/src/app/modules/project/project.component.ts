@@ -66,6 +66,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                 this.user = user;
             }
         })
+
        
         this.messageInput = new FormControl(null);
         this.formGroup = new FormGroup({

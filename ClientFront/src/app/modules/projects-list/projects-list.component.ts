@@ -68,6 +68,7 @@ export class ProjectsListComponent implements OnInit {
             }
         })
 
+
         let observable: Observable<Project[]>;
         if (this.isCustomer) {
             observable = this.projectService.getByClientId(

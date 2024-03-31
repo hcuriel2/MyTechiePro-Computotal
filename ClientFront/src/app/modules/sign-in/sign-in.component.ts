@@ -94,6 +94,7 @@ export class SignInComponent implements OnInit {
                     if (!user) return;
                     console.log('Signin component user value: ', user);
 
+
                     if (user.userType == 'Professional') {
                         this.dialogRef.close(user);
                         this.router.navigateByUrl('/projects').then(() => {

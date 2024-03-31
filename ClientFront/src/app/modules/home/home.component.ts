@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  ElementRef,
-  HostListener,
-} from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { first } from "rxjs/operators";
 import { CategoryEnum } from "src/app/shared/enums/Category.enum";
@@ -12,8 +6,9 @@ import { Category } from "src/app/shared/models/category";
 import { Service } from "src/app/shared/models/service";
 import { CategoryService } from "src/app/shared/services/category.service";
 import { Ng2SearchPipe } from "ng2-search-filter";
-import { User } from "src/app/shared/models/user";
+import { User } from 'src/app/shared/models/user';
 import { AuthService } from "src/app/shared/services/auth.service";
+
 
 @Component({
   selector: "app-home",
@@ -22,7 +17,7 @@ import { AuthService } from "src/app/shared/services/auth.service";
 })
 export class HomeComponent implements OnInit {
   public user: User | null = null;
-  public isCustomer: boolean | null = null;
+  public isCustomer: boolean | null = null; 
   isProfessional: boolean = false;
   public categories: Category[];
   public readonly CATEGORY_ENUM: typeof CategoryEnum;
@@ -34,8 +29,7 @@ export class HomeComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
-    private categoryService: CategoryService,
-    private elementRef: ElementRef
+    private categoryService: CategoryService
   ) {
     this.CATEGORY_ENUM = CategoryEnum;
     this.route.queryParams.subscribe((params) => {
@@ -54,23 +48,25 @@ export class HomeComponent implements OnInit {
         return true; // Found a matching result
       }
     }
+
     return false; // No matching results found for this category
   }
 
-  public noResult(): boolean {
-    for (const category of this.categories) {
-      if (this.hasMatchingResults(category)) {
-        return false; // Found a matching result in at least one category
-      }
-    }
-    return true; // No matching results found in any category
-  }
+/**
+ * Initialize the component by subscribing to user updates and
+ * routing based on the user's role.
+ */
+public ngOnInit(): void {
+  // Fetch static data needed for the component.
+  this.getStaticData();
 
-  // Function to clear the search input
-  public clearSearchInput(): void {
-    this.searchQuery = "";
-    this.showResults = false;
-  }
+  
+  // Subscribe to the AuthService to get the user data
+  this.authService.user.subscribe((userData: User | null) => {
+    if (userData) {
+      this.user = userData;
+      this.isProfessional = userData.userType === "Professional";
+      this.isCustomer = userData.userType === "Client";
 
 /**
  * Initialize the component by subscribing to user updates and
@@ -102,13 +98,21 @@ public ngOnInit(): void {
   });
 }
 
-  @HostListener("document:click", ["$event"])
-  onClick(event: MouseEvent) {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      // Clicked outside the search container, hide results
-      this.showResults = false;
+      // Use setTimeout to delay redirection logic to the end of the event loop,
+      // allowing the initial view to render first.
+      setTimeout(() => {
+        // Redirect professionals to the projects page
+        if (this.isProfessional) {
+          this.router.navigate(["/projects"]);
+        }
+      });
     }
-  }
+  });
+}
+
+
+
+  
 
   // Search bar method, redirects to tech select when category is selected
   public selectService(
