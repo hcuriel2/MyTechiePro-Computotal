@@ -52,7 +52,6 @@ public registerUser(user: User): Observable<User> {
     public signOut(): Observable<any> {
         return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
             tap(() => {
-                console.log('Signout: user signed out');
                 this.userSubject.next(null);
             })
         )
@@ -61,10 +60,8 @@ public registerUser(user: User): Observable<User> {
     // Retrieves the User information from the database
     // Passes it into the userSubject - which allows the UI to be applied from the User values
     public checkSession(): Observable<User> {
-        console.log('CHECK SESSION - Fetching user info');
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
-                console.log('CHECK SESSION UserInfo: Received user info', user);
                 this.userSubject.next(user);
             })
         );
