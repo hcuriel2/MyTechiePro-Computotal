@@ -1,177 +1,192 @@
-<div class="my-3">
+<div class="container my-3">
   <mat-card>
     <mat-card-content [formGroup]="formGroup">
-      <div class="d-flex flex-column">
-        <mat-card-title class="mb-3" *ngIf="!forPro">
-          <strong>{{ "Dictionary.SignUp" | translate }}</strong>
-        </mat-card-title>
-        <mat-card-title class="mb-3" *ngIf="forPro">
-          <strong>{{ "Label.JoinPro" | translate }}</strong>
-        </mat-card-title>
-
-        <h2>{{ "Label.BasicInfo" | translate }}</h2>
-        <div class="d-flex flex-row">
-          <div class="px-2">
-            <mat-form-field appearance="outline">
-              <mat-label>{{ "Label.FirstName" | translate }}</mat-label>
-              <input
-                matInput
-                formControlName="firstName"
-                type="text"
-                required
-              />
-            </mat-form-field>
-          </div>
-          <div class="px-2">
-            <mat-form-field appearance="outline">
-              <mat-label>{{ "Label.LastName" | translate }}</mat-label>
-              <input matInput formControlName="lastName" type="text" required />
-            </mat-form-field>
-          </div>
+      <div class="row">
+        <div class="col-md-12">
+          <mat-card-title class="mb-3" *ngIf="!forPro">
+            <strong>{{ "Dictionary.SignUp" | translate }}</strong>
+          </mat-card-title>
+          <mat-card-title class="mb-3" *ngIf="forPro">
+            <strong>{{ "Label.JoinPro" | translate }}</strong>
+          </mat-card-title>
         </div>
-        <div class="px-2">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ "Label.Email" | translate }}</mat-label>
-            <input
-              matInput
-              placeholder="computotal@it.com"
-              formControlName="emailAddress"
-              type="email"
-              required
-            />
-          </mat-form-field>
-        </div>
-        <div class="px-2">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ "Label.Password" | translate }}</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              type="password"
-              required
-            />
-            <div id="error-message">
-              <mat-error
-                *ngIf="
-                  formGroup.get('password')?.touched &&
-                  formGroup.hasError('required', 'password')
-                "
-              >
-                {{ "Warning.PasswordRequired" | translate }}
-              </mat-error>
-              <mat-error *ngIf="formGroup.hasError('pattern', 'password')">
-                {{ "Warning.PasswordComplexity" | translate }}
-              </mat-error>
-              <mat-error *ngIf="formGroup.hasError('minlength', 'password')">
-                {{ "Warning.PasswordTooShort" | translate }}
-              </mat-error>
-              <mat-error *ngIf="formGroup.hasError('maxlength', 'password')">
-                {{ "Warning.PasswordTooLong" | translate }}
-              </mat-error>
-            </div>
-          </mat-form-field>
-        </div>
-        <div class="px-2">
-          <mat-form-field appearance="outline">
-            <mat-label>
-              {{ "Label.ConfirmPassword" | translate }}
-            </mat-label>
+      </div>
 
-            <input
-              matInput
-              formControlName="confirmPassword"
-              type="password"
-              required
-            />
-
-            <mat-error *ngIf="confirmPassword?.hasError('notSame')">
-              {{ "Warning.PasswordNotMatch" | translate }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <hr />
-
-        <h2>{{ "Label.UserDetails" | translate }}</h2>
-        <div class="px-2">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ "Label.PhoneNumber" | translate }}</mat-label>
-            <input
-              matInput
-              mask="(000) 000-0000"
-              formControlName="phoneNumber"
-              [showMaskTyped]="true"
-              required
-            />
-          </mat-form-field>
-        </div>
-        <div class="px-2">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ "Label.CompanyName" | translate }}</mat-label>
-            <input
-              matInput
-              formControlName="companyName"
-              type="text"
-              required
-            />
-          </mat-form-field>
-        </div>
-
-        <div *ngIf="forPro" class="mt-4">
-          <h2>{{ "Label.ProDetails" | translate }}</h2>
-          <div class="d-flex flex-row">
-            <div class="px-1">
-              <mat-form-field appearance="outline">
-                <!-- Change to dropdown: hourly, flat fee, source-->
-                <mat-label>{{ "Label.RateType" | translate }}</mat-label>
-                <!-- When switching to drop down menu accounts cannot be made need
-                                    to look for error, possibly type of value is wrong? -->
-                <mat-select
-                  name="Rate Type"
-                  id="RateType"
-                  formControlName="unitType"
-                >
-                  <mat-option value="Hour">Hour</mat-option>
-                  <mat-option value="Flat fee">Flat fee</mat-option>
-                </mat-select>
-                <!-- <input
-                                    matInput
-                                    formControlName="unitType"
-                                    type="text"
-                                    required
-                                /> -->
-              </mat-form-field>
-            </div>
-            <div class="px-1">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ "Label.RateValue" | translate }}</mat-label>
+      <div class="row">
+        <div class="col-sm-6 col-md-12 col-lg-12">
+          <h2>{{ "Label.BasicInfo" | translate }}</h2>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.FirstName" | translate }}</mat-label>
                 <input
                   matInput
-                  formControlName="unitPrice"
+                  formControlName="firstName"
+                  type="text"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.LastName" | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="lastName"
                   type="text"
                   required
                 />
               </mat-form-field>
             </div>
           </div>
-          <br />
-          <h2>{{ "Label.SelectApplicableServices" | translate }}</h2>
-          <div *ngFor="let category of categories" class="skill-container">
-            <br />
-            <h3>{{ category.name }}</h3>
-            <div
-              class="skill-box mb-1 px-2"
-              *ngFor="let skill of category.services"
-            >
-              <label
-                ><input type="checkbox" formControlName="{{ skill.name }}" />
-                {{ skill.name }}</label
-              >
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.Email" | translate }}</mat-label>
+                <input
+                  matInput
+                  placeholder="computotal@it.com"
+                  formControlName="emailAddress"
+                  type="email"
+                  required
+                />
+              </mat-form-field>
             </div>
           </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.Password" | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="password"
+                  type="password"
+                  required
+                />
+                <div id="error-message">
+                  <mat-error
+                    *ngIf="
+                      formGroup.get('password')?.touched &&
+                      formGroup.hasError('required', 'password')
+                    "
+                  >
+                    {{ "Warning.PasswordRequired" | translate }}
+                  </mat-error>
+                  <mat-error *ngIf="formGroup.hasError('pattern', 'password')">
+                    {{ "Warning.PasswordComplexity" | translate }}
+                  </mat-error>
+                  <mat-error
+                    *ngIf="formGroup.hasError('minlength', 'password')"
+                  >
+                    {{ "Warning.PasswordTooShort" | translate }}
+                  </mat-error>
+                  <mat-error
+                    *ngIf="formGroup.hasError('maxlength', 'password')"
+                  >
+                    {{ "Warning.PasswordTooLong" | translate }}
+                  </mat-error>
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.ConfirmPassword" | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="confirmPassword"
+                  type="password"
+                  required
+                />
+                <mat-error *ngIf="confirmPassword?.hasError('notSame')">
+                  {{ "Warning.PasswordNotMatch" | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Move UserDetails section below -->
+        <div class="col-md-6 col-lg-12">
+          <h2>{{ "Label.UserDetails" | translate }}</h2>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.PhoneNumber" | translate }}</mat-label>
+                <input
+                  matInput
+                  mask="(000) 000-0000"
+                  formControlName="phoneNumber"
+                  [showMaskTyped]="true"
+                  required
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>{{ "Label.CompanyName" | translate }}</mat-label>
+                <input
+                  matInput
+                  formControlName="companyName"
+                  type="text"
+                  required
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="forPro" class="mt-4">
+        <h2>{{ "Label.ProDetails" | translate }}</h2>
+        <div class="col px-0">
+          <div class="col-sm-6 col-lg-6 px-0">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ "Label.RateType" | translate }}</mat-label>
+              <mat-select
+                name="Rate Type"
+                id="RateType"
+                formControlName="unitType"
+              >
+                <mat-option value="Hour">Hour</mat-option>
+                <mat-option value="Flat fee">Flat fee</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-6 col-lg-6 px-0">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ "Label.RateValue" | translate }}</mat-label>
+              <input
+                matInput
+                formControlName="unitPrice"
+                type="text"
+                required
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <br />
+        <h2>{{ "Label.SelectApplicableServices" | translate }}</h2>
+        <div *ngFor="let category of categories" class="skill-container">
           <br />
-          <div class="px-2">
-            <mat-form-field appearance="outline" [style.width.px]="400">
+          <h3>{{ category.name }}</h3>
+          <div
+            class="skill-box mb-1 px-2"
+            *ngFor="let skill of category.services"
+          >
+            <label
+              ><input type="checkbox" formControlName="{{ skill.name }}" />
+              {{ skill.name }}</label
+            >
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline">
               <mat-label>{{ "Dictionary.Bio" | translate }}</mat-label>
               <textarea
                 matInput
@@ -183,8 +198,10 @@
               </textarea>
             </mat-form-field>
           </div>
-          <div class="px-2">
-            <mat-form-field appearance="outline" [style.width.px]="400">
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <mat-form-field appearance="outline">
               <mat-label>{{ "Label.Website" | translate }}</mat-label>
               <input
                 matInput
@@ -195,10 +212,12 @@
             </mat-form-field>
           </div>
         </div>
+      </div>
 
-        <hr />
-        <h3>{{ "Dictionary.Address" | translate }}</h3>
-        <div class="px-2">
+      <hr />
+      <h3>{{ "Dictionary.Address" | translate }}</h3>
+      <div class="row">
+        <div class="col-md-12">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.Location" | translate }}</mat-label>
             <input
@@ -210,21 +229,26 @@
               ngx-google-places-autocomplete
               (onAddressChange)="handleAddressChange($event)"
             />
-            <!-- <input
-                            matInput
-                            formControlName="city"
-                            type="text"
-                            required
-                        /> -->
           </mat-form-field>
         </div>
-        <div class="px-2">
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-lg-6">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ "Label.Street" | translate }}</mat-label>
+            <input matInput formControlName="street" type="text" />
+          </mat-form-field>
+        </div>
+        <div class="col-md-12 col-lg-6">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.City" | translate }}</mat-label>
             <input matInput formControlName="city" type="text" id="cityField" />
           </mat-form-field>
         </div>
-        <div class="px-2">
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 col-lg-6">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.Country" | translate }}</mat-label>
             <input
@@ -235,13 +259,8 @@
             />
           </mat-form-field>
         </div>
-        <div class="px-2">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ "Label.Street" | translate }}</mat-label>
-            <input matInput formControlName="street" type="text" />
-          </mat-form-field>
-        </div>
-        <div class="px-2">
+
+        <div class="col-md-12 col-lg-6">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.PostalCode" | translate }}</mat-label>
             <input
