@@ -29,6 +29,24 @@
     </button>
   </div>
 
+
+
+
+  <div class="filter-options text-center mb-3">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "Sort By" | translate }}</mat-label>
+      <mat-select [(ngModel)]="sortOption" (selectionChange)="sortProfessionals()">
+        <mat-option value="ratingDesc">{{ "By Rating: High To Low" | translate }}</mat-option>
+        <mat-option value="ratingAsc">{{ "By Rating: Low To High" | translate }}</mat-option>
+        <mat-option value="priceDesc">{{ "By Price: High To Low" | translate }}</mat-option>
+        <mat-option value="priceAsc">{{ "By Price: Low To High" | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  
+
+
   <div *ngIf="isFeedbackVisible" id="search-feedback">{{ searchFeedback }}</div>
 
   <div class="row" *ngIf="isCardListVisible">

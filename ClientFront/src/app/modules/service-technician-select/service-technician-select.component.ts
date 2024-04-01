@@ -245,12 +245,42 @@ export class ServiceTechnicianSelectComponent implements OnInit {
         }
     }
 
+
+
+    public sortOption: string = 'ratingDesc'; 
+
+    public sortProfessionals(): void {
+        this.filteredProfessionals.sort((a, b) => {
+          // Handle cases where ratingCount is 0 or null by treating these professionals as having a rating of 0
+          const ratingA = a.ratingCount > 0 ? a.ratingSum / a.ratingCount : 0;
+          const ratingB = b.ratingCount > 0 ? b.ratingSum / b.ratingCount : 0;
+      
+          // Adjust sort order based on the selected sort option
+          switch (this.sortOption) {
+            case 'ratingDesc':
+              return ratingB - ratingA;
+            case 'ratingAsc':
+              return ratingA - ratingB;
+            case 'priceDesc':
+              return b.unitPrice - a.unitPrice;
+            case 'priceAsc':
+              return a.unitPrice - b.unitPrice;
+            default:
+              return 0; 
+          }
+        });
+      
+        this.changeDetectorRef.markForCheck(); 
+      }
+      
+
     /**
      * Toggle the showMore button visibility and displays all current professionals.
      */
-    public showMore(){
+    public showMore() {
         this.isShowMoreBtnVisible = false;
-        this.filteredProfessionals = this.professionals;
+        this.filteredProfessionals = [...this.professionals]; 
+        this.sortProfessionals(); 
     }
 
     /**
