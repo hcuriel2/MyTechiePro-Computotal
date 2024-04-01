@@ -176,8 +176,20 @@
             *ngFor="let skill of category.services"
           >
             <label
-              ><input type="checkbox" formControlName="{{ skill.name }}" />
-              {{ skill.name }}</label
+              [ngClass]="{
+                'disabled-label':
+                  getSelectedSkillsCount() >= 3 &&
+                  !formGroup.get(skill.name)?.value
+              }"
+            >
+              <label
+                ><input
+                  type="checkbox"
+                  formControlName="{{ skill.name }}"
+                  (click)="onSkillCheckboxClicked(skill.name)"
+                />
+                {{ skill.name }}</label
+              ></label
             >
           </div>
         </div>
