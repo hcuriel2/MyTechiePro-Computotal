@@ -21,7 +21,7 @@ import { Message } from "./shared/models/message";
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit, OnDestroy {
   public user: User | null | undefined;
@@ -54,14 +54,50 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Initialize the component
   public ngOnInit(): void {
-    
+    this.authService.checkSession().subscribe({
+      next: (user) => {
+        console.log('before setting user', this.user)
+        this.user = user;
+        console.log('after setting user', this.user);
+      this.changeDetectorRef.detectChanges();
+      this.isProfessional = user?.userType === "Professional" ?? false;
+
+      // Checks the userType to adjust UI elements accordingly
+      const signupBtn = document.getElementById("app-menu-signup-btn");
+      const joinBtn = document.getElementById("app-menu-join-btn");
+      const projectBtn = document.getElementById("app-menu-project-btn");
+      const userInfo = document.getElementById("app-menu-user-info");
+      const toolbar = document.getElementById("app-toolbar");
+      const footer = document.getElementById("footer");
+  
+      if (signupBtn) {
+        signupBtn.style.display = "none";
+      }
+      if (joinBtn) {
+        joinBtn.style.display = "none";
+      }
+      if (projectBtn) {
+        projectBtn.style.display = "block";
+      }
+      if (userInfo) {
+        userInfo.style.display = "block";
+      }
+      if (toolbar && footer) {
+        if (this.user?.userType === "Professional") {
+          toolbar.style.backgroundColor = "#ef0078";
+          footer.style.background = "#ef0078";
+        }
+      }    
+      }
+    })
+
+    /*
     // Subscribe to the user observable (within AuthService)
     this.authService.user.subscribe((user) => {
-      console.log('APP COMPONENT TS SUBSCRIBER', user)
       this.user = user;
       this.changeDetectorRef.detectChanges();
       this.isProfessional = user?.userType === "Professional" ?? false;
-  
+
       // Checks the userType to adjust UI elements accordingly
       const signupBtn = document.getElementById("app-menu-signup-btn");
       const joinBtn = document.getElementById("app-menu-join-btn");
@@ -89,10 +125,9 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
 
+
       this.changeDetectorRef.detectChanges();
-    });
-  
-    console.log("ngOnInit");
+    });*/
   }
   
   /**
@@ -109,25 +144,26 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("something");
   }
 
-public signIn(): void {
-  const dialogConfig = new MatDialogConfig();
-
-  dialogConfig.disableClose = true;
-  dialogConfig.autoFocus = true;
-
-  this.dialog
-    .open(SignInComponent, dialogConfig)
-    .afterClosed()
-    .subscribe((user: User) => {
-      if (user != null) {
-      } else {
-        console.log("sign-in failed");
-      }
-    });
-}
-
+  public signIn(): void {
+    const dialogConfig = new MatDialogConfig();
+  
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+  
+    this.dialog
+      .open(SignInComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((user: User) => {
+        if (user != null) {
+        } else {
+          console.log("sign-in failed");
+        }
+      });
+  }
 
 public signOut(): void {
+  console.log('LOGOUT CALLED')
+  /*
   const keys = ["Message.LoggedOut", "Dictionary.OK"];
   document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   this.translateService
@@ -136,8 +172,14 @@ public signOut(): void {
     .subscribe((translations) => {
       this.snackbar.open(translations[keys[0]], translations[keys[1]]);
     });
-
-  this.authService.signOut();
+*/
+  this.authService.signOut().subscribe(response => {
+    console.log('APP COMPONENT SIGNOUT')
+    console.log(response);
+  },
+  error => {
+    console.log('APP COMPONENT SIGNOUT', error);
+  })
 
   this.router.navigateByUrl("/").then(() => {
     window.location.reload();
@@ -148,6 +190,7 @@ public signOut(): void {
   public routeToHomePage(): void {
     this.router.navigateByUrl("/");
   }
+
 
    // Handles page routing
   // Dependent on the userType value of the current User

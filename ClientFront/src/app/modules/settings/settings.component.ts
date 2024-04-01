@@ -42,12 +42,19 @@ export class SettingsComponent implements OnInit {
 
     // Displays homepage to client, if user is technician projects page is displayed instead
     public ngOnInit(): void {
-        this.populateForm();
+        this.user = this.authService.userValue ?? this.user;
+        if (!this.user) {
+            console.error('error user not loaded')
+            return;
+        }
+        this.populateForm(this.user);
+
+
+        let temp = this.authService.user.subscribe();
+        console.log('temp called', temp);
     }
 
-    public populateForm() {
-        this.authService.checkSession().subscribe({
-            next: (user: User | null) => {
+    public populateForm(user: User) {
                 if (user) {
                     this.userId = user._id;
                     const firstName = document.getElementById('firstName') as HTMLInputElement;
@@ -68,8 +75,6 @@ export class SettingsComponent implements OnInit {
                 }
 
 
-            }
-        })
     }
 
     enableForm(): void {

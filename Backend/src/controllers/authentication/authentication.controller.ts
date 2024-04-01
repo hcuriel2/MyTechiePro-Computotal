@@ -48,6 +48,26 @@ class AuthenticationController implements Controller {
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
         this.router.patch(`${this.path}/settings/:userId`, authMiddleware, this.updateUserSettings);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
+        this.router.get(`${this.path}/userInfo`, authMiddleware, this.getUserInfo);
+    }
+
+    private getUserInfo = async (
+        request: RequestWithUser,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const user = request.user;
+        if (!user) {
+            return next(new Error('Cannot retrieve user'));
+        }
+
+        try {
+            response.json(user);
+
+        } catch (error) {
+            next(new Error('Check session response failed'));
+
+        }
     }
 
     // Creates an HttpOnly cookie
@@ -87,9 +107,7 @@ class AuthenticationController implements Controller {
         }
 
         try {
-            console.log('\n\n\nCheck session response value:', user);
             response.json(user);
-            console.log('\n\nCheck session response sent')
 
         } catch (error) {
             next(new Error('Check session response failed'));
@@ -153,7 +171,7 @@ class AuthenticationController implements Controller {
         // Clear the cookie with matching attributes, except Max-Age which is set to expire the cookie
         response.setHeader('Set-Cookie', 'Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None');
     
-        response.status(200).json({ message: 'Logged out successfully' });
+        response.send(200);
     };
 
     // Registers a new User

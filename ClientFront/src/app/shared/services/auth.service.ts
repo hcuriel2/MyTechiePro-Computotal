@@ -23,13 +23,14 @@ export class AuthService {
 
     // Retrieves the current User's values
     public get userValue(): User | null {
+        console.log('userValue called')
         return this.userSubject.value;
     }
 
-// Register a new User
-public registerUser(user: User): Observable<User> {
-    return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
-}
+    // Register a new User
+    public registerUser(user: User): Observable<User> {
+        return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
+    }
 
 // Signs in a User
     // Assigns the User's values to the UserSubject
@@ -52,9 +53,13 @@ public registerUser(user: User): Observable<User> {
     // Signs out the User
     // Updates the userSubject null, so no User values remain
     public signOut(): Observable<any> {
+        console.log('LOGOUT AUTHSERVICE')
         return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
             tap(() => {
                 this.userSubject.next(null);
+            },
+            error => {
+                console.log('SIGNOUT ERROR', error);
             })
         )
     }
@@ -66,6 +71,7 @@ public registerUser(user: User): Observable<User> {
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
                 this.userSubject.next(user);
+                console.log('auth service user', this.userSubject);
             })
         );
     }
@@ -75,5 +81,9 @@ public registerUser(user: User): Observable<User> {
     // All changes will update the User entry in the database
     updateUserSettings(userId: string, updates: any): Observable<any> {
         return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates);
+    }
+
+    getUserInfo(): Observable<any> {
+        return this.httpClient.get(`${this.API_URL}/userInfo`, { withCredentials: true });
     }
 }
