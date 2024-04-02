@@ -118,7 +118,7 @@ export class SignInComponent implements OnInit {
         );
     }
 
-
+/*
     private checkSession(): void {
         this.authService.checkSession().subscribe((userInfo) => {
             let userType = userInfo.userType;
@@ -137,5 +137,5 @@ export class SignInComponent implements OnInit {
         }, (error) => {
             console.error('Failed to fetch user info', error);
         })
-    }
+    }*/
 }
