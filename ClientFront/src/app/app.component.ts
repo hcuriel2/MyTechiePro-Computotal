@@ -28,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
   userLatitude: string = "";
   userLongitude: string = "";
   isProfessional: boolean = false;
+  isMenuOpen: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -215,16 +216,15 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/settings");
   }
 
+  public navigateToProProfile(): void {
+    this.router.navigateByUrl("/pro-profile");
+  }
 
-public navigateToProProfile(): void {
-  this.router.navigateByUrl("/pro-profile");
+  // Function to toggle the menu on small screens
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 }
-
-
-}
-
-
-
 
 function getCookie(cname: string) {
   let name = cname + "=";
