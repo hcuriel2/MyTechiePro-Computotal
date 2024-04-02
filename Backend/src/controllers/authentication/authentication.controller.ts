@@ -8,6 +8,7 @@ import TokenData from "../../interfaces/tokenData.interface";
 import validationMiddleware from "../../middleware/validation.middleware";
 import adminMiddleware from "../../middleware/admin.middleware";
 import CreateUserDto from "../user/user.dto";
+import CreateAddressDto from "../user/address.dto";
 import User from "../../models/user/user.interface";
 import userModel from "../../models/user/user.model";
 import AuthenticationService from "./authentication.service";
@@ -22,6 +23,8 @@ import UserNotVerify from "../../exceptions/UserNotVerify";
 import authMiddleware from "../../middleware/error.middleware";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import AuthenticationTokenMissingException from "../../exceptions/AuthenticationTokenMissingException";
+import { validate, ValidationError } from "class-validator";
+
 
 class AuthenticationController implements Controller {
     public path = "/auth";
@@ -41,34 +44,17 @@ class AuthenticationController implements Controller {
     // Last parameter is a function (listed below alphabetically)
     private initializeRoutes() {
         this.router.post(`${this.path}/admin/register`, adminMiddleware, validationMiddleware(CreateUserDto), this.registration);
+        this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
         this.router.post(`${this.path}/login`,validationMiddleware(LogInDto),this.loggingIn);
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(`${this.path}/professional/register`,validationMiddleware(CreateUserDto),this.registration);
         this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto),this.registration);
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
-        this.router.patch(`${this.path}/settings/:userId`, authMiddleware, this.updateUserSettings);
+        this.router.patch(`${this.path}/settings/:id`, authMiddleware, this.updateUserSettings);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
-        this.router.get(`${this.path}/userInfo`, authMiddleware, this.getUserInfo);
+        
     }
 
-    private getUserInfo = async (
-        request: RequestWithUser,
-        response: Response,
-        next: NextFunction
-    ) => {
-        const user = request.user;
-        if (!user) {
-            return next(new Error('Cannot retrieve user'));
-        }
-
-        try {
-            response.json(user);
-
-        } catch (error) {
-            next(new Error('Check session response failed'));
-
-        }
-    }
 
     // Creates an HttpOnly cookie
     // Used to enable secure sessions
@@ -153,7 +139,8 @@ class AuthenticationController implements Controller {
                 };
                 const tokenData = this.createToken(user);
                 response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
-                response.send({ message: 'Login successful' });
+                //response.send({ message: 'Login successful' });
+                response.send(user);
                 
             } else {
                 next(new WrongCredentialsException());
@@ -232,31 +219,43 @@ class AuthenticationController implements Controller {
         });
     };
 
-// Updates User's information in the frontend '/settings' route
-// Modifies existing information in the database
-private updateUserSettings = async (
-        request: Request,
+    // Updates User's information in the frontend '/settings' route
+    // Modifies existing information in the database
+    private updateUserSettings = async (
+        request: RequestWithUser,
         response: Response,
     ) => {
-        const userId = request.params._id;
-        const updates = request.body;
-        console.log('Updating user...\n\n');
+        const userId = request.user._id;
+
+        const { firstName, lastName, email, street, city, country, postalCode } = request.body;
+    
         try {
-            
-            const result = await this.user.updateOne({ _id: userId }, { $set: updates });
-            
-            if (result.nModified === 0) {
-                response.send('No changes were made');
+            let user = await this.user.findById(userId);
+
+            if (!user) {
+                return response.status(404).json({ message: 'User not found' });
             }
 
-            response.send('Update successful');
-            console.log('User updated successfully');
+            user.firstName = firstName || user.firstName;
+            user.lastName = lastName || user.lastName;
+            user.email = email || user.email;
 
+            if (user.address) {
+                user.address.street = street || user.address.street;
+                user.address.city = city || user.address.city;
+                user.address.country = country || user.address.country;
+                user.address.postalCode = postalCode || user.address.postalCode;
+            }
+
+            await user.save();
+        
+            return response.status(200).json({ message: 'Update successful' });
+        
         } catch (error) {
             console.error('Error updating user:', error);
-            response.status(500).send('Failed to update user');
+            return response.status(500).json({ message: 'Failed to update user', error: error.message });
         }
-    }
+    };
 }
 
 export default AuthenticationController;
