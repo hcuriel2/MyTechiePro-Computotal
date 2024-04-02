@@ -29,6 +29,8 @@ export class AuthService {
 
     // Sets the current User's value
     public setUserValue(user: User | null): void {
+        console.log('setUserValue: updating user to', user);
+
         this.userSubject.next(user);
     }
 
@@ -44,7 +46,7 @@ export class AuthService {
         console.log('authservice: attempting signin for', user)
          return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
           tap((user: User) => {
-            this.userSubject.next(user);
+            this.setUserValue(user);
             console.log('SIGN IN function', user);
           }),
           //switchMap(() => this.checkSession())
@@ -73,9 +75,10 @@ export class AuthService {
     // Retrieves the User information from the database
     // Passes it into the userSubject - which allows the UI to be applied from the User values
     public checkSession(): Observable<User> {
+        console.log('check session called')
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
-                this.userSubject.next(user)
+                this.setUserValue(user)
             }, error => {
                 console.log('auth service no session found or error', error);
             }            

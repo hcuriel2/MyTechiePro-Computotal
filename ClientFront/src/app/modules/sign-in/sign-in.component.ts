@@ -33,6 +33,7 @@ export class SignInComponent implements OnInit {
     ) {}
 
     public ngOnInit(): void {
+        console.log('sign in comp')
         this.emailAddress = new FormControl(null, Validators.required);
         this.password = new FormControl(null, Validators.required);
         this.authCode = new FormControl(null);
@@ -89,8 +90,8 @@ export class SignInComponent implements OnInit {
          */
         this.authService.signIn(user).subscribe(
             (user: User) => {
-                user = user;
-                this.authService.user.subscribe((user) => {
+                this.authService.setUserValue(user);
+                
                     if (!user) return;
 
                     if (user.userType == 'Professional') {
@@ -104,7 +105,6 @@ export class SignInComponent implements OnInit {
                     } else {
                         window.location.href = 'https://admin.mytechie.pro';
                     }
-                })
             },
             (error) => {
                 if (error.status == 401 && !this.authCode.value) {

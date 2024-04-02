@@ -36,7 +36,6 @@ export class HomeComponent implements OnInit {
       this.searchQuery = params.q;
     });
     this.showResults = !this.searchQuery ? false : this.searchQuery !== "";
-
   }
 
   public hasMatchingResults(category: any): boolean {
@@ -58,20 +57,24 @@ export class HomeComponent implements OnInit {
  * routing based on the user's role.
  */
   public ngOnInit(): void {
+    console.log('home comp')
   // Fetch static data needed for the component.
     this.getStaticData();
 
+  
   // Subscribe to the AuthService to get the user data
-    this.authService.user.subscribe((user: User | null) => {
-      if (user) {
-        this.user = user;
-        this.isProfessional = user.userType === "Professional";
-        this.isCustomer = user.userType === "Client";
+    this.authService.user.subscribe((userData: User | null) => {
+      console.log('[ComponentName]: user subscription updated', userData);
+
+      if (userData) {
+        this.user = userData;
+        this.isProfessional = userData.userType === "Professional";
+        this.isCustomer = userData.userType === "Client";
 
         this.changeDetectorRef.detectChanges();
 
-        if (!user){
-          console.log('Home component could not render the user information');
+        if (!userData){
+          console.log('no user data in authservice sub in home component')
         } 
 
         // Use setTimeout to delay redirection logic to the end of the event loop,
@@ -85,8 +88,12 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-  
 
+
+
+
+
+  
 
   // Search bar method, redirects to tech select when category is selected
   public selectService(

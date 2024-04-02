@@ -23,6 +23,7 @@ import { Message } from "./shared/models/message";
   styleUrls: ["./app.component.scss"],
   //changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class AppComponent implements OnInit, OnDestroy {
   public user: User | null | undefined;
   userAddress: string = "";
@@ -54,27 +55,41 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Initialize the component
   public ngOnInit(): void {
-    // Attempt to refresh on app start
-    // This will use the existing HttpOnly cookie from the initial login and use it to validate the session
-    this.authService.checkSession().subscribe({
-      next: (user) => {
-        this.authService.setUserValue(user);
-        this.subscribeToUserChanges();
-      },
-      error: (error) => {
-        if (error.status === 401) {
-          this.authService.setUserValue(null);
-          this.subscribeToUserChanges();
-        } else {
-          console.error('Error fetching user', error);
-        }
-      }
-    });
+    console.log('AppComponent Init');
+    // Subscribe once to the user Observable from AuthService.
+   this.authService.user.subscribe(user => {
+    this.user = user;
+    this.changeDetectorRef.detectChanges();
+
+    if (user) {
+      console.log('user logged in', user);
+      this.isProfessional = user.userType === 'Professional' ?? false;
+      this.updateUIBasedOnUser(user);
+    } else {
+      console.log('no user is logged in');
+      this.isProfessional = false;
+    }
+    this.changeDetectorRef.detectChanges();
+   })
+
+   this.authService.checkSession().subscribe({
+    next: (user) => {
+      console.log('app comp auth service check sesh')
+      this.user = user;
+      this.changeDetectorRef.detectChanges();
+
+    }, error: (error) => {
+      console.log('error fetching app comp auth service check')
+    }
+   })
   }
 
   private subscribeToUserChanges(): void {
     this.authService.user.subscribe({
       next: (user) => {
+        
+        console.log('[ComponentName]: user subscription updated', user);
+
         this.user = user;
         this.isProfessional = user?.userType === "Professional" ?? false;
         this.updateUIBasedOnUser(user);
