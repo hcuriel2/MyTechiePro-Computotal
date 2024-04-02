@@ -54,80 +54,66 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Initialize the component
   public ngOnInit(): void {
+    // Attempt to refresh on app start
+    // This will use the existing HttpOnly cookie from the initial login and use it to validate the session
     this.authService.checkSession().subscribe({
       next: (user) => {
-        console.log('before setting user', this.user)
+        this.authService.setUserValue(user);
+        this.subscribeToUserChanges();
+      },
+      error: (error) => {
+        if (error.status === 401) {
+          this.authService.setUserValue(null);
+          this.subscribeToUserChanges();
+        } else {
+          console.error('Error fetching user', error);
+        }
+      }
+    });
+  }
+
+  private subscribeToUserChanges(): void {
+    this.authService.user.subscribe({
+      next: (user) => {
         this.user = user;
-        console.log('after setting user', this.user);
-      this.changeDetectorRef.detectChanges();
-      this.isProfessional = user?.userType === "Professional" ?? false;
+        this.isProfessional = user?.userType === "Professional" ?? false;
+        this.updateUIBasedOnUser(user);
+      }, 
+      error: (error) => {
+        console.error('Unexpected error in user subscription', error);
+      }
+    });
+  }
 
-      // Checks the userType to adjust UI elements accordingly
-      const signupBtn = document.getElementById("app-menu-signup-btn");
-      const joinBtn = document.getElementById("app-menu-join-btn");
-      const projectBtn = document.getElementById("app-menu-project-btn");
-      const userInfo = document.getElementById("app-menu-user-info");
-      const toolbar = document.getElementById("app-toolbar");
-      const footer = document.getElementById("footer");
-  
-      if (signupBtn) {
-        signupBtn.style.display = "none";
-      }
-      if (joinBtn) {
-        joinBtn.style.display = "none";
-      }
-      if (projectBtn) {
-        projectBtn.style.display = "block";
-      }
-      if (userInfo) {
-        userInfo.style.display = "block";
-      }
-      if (toolbar && footer) {
-        if (this.user?.userType === "Professional") {
-          toolbar.style.backgroundColor = "#ef0078";
-          footer.style.background = "#ef0078";
-        }
-      }    
-      }
-    })
+  private updateUIBasedOnUser(user: User | null): void {
+    // Checks the userType to adjust UI elements accordingly
+    const signupBtn = document.getElementById("app-menu-signup-btn");
+    const joinBtn = document.getElementById("app-menu-join-btn");
+    const projectBtn = document.getElementById("app-menu-project-btn");
+    const userInfo = document.getElementById("app-menu-user-info");
+    const toolbar = document.getElementById("app-toolbar");
+    const footer = document.getElementById("footer");
 
-    /*
-    // Subscribe to the user observable (within AuthService)
-    this.authService.user.subscribe((user) => {
-      this.user = user;
-      this.changeDetectorRef.detectChanges();
-      this.isProfessional = user?.userType === "Professional" ?? false;
+    if (signupBtn) {
+      signupBtn.style.display = "none";
+    }
+    if (joinBtn) {
+      joinBtn.style.display = "none";
+    }
+    if (projectBtn) {
+      projectBtn.style.display = "block";
+    }
+    if (userInfo) {
+      userInfo.style.display = "block";
+    }
+    if (toolbar && footer) {
+      if (this.user?.userType === "Professional") {
+        toolbar.style.backgroundColor = "#ef0078";
+        footer.style.background = "#ef0078";
+      }
+    }
 
-      // Checks the userType to adjust UI elements accordingly
-      const signupBtn = document.getElementById("app-menu-signup-btn");
-      const joinBtn = document.getElementById("app-menu-join-btn");
-      const projectBtn = document.getElementById("app-menu-project-btn");
-      const userInfo = document.getElementById("app-menu-user-info");
-      const toolbar = document.getElementById("app-toolbar");
-      const footer = document.getElementById("footer");
-  
-      if (signupBtn) {
-        signupBtn.style.display = "none";
-      }
-      if (joinBtn) {
-        joinBtn.style.display = "none";
-      }
-      if (projectBtn) {
-        projectBtn.style.display = "block";
-      }
-      if (userInfo) {
-        userInfo.style.display = "block";
-      }
-      if (toolbar && footer) {
-        if (this.user?.userType === "Professional") {
-          toolbar.style.backgroundColor = "#ef0078";
-          footer.style.background = "#ef0078";
-        }
-      }
-
-
-      this.changeDetectorRef.detectChanges();
-    });*/
+    this.changeDetectorRef.detectChanges();
   }
   
   /**
