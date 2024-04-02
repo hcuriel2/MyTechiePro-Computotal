@@ -57,8 +57,94 @@ export class ProjectsListComponent implements OnInit {
         });
     }
 
+
     public ngOnInit(): void {
-        this.authService.user.subscribe((user: User | null) => {
+        this.authService.checkSession().subscribe({
+            next: (user) => {
+                this.authService.setUserValue(user);
+                this.subscribeToUserChanges();
+            },
+            error: (error) => {
+                console.error('Error fetching user', error);
+            }
+        })
+    }
+
+    private subscribeToUserChanges(): void {
+        this.authService.user.subscribe({
+            next: (user) => {
+                this.user = user;
+                this.updateUIBasedOnUser(user);
+            },
+            error: (error) => {
+                console.error('Unexpected error in user subscription', error);
+            }
+        })
+    }
+
+    private updateUIBasedOnUser(user: User | null): void {
+        if (user?.userType == 'Professional') {
+            const root = document.documentElement;
+            root.style.setProperty('--background-color', 'red');
+        } else {
+            const root = document.documentElement;
+            root.style.setProperty('--background-color', 'blue');
+        }
+
+        let observable: Observable<Project[]>;
+        if (this.isCustomer) {
+            observable = this.projectService.getByClientId(
+                this.user?._id || ''
+            );
+        } else {
+            observable = this.projectService.getByProfessionalId(
+                this.user?._id || ''
+            );      
+        }
+        observable.pipe(first()).subscribe((projects: Project[]) => {
+            this.projects = projects;
+            const blankProject = new Project();
+            blankProject.serviceName = 'No project to show';
+
+            const newProjects = this.projects.filter(
+                (pro) => pro.state === 'Requested'
+            );
+
+            const onGoingProjects = this.projects.filter(
+                (pro) => pro.state === 'OnGoing'
+            );
+
+            const completedOrPaid = this.projects.filter(
+                (pro) => (pro.state === 'Completed' || pro.state === 'Paid')
+            );
+
+
+            console.log(newProjects, onGoingProjects);
+
+            this.dataSourceRequest = new MatTableDataSource(
+                newProjects.length !== 0 ? newProjects : [blankProject]
+            );
+            this.dataSource = new MatTableDataSource(
+                onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]
+            );
+
+            this.dataSourceCompleted = new MatTableDataSource(
+                completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]
+            );
+
+            this.changeDetectorRef.markForCheck();
+        });
+    }
+    
+    /*
+    public ngOnInit(): void {
+        
+        //this.authService.checkSession().subscribe((user: User | null) => {
+            this.authService.user.subscribe((user: User | null) => {
+
+            this.user = user;
+            this.changeDetectorRef.detectChanges();
+
             if (user?.userType == 'Professional') {
                 const root = document.documentElement;
                 root.style.setProperty('--background-color', 'red');
@@ -112,7 +198,7 @@ export class ProjectsListComponent implements OnInit {
 
             this.changeDetectorRef.markForCheck();
         });
-    }
+    }*/
 
     public applyFilterCompletedClient(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value;
