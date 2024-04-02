@@ -1,71 +1,62 @@
-<div class="container">
-    <mat-card>
-        <mat-card-content [formGroup]="formGroup">
-            <mat-card-title class="mt-3">
-                {{ 'Dictionary.ContactUs' | translate }}
-            </mat-card-title>
+<div class="container m-0 p-5 mw-100 h-100">
+  <mat-card>
+    <mat-card-content [formGroup]="formGroup">
+      <mat-card-title class="mt-3">
+        {{ "Dictionary.ContactUs" | translate }}
+      </mat-card-title>
 
-            <div class="row">
-                <mat-form-field appearance="standard">
-                    <mat-label>{{ 'Label.FirstName' | translate }}</mat-label>
-                    <input
-                        matInput
-                        formControlName="firstName"
-                        type="text"
-                        required
-                    />
-                </mat-form-field>
-            </div>
-            <div class="row">
-                <mat-form-field appearance="standard">
-                    <mat-label>{{ 'Label.LastName' | translate }}</mat-label>
-                    <input
-                        matInput
-                        formControlName="lastName"
-                        type="text"
-                        required
-                    />
-                </mat-form-field>
-            </div>
-            <div class="row">
-                <mat-form-field appearance="standard">
-                    <mat-label>{{ 'Label.Email' | translate }}</mat-label>
-                    <input
-                        matInput
-                        placeholder="computotal@it.com"
-                        formControlName="emailAddress"
-                        pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
-                        type="text"
-                        required
-                    />
-                    <mat-error *ngIf="formGroup.get('emailAddress')?.hasError('required')"
-                    >Email is required</mat-error>
-                    <mat-error *ngIf="formGroup.get('emailAddress')?.hasError('email')"
-                    >Please enter a valid email address
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="row">
-                <mat-form-field appearance="standard">
-                    <mat-label>{{ 'Label.Message' | translate }}</mat-label>
-                    <textarea
-                        matInput
-                        formControlName="message"
-                        type="text"
-                        required
-                    ></textarea>
-                </mat-form-field>
-            </div>
-        </mat-card-content>
-        <mat-card-actions align="end">
-            <button
-                mat-raised-button
-                id="contact-us-submit-btn"
-                color="primary"
-                (click)="onSubmit()"
-            >
-                {{ 'Dictionary.Submit' | translate }}
-            </button>
-        </mat-card-actions>
-    </mat-card>
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Label.FirstName" | translate }}</mat-label>
+          <input matInput formControlName="firstName" type="text" required />
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Label.LastName" | translate }}</mat-label>
+          <input matInput formControlName="lastName" type="text" required />
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Label.Email" | translate }}</mat-label>
+          <input
+            matInput
+            placeholder="computotal@it.com"
+            formControlName="emailAddress"
+            pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
+            type="text"
+            required
+          />
+          <mat-error *ngIf="formGroup.get('emailAddress')?.hasError('required')"
+            >Email is required</mat-error
+          >
+          <mat-error *ngIf="formGroup.get('emailAddress')?.hasError('email')"
+            >Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Label.Message" | translate }}</mat-label>
+          <textarea
+            matInput
+            formControlName="message"
+            type="text"
+            required
+          ></textarea>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button
+        mat-raised-button
+        id="contact-us-submit-btn"
+        color="primary"
+        (click)="onSubmit()"
+      >
+        {{ "Dictionary.Submit" | translate }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </div>
