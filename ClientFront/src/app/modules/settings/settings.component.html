@@ -1,8 +1,8 @@
 <p class="h1 text-center">
-    {{'Dictionary.MFA' | translate }}
+    {{'Settings' | translate }}
 </p>
 <div class="full-width mt-5 py-5 mat-toolbar mat-primary text-center">
-    <form class="text-center">
+    <form (ngSubmit)="submitForm()" class="text-center">
         <label>First Name</label>
         <br/>
         <input type="text" id='firstName' [disabled]="formDisabled">
@@ -14,10 +14,6 @@
         <label>Email</label>
         <br/>
         <input type="email" id="email" [disabled]="formDisabled">
-        <br/>
-        <label>Password</label>
-        <br/>
-        <input type="password" [disabled]="formDisabled">
         <br/>
         <label>Street</label>
         <br/>
@@ -35,7 +31,7 @@
         <br/>
         <input type="text" id='postalCode' [disabled]="formDisabled">
         <br/>
-        <button onClick="enableForm()" *ngIf="formDisabled">Edit</button>
+        <button (click)="enableForm()" *ngIf="formDisabled">Edit</button>
         <button type="submit" [disabled]="formDisabled">Submit</button>
 
     </form>
