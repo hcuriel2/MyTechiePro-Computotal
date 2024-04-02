@@ -60,12 +60,10 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
         this.projectId = this.route.snapshot.params.id;
 
-        this.authService.checkSession().subscribe({
-            next: (user: User | null) => {
-                this.isCustomer = user?.userType === UserType.Client;
-                this.user = user;
-            }
-        })
+        this.authService.user.subscribe((u: User | null) => {
+            this.isCustomer = u?.userType === UserType.Client;
+            this.user = u;
+        });
 
        
         this.messageInput = new FormControl(null);
@@ -76,6 +74,32 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     public ngOnInit(): void {
 
+        this.authService.checkSession().subscribe({
+            next: (user) => {
+                this.authService.setUserValue(user);
+                this.subscribeToUserChanges();
+            },
+            error: (error) => {
+                console.error('Unexpected error in user subscription', error);
+            }
+        })
+    }
+
+    private subscribeToUserChanges(): void {
+        this.authService.user.subscribe({
+            next: (user) => {
+                this.user = user;
+                this.updateUIBasedOnUser(user);
+            },
+            error: (error) => {
+                console.error('Unexpected error in user subscription', error);
+            }
+        })
+    }
+
+    private updateUIBasedOnUser(user: User | null): void {
+        this.isCustomer = user?.userType === UserType.Client;
+        
         if (this.projectId) {
             // Get project details from db.
             this.projectService
@@ -101,6 +125,8 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
         this.scrollToBottom();
     }
+
+
 
     public ngOnDestroy(): void {
         this.destroyed.next();
@@ -252,6 +278,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     public onSubmit(): void {
         const userId = this.user?._id;
+        console.log(`OnSubmit user: ${userId}`)
         if (userId) {
             this.projectService
                 .commentProject(
