@@ -35,13 +35,13 @@ export class ProjectService {
 
     public get(id: string): Observable<Project> {
         return this.httpClient
-            .get<Project>(`${this.API_URL}/${id}`)
+            .get<Project>(`${this.API_URL}/${id}`, { withCredentials: true })
             .pipe(map((project) => plainToClass(Project, project)));
     }
 
     public getByClientId(clientId: string): Observable<Project[]> {
         return this.httpClient
-            .get<Project[]>(`${this.API_URL}/client/${clientId}`)
+            .get<Project[]>(`${this.API_URL}/client/${clientId}`, { withCredentials: true })
             .pipe(map((projects) => plainToClass(Project, projects)));
     }
 
@@ -178,7 +178,8 @@ export class ProjectService {
             {
                 text,
                 userId,
-            }
+            }, { withCredentials: true }
         );
     }
+    
 }
