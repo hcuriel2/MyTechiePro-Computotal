@@ -1,9 +1,5 @@
 <div class="flex-column d-flex h-100">
-  <nav
-    class="navbar navbar-expand-mg navbar-light bg-light"
-    [class.pro-navbar]="isProfessional"
-    id="app-toolbar"
-  >
+  <nav class="navbar px-5" [class.pro-navbar]="isProfessional" id="app-toolbar">
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
       <h5 id="app-title">{{ "App.Title" | translate }}</h5>
     </button>
@@ -73,5 +69,5 @@
 
   <router-outlet></router-outlet>
 
-  <footer class="footer px-4 py-3" id="footer">&copy; 2024 Computotal</footer>
+  <footer class="footer px-5 py-3" id="footer">&copy; 2024 Computotal</footer>
 </div>
