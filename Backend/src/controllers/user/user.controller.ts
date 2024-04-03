@@ -32,13 +32,15 @@ class UserController implements Controller {
             .get(`${this.path}`, this.getAllUsers)
             // only admin can see the all clients
             .get(`${this.path}/clients`, this.getAllClients)
+
+            .get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill)
             // only admin can see the all professionals
             .get(`${this.path}/professionals`, this.getAllProfessionals)
 
             // only admin can see the all admins
             .get(`${this.path}/admins`, this.getAllAdmins)
 
-            .get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill)
+
             // get user by id
             .get(`${this.path}/:id`, this.getUserById)
             .patch(`${this.path}/:id`, this.changeStatus)
@@ -72,7 +74,6 @@ class UserController implements Controller {
         const id = request.params.id;
         const userQuery = this.user.findById(id);
         const user = await userQuery;
-        // await user.populate('password').execPopulate();
         if (user) {
             response.send(user);
         } else {
@@ -151,7 +152,10 @@ class UserController implements Controller {
         next: NextFunction
     ) => {
         //given object with filtering requirements
+        console.log(`Received filter string: ${request.params.skill}`);
+
         let givenUser = JSON.parse(request.params.skill)
+        console.log(givenUser);
         const skill = givenUser.skill;
         const userLat = givenUser.lat;
         const userLng = givenUser.lng;
@@ -159,23 +163,32 @@ class UserController implements Controller {
         //get list of techies filtered by skill
         const userQuery = this.user.find({ userType: "Professional", approved: true, skills:{ $in: [skill]}});
         const users = await userQuery;
+        console.log(`Fetched ${users.length} professionals with skill: ${skill}`);
         let closeUsers = []
         //filter list of users by checking if they are within the given radius of the client.
-        let R = 3958.8; // Radius of the Earth in miles
-        let d: number;
-        for(let i = 0; i < users.length; i++) {
-            if (users[i].address["lat"]) {
-                let userRadiansLat = userLat * (Math.PI/180);
-                let techRadianLat = users[i].address["lat"] * (Math.PI/180);
-                let latDiff = techRadianLat - userRadiansLat;
-                let lngDiff = (users[i].address["lng"] - userLng) *  (Math.PI/180);
-                d = 2 * R * Math.asin(Math.sqrt(Math.sin(latDiff/2)*Math.sin(latDiff/2)+Math.cos(userRadiansLat)*Math.cos(techRadianLat)*Math.sin(lngDiff/2)*Math.sin(lngDiff/2))); //in miles
-                d = d * 1.609 //convert distance(miles) to km
-                if (d < rnge ) { //rnge is the radius that is set by the user the default value is 10km
-                    closeUsers.push(users[i]);
-                } 
-            }
+        let R = 6371; // Radius of the Earth in kilometers
+let d: number;
+for (let i = 0; i < users.length; i++) {
+    if (users[i].address["lat"]) {
+        let userRadiansLat = userLat * (Math.PI / 180);
+        let techRadianLat = users[i].address["lat"] * (Math.PI / 180);
+        let latDiff = techRadianLat - userRadiansLat;
+        let lngDiff = (users[i].address["lng"] - userLng) * (Math.PI / 180);
+        d = 2 * R * Math.asin(Math.sqrt(Math.sin(latDiff / 2) * Math.sin(latDiff / 2) + Math.cos(userRadiansLat) * Math.cos(techRadianLat) * Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2)));
+        console.log(`Distance to ${users[i].firstName}: ${d} km`);
+        // No need to convert d to kilometers because it's already in kilometers
+        console.log(`Calculating distance to ${users[i].firstName} with lat: ${users[i].address.lat}, lng: ${users[i].address.lng}`);
+        if (d < rnge) { // rnge is the radius that is set by the user. The default value is assumed to be in kilometers.
+            console.log(`Adding ${users[i].firstName} to close users.`);
+            closeUsers.push(users[i]);
+        } else {
+            console.log(`Excluding ${users[i].firstName}. Distance: ${d} km, Range: ${rnge} km`);
         }
+    }
+}
+console.log(`Found ${closeUsers.length} professionals within range.`);
+
+
         if (closeUsers) { //originally just users
             // send back list of techies that are within the given radius.
             response.send(closeUsers);

@@ -75,6 +75,9 @@ class AuthenticationController implements Controller {
             validationMiddleware(LogInDto),
             this.loggingIn
         );
+
+        this.router.post(`${this.path}/notifyAdmin`, this.notifyAdmin);
+
         this.router.post(`${this.path}/logout`, this.loggingOut);
         
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
@@ -82,6 +85,36 @@ class AuthenticationController implements Controller {
 
         this.router.post(`${this.path}/reviews`, this.projectReview);
     }
+    
+
+    private notifyAdmin = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { clientName, clientEmail, skill } = request.body;
+        
+        // Compose your email content
+        const subject = `No professionals available for requested skill: ${skill}`;
+        const htmlContent = `
+            <p>Dear Admin,</p>
+            <p>The following skill has no professionals available: <strong>${skill}</strong>.</p>
+            <p>Client Details:</p>
+            <ul>
+                <li>Name: ${clientName}</li>
+                <li>Email: ${clientEmail}</li>
+            </ul>
+            <p>Please take necessary action.</p>
+        `;
+    
+        // Send the email
+        this.sendEmail('laurieannesolkoski@hotmail.com', subject, htmlContent) 
+        .then(() => response.json({ message: 'Admin notified successfully' }))
+        .catch(error => {
+            console.error('Failed to send email to admin:', error);
+            response.status(500).json({ message: 'Failed to notify admin' });
+        });
+    };
     
 
     private projectReview = async (
