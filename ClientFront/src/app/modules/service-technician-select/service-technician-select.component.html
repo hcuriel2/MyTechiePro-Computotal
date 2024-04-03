@@ -1,33 +1,57 @@
-<div class="container my-4">
-  <h1 class="text-center mb-4">{{ "Label.ChooseTechTitle" | translate }}</h1>
+<div class="container my-4 radius-25">
+  <h1 class="text-center mb-4"><strong>{{ "Label.ChooseTechTitle" | translate }}</strong></h1>
 
 <!-- <button  mat-raised-button class="center submit-button" color="primary" (click)="createProject()">
     {{ 'Label.ChooseTechnician' | translate }}
 </button>  -->
 
 <div class="mb-3 text-center">
-    <mat-form-field appearance="fill" class="w-100">
-      <mat-label>{{ "Label.AreaCode" | translate }}</mat-label>
+  <mat-form-field appearance="fill" class="col-12 col-md-6 radius-50">
+    <mat-label>{{ "Label.AreaCode" | translate }}</mat-label>
       <input matInput placeholder="{{ areaCode }}" [(ngModel)]="areaCode" />
     </mat-form-field>
   </div>
 
-  <div class="row justify-content-center mb-3">
-    <div class="col-12 col-md-6">
-      <mat-form-field appearance="fill" class="w-100">
+  <div class="mb-3 text-center">
+    <!-- <div class="col-12 col-md-6"> -->
+      <mat-form-field appearance="fill"  class="col-12 col-md-6 radius-50">
         <mat-label>{{ "Label.Distance" | translate }}</mat-label>
         <mat-select [(ngModel)]="selectedOption" (selectionChange)="onOptionsSelected()">
           <mat-option *ngFor="let o of options" [value]="o.name">{{ o.name }}</mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
+    <!-- </div> -->
   </div>
 
+
   <div class="text-center mb-3">
-    <button mat-raised-button color="primary" (click)="findTechs()">
+    <button mat-raised-button color="primary" class="radius-50" (click)="findTechs()">
       {{ "Label.FindTechnicians" | translate }}
     </button>
+
+
+    <button (click)="notifyAdmin()" class="radius-50">Notify Admin</button>
+
+
   </div>
+
+
+
+
+  <div class="filter-options text-center mb-3" class="w-100 radius-50 narrow-field">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "Sort By" | translate }}</mat-label>
+      <mat-select [(ngModel)]="sortOption" (selectionChange)="sortProfessionals()">
+        <mat-option value="ratingDesc">{{ "By Rating: High To Low" | translate }}</mat-option>
+        <mat-option value="ratingAsc">{{ "By Rating: Low To High" | translate }}</mat-option>
+        <mat-option value="priceDesc">{{ "By Price: High To Low" | translate }}</mat-option>
+        <mat-option value="priceAsc">{{ "By Price: Low To High" | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  
+
 
   <div *ngIf="isFeedbackVisible" id="search-feedback">{{ searchFeedback }}</div>
 
@@ -83,6 +107,6 @@
 </div>
 
 <div class="text-center" *ngIf="isShowMoreBtnVisible">
-  <button mat-raised-button color="primary" (click)="showMore()">Show More</button>
+  <button mat-raised-button color="primary" class="radius-50" (click)="showMore()">Show More</button>
 </div>
 </div>

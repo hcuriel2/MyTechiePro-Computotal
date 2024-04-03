@@ -1,18 +1,22 @@
 mat-card {
-    padding: 30px;
-    margin: auto;
-    max-width: 500px;
-    mat-card-content {
-        .row {
-            margin: 0;
-        }
+  padding: 30px;
+  margin: auto;
+  max-width: 500px;
+  mat-card-content {
+    .row {
+      margin: 0;
     }
+  }
 }
 
 .container {
-    margin-top: 100px;
+  background-color: #eef2f6;
 }
 
 .row {
-    display: grid;
+  display: grid;
+}
+
+textarea {
+  height: 90px;
 }

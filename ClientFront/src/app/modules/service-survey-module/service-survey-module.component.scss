@@ -1,11 +1,15 @@
-/* Survey Container */
+// Survey Container
 .survey-container {
   height: auto;
-  width: 50%;
+  width: 90%; // Adjusted for responsiveness
   margin: 30px auto;
+
+  @media (min-width: 768px) {
+    width: 70%; // Adjust for larger screens
+  }
 }
 
-/* Search Bar */
+// Search Bar
 .search-container {
   position: relative;
   width: 100%;
@@ -17,26 +21,27 @@
   height: 50px;
   border-radius: 25px;
   padding: 0 20px;
-  padding-right: 60px; 
+  padding-right: 60px;
   border: 1px solid #ccc;
 }
 
 .search-button {
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
   border: none;
-  background-color: #1432f9; 
+  background-color: #f94144;
   color: white;
   cursor: pointer;
   border-radius: 50%;
-  width: 40px; 
+  width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 // Search Bar end
 
 .pull-right {
@@ -50,16 +55,25 @@
 }
 
 mat-radio-button {
-  margin-left: 25%;
+  padding-left: 10%;
   margin-bottom: 10px;
 }
+
 .radio-button {
   display: flex;
   flex-direction: column;
 }
+
+.radio-button p {
+  white-space: normal !important; // Allow the text to wrap
+  padding: 0;
+  margin: 0;
+}
+
 .center {
   text-align: center;
 }
+
 .center-v {
   text-align: center;
 }
@@ -67,20 +81,20 @@ mat-radio-button {
 .red {
   color: red;
 }
+
 .back-arrow {
   margin-left: 2vw;
 }
 
-
 .search-results {
   position: absolute;
-  width: calc(100% - 20px); 
+  width: calc(100% - 20px);
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,.2);
-  max-height: 200px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  max-height: 200px;
   overflow-y: auto;
   border-radius: 0 0 4px 4px;
-  z-index: 100; 
+  z-index: 100;
 }
 
 .search-result-item {

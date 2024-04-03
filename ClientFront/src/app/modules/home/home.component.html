@@ -43,7 +43,6 @@
     </div>
   </div>
 </div>
-
 <div
   *ngIf="showResults"
   class="row flex-align-top px-4 full-width bg-primary-lighter"
@@ -80,9 +79,12 @@
   </ng-container>
 </div>
 
-<div class="container-fluid mt-5 mb-5">
+<div class="container-fluid mt-5 mb-5 px-4 col-md-8">
   <div class="row justify-content-around align-items-start">
-    <div class="col-md-1" *ngFor="let category of categories">
+    <div
+      class="col-md-3 col-sm-6 col-12 mb-5"
+      *ngFor="let category of categories"
+    >
       <div class="row justify-content-center align-items-center">
         <button
           mat-fab
