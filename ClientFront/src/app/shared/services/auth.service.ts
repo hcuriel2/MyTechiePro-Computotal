@@ -40,6 +40,13 @@ export class AuthService {
             );
     }
 
+    public notifyAdmin(clientName: string, clientEmail: string, skill: string): Observable<any> {
+        console.log(clientName, clientEmail, skill);
+        const body = { clientName, clientEmail, skill };
+        console.log(body);
+        return this.httpClient.post<any>(`${this.API_URL}/notifyAdmin`, body);
+      }
+
     public verifyMFA(id: string, token: string): Observable<Boolean> {
         return this.httpClient
             .post<Boolean>(`${this.API_URL}/verifyMfa`, {id, token});

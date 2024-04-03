@@ -1,4 +1,4 @@
-<div class="container my-4">
+<div class="container my-4 radius-25">
   <h1 class="text-center mb-4">{{ "Label.ChooseTechTitle" | translate }}</h1>
 
 <!-- <button  mat-raised-button class="center submit-button" color="primary" (click)="createProject()">
@@ -6,8 +6,8 @@
 </button>  -->
 
 <div class="mb-3 text-center">
-    <mat-form-field appearance="fill" class="w-100">
-      <mat-label>{{ "Label.AreaCode" | translate }}</mat-label>
+  <mat-form-field appearance="fill" class="radius-25 w-100 narrow-field">
+    <mat-label>{{ "Label.AreaCode" | translate }}</mat-label>
       <input matInput placeholder="{{ areaCode }}" [(ngModel)]="areaCode" />
     </mat-form-field>
   </div>
@@ -23,16 +23,22 @@
     </div>
   </div>
 
+
   <div class="text-center mb-3">
-    <button mat-raised-button color="primary" (click)="findTechs()">
+    <button mat-raised-button color="primary" class="radius-25" (click)="findTechs()">
       {{ "Label.FindTechnicians" | translate }}
     </button>
+
+
+    <button (click)="notifyAdmin()">Notify Admin</button>
+
+
   </div>
 
 
 
 
-  <div class="filter-options text-center mb-3">
+  <div class="filter-options text-center mb-3" class="w-100 narrow-field">
     <mat-form-field appearance="fill">
       <mat-label>{{ "Sort By" | translate }}</mat-label>
       <mat-select [(ngModel)]="sortOption" (selectionChange)="sortProfessionals()">

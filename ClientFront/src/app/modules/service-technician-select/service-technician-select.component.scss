@@ -16,6 +16,20 @@
   color: rgb(22, 76, 139) !important; 
 }
 
+.narrow-field {
+  width: 50% !important; 
+  max-width: 300px !important;
+  margin: auto !important; 
+}
+
+::ng-deep .radius-25 .mat-form-field-flex {
+  border-radius: 25px;
+}
+
+.mat-form-field, .submit-button, .contact-tech-btn, .tech-container {
+  border-radius: 25px !important; 
+}
+
 
 mat-nav-list.list-horizontal {
   padding: 0;
@@ -50,6 +64,7 @@ mat-nav-list.list-horizontal {
   margin-bottom: 20px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; 
+  border-radius: 25px !important;
 
   &:hover {
     transform: translateY(-5px); 
@@ -112,6 +127,11 @@ mat-nav-list.list-horizontal {
     @include mat-elevation(8);
   }
 }
+
+.radius-25 {
+  border-radius: 25px !important;
+}
+
 
 button {
   margin-bottom: 10px;
