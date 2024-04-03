@@ -55,41 +55,43 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Initialize the component
   public ngOnInit(): void {
-    console.log('AppComponent Init');
     // Subscribe once to the user Observable from AuthService.
-   this.authService.user.subscribe(user => {
+    this.authService.user.subscribe(user => {
+      console.log('subscribing to auth service user from app component', user);
     this.user = user;
     this.changeDetectorRef.detectChanges();
 
     if (user) {
-      console.log('user logged in', user);
       this.isProfessional = user.userType === 'Professional' ?? false;
       this.updateUIBasedOnUser(user);
+      this.changeDetectorRef.detectChanges();
+
     } else {
-      console.log('no user is logged in');
       this.isProfessional = false;
+      // New
+      this.changeDetectorRef.detectChanges();
     }
     this.changeDetectorRef.detectChanges();
    })
 
    this.authService.checkSession().subscribe({
     next: (user) => {
-      console.log('app comp auth service check sesh')
+      console.log('subscribing to auth service checksession from app component', user);
+
       this.user = user;
+      // NEW
+      this.subscribeToUserChanges();
       this.changeDetectorRef.detectChanges();
 
     }, error: (error) => {
-      console.log('error fetching app comp auth service check')
+      //console.log('Unexpected error in user subscription', error);
     }
-   })
+   });
   }
 
   private subscribeToUserChanges(): void {
     this.authService.user.subscribe({
       next: (user) => {
-        
-        console.log('[ComponentName]: user subscription updated', user);
-
         this.user = user;
         this.isProfessional = user?.userType === "Professional" ?? false;
         this.updateUIBasedOnUser(user);
@@ -157,29 +159,17 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe((user: User) => {
         if (user != null) {
         } else {
-          console.log("sign-in failed");
+          
         }
       });
   }
 
 public signOut(): void {
-  console.log('LOGOUT CALLED')
-  /*
-  const keys = ["Message.LoggedOut", "Dictionary.OK"];
-  document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  this.translateService
-    .get(keys)
-    .pipe(first())
-    .subscribe((translations) => {
-      this.snackbar.open(translations[keys[0]], translations[keys[1]]);
-    });
-*/
   this.authService.signOut().subscribe(response => {
-    console.log('APP COMPONENT SIGNOUT')
-    console.log(response);
+    
   },
   error => {
-    console.log('APP COMPONENT SIGNOUT', error);
+    console.log('Error in sign out function', error);
   })
 
   this.router.navigateByUrl("/").then(() => {
@@ -196,7 +186,6 @@ public signOut(): void {
    // Handles page routing
   // Dependent on the userType value of the current User
   public routeBasedOnUser(): void {
-    console.log('i got you now')
     if (this.user?.userType === 'Professional'){
       this.router.navigateByUrl('/projects');
     } else {

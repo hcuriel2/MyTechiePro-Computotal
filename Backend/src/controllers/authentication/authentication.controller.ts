@@ -52,7 +52,24 @@ class AuthenticationController implements Controller {
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
         this.router.patch(`${this.path}/settings/:id`, authMiddleware, this.updateUserSettings);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
+        this.router.get(`${this.path}/getUserInfo`, authMiddleware, this.getUserInfo);
         
+    }
+
+    public getUserInfo = async (request: RequestWithUser, response: Response, next: NextFunction) => {
+        const user = request.user;
+        if (!user) {
+            // If there's no user, send a 401 Unauthorized response.
+            return response.status(401).json({ message: 'Unauthorized: No user information available.' });
+        }
+
+        try {
+            // Directly return the user object. Be cautious with sensitive information.
+            response.json(user);
+        } catch (error) {
+            console.error('Failed to fetch user information:', error);
+            response.status(500).json({ message: 'Internal server error while fetching user information.' });
+        }
     }
 
 
@@ -153,7 +170,6 @@ class AuthenticationController implements Controller {
     // Logs the User out
     // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
-        console.log('\n\n\nUser logging out...');
 
         // Clear the cookie with matching attributes, except Max-Age which is set to expire the cookie
         response.setHeader('Set-Cookie', 'Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None');
@@ -174,7 +190,8 @@ class AuthenticationController implements Controller {
         try {
             const { cookie, user } = await this.authenticationService.register(userData);
             response.setHeader("Set-Cookie", [cookie]);
-            response.send({ message: 'Registration successful', userType: user.userType });
+            //response.send({ message: 'Registration successful', userType: user.userType });
+            response.send(user);
         } catch (error) {
             next(error);
         }

@@ -14,7 +14,7 @@ class UserController implements Controller {
     public path = "/users";
     public router = Router();
     private user = userModel;
-    public URL = "https://mytechie.pro/";
+    public URL = process.env.CLIENT_URL;
 
     constructor() {
         this.initializeRoutes();

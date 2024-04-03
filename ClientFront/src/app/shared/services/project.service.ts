@@ -21,7 +21,7 @@ export class ProjectService {
 
     public getProjectsByProId(id: string): Observable<Project[]> {
         return this.httpClient
-          .get<Project[]>(`${this.API_URL}/professional/${id}`)
+          .get<Project[]>(`${this.API_URL}/professional/${id}`, { withCredentials: true })
           .pipe(map((project) => plainToClass(Project, project)));
       }
 
@@ -29,7 +29,7 @@ export class ProjectService {
 
     public getAll(): Observable<Project[]> {
         return this.httpClient
-            .get<Project[]>(this.API_URL)
+            .get<Project[]>(this.API_URL, { withCredentials: true })
             .pipe(map((projects) => plainToClass(Project, projects)));
     }
 
@@ -47,7 +47,7 @@ export class ProjectService {
 
     public getByProfessionalId(professionalId: string): Observable<Project[]> {
         return this.httpClient
-            .get<Project[]>(`${this.API_URL}/professional/${professionalId}`)
+            .get<Project[]>(`${this.API_URL}/professional/${professionalId}` , { withCredentials: true })
             .pipe(map((projects) => plainToClass(Project, projects)));
     }
 
@@ -81,7 +81,7 @@ export class ProjectService {
                 totalCost,
                 projectDetails,
                 professionalId,
-            }
+            }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
                 console.log('error caught in service')
@@ -117,7 +117,7 @@ export class ProjectService {
                 projectStartDate,
                 projectEndDate,
                 totalCost
-            }
+            }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
                 console.log('error caught in service')
@@ -138,7 +138,7 @@ export class ProjectService {
             `${this.API_URL}/pay/${projectId}`,
             {
                 clientId,
-            }
+            }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
                 console.log('error caught in service')
@@ -148,7 +148,7 @@ export class ProjectService {
                 window.location.reload();
                 return throwError(err);    //Rethrow it back to component
               })
-        );;;
+        );
     }
 
 
@@ -164,7 +164,7 @@ export class ProjectService {
                 rating,
                 feedback,
                 professionalId
-            }
+            }, { withCredentials: true }
         );
     }
 

@@ -36,17 +36,17 @@ class ProjectController implements Controller {
         //            .patch(`${this.path}/completed/:id`,authMiddleware, this.completedProject)
                 //    .patch(`${this.path}/paid/:id`,authMiddleware, this.paidProject);
                 //    .patch(`${this.path}/:userId`,authMiddleware, this.getProjectsByUserId);
-        this.router.get(this.path, this.getAllProjects);
+        this.router.get(`${this.path}`, this.getAllProjects);
         // this.router.get(`${this.path}/:id`, this.getAllProjectsByProfessionID);
         this.router.get(`${this.path}/:id`, this.getprojectById);
         this.router.delete(`${this.path}/:id`, this.deleteproject);
         this.router.all(`${this.path}/*`)
-                    .post(this.path, this.createproject)
+                    .post(this.path, authMiddleware, this.createproject)
                     .patch(`${this.path}/comment/:id`, authMiddleware, this.commentProject)
                     .patch(`${this.path}/start/:id`, authMiddleware, this.startProject)
                     .patch(`${this.path}/feedback/:id`, authMiddleware,this.reviewProject)
                     .patch(`${this.path}/complete/:id`,authMiddleware, this.completeProject)
-                    .patch(`${this.path}/pay/:id`, this.payProject)
+                    .patch(`${this.path}/pay/:id`, authMiddleware,this.payProject)
                     .get(`${this.path}/client/:clientId`, authMiddleware, this.getProjectsByClientId)
                     .get(`${this.path}/professional/:professionalId`, authMiddleware, this.getProjectsProfessionalById)
                     .post(`${this.path}/projectReview`, authMiddleware,this.projectReview)

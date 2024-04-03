@@ -113,7 +113,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                     } else {
                         this.projectPrice = "$0"
                     }
-                    console.log(this.project.totalCost)
+                    //console.log(this.project.totalCost)
 
                     // if (this.project.rating != 0) {
                     //     document.getElementById("project-component-review-button")!. = "true";

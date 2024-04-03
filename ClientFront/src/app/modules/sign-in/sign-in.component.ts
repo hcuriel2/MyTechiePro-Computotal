@@ -33,7 +33,6 @@ export class SignInComponent implements OnInit {
     ) {}
 
     public ngOnInit(): void {
-        console.log('sign in comp')
         this.emailAddress = new FormControl(null, Validators.required);
         this.password = new FormControl(null, Validators.required);
         this.authCode = new FormControl(null);
@@ -76,7 +75,6 @@ export class SignInComponent implements OnInit {
     }
 
     public signIn(): void {
-        console.log('SignInComponent: starting sign-in process....');
         const user: User = new User();
         user.email = this.emailAddress.value;
         user.password = this.password.value;
@@ -97,6 +95,7 @@ export class SignInComponent implements OnInit {
                     if (user.userType == 'Professional') {
                         this.dialogRef.close(user);
                         this.router.navigateByUrl('/projects').then(() => {
+                            window.location.reload()
                         })
                     } else if (user.userType == 'Client') {
                         this.dialogRef.close(user);

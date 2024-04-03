@@ -29,8 +29,7 @@ export class AuthService {
 
     // Sets the current User's value
     public setUserValue(user: User | null): void {
-        console.log('setUserValue: updating user to', user);
-
+        console.log('setting user value', user)
         this.userSubject.next(user);
     }
 
@@ -43,11 +42,10 @@ export class AuthService {
     // Assigns the User's values to the UserSubject
     // It's then accessible through the 'this.user' value
     public signIn(user: User): Observable<User> {
-        console.log('authservice: attempting signin for', user)
          return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
           tap((user: User) => {
+            console.log('siging in', user);
             this.setUserValue(user);
-            console.log('SIGN IN function', user);
           }),
           //switchMap(() => this.checkSession())
         );
@@ -64,6 +62,7 @@ export class AuthService {
     public signOut(): Observable<any> {
         return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
             tap(() => {
+                console.log('siging out');
                 this.userSubject.next(null);
             },
             error => {
@@ -75,12 +74,14 @@ export class AuthService {
     // Retrieves the User information from the database
     // Passes it into the userSubject - which allows the UI to be applied from the User values
     public checkSession(): Observable<User> {
-        console.log('check session called')
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
+                console.log('checking session', user);
                 this.setUserValue(user)
             }, error => {
                 console.log('auth service no session found or error', error);
+                this.setUserValue(null);
+                // This is commented out to handle the error gracefully
             }            
             )
         );
@@ -95,6 +96,6 @@ export class AuthService {
     }
 
     getUserInfo(): Observable<any> {
-        return this.httpClient.get(`${this.API_URL}/userInfo`, { withCredentials: true });
+        return this.httpClient.get(`${this.API_URL}/getUserInfo`, { withCredentials: true });
     }
 }

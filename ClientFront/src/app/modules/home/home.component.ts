@@ -57,14 +57,12 @@ export class HomeComponent implements OnInit {
  * routing based on the user's role.
  */
   public ngOnInit(): void {
-    console.log('home comp')
   // Fetch static data needed for the component.
     this.getStaticData();
 
   
   // Subscribe to the AuthService to get the user data
     this.authService.user.subscribe((userData: User | null) => {
-      console.log('[ComponentName]: user subscription updated', userData);
 
       if (userData) {
         this.user = userData;

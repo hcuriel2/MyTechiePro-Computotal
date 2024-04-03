@@ -18,7 +18,7 @@ import { ProjectService } from 'src/app/shared/services/project.service';
     selector: 'app-projects-list',
     templateUrl: './projects-list.component.html',
     styleUrls: ['./projects-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectsListComponent implements OnInit {
 
@@ -59,10 +59,16 @@ export class ProjectsListComponent implements OnInit {
 
 
     public ngOnInit(): void {
+        console.log('proj list initif ')
         this.authService.checkSession().subscribe({
             next: (user) => {
+                console.log('project list init - user data:', user)
+
+                this.user = user;
+                console.log(user);
                 this.authService.setUserValue(user);
                 this.subscribeToUserChanges();
+                this.changeDetectorRef.detectChanges();
             },
             error: (error) => {
                 console.error('Error fetching user', error);
@@ -72,69 +78,61 @@ export class ProjectsListComponent implements OnInit {
 
     private subscribeToUserChanges(): void {
         this.authService.user.subscribe({
-            next: (user) => {
-                this.user = user;
-                this.updateUIBasedOnUser(user);
-            },
-            error: (error) => {
-                console.error('Unexpected error in user subscription', error);
+          next: (user) => {
+            console.log(user);
+            this.user = user;
+            if (user?.userType === 'Professional') {
+              this.isCustomer = false;
+              this.fetchProjects(user);
+            } else if (user?.userType === 'Client') {
+              this.isCustomer = true;
+              this.fetchProjects(user);
             }
+            this.changeDetectorRef.detectChanges();
+          },
+          error: (error) => {
+            console.error('Unexpected error in user subscription', error);
+          }
         })
     }
+      
 
-    private updateUIBasedOnUser(user: User | null): void {
-        if (user?.userType == 'Professional') {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', 'red');
-        } else {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', 'blue');
-        }
-
+    private fetchProjects(user: User | null): void {
+        console.log('fetchprojects')
         let observable: Observable<Project[]>;
-        if (this.isCustomer) {
-            observable = this.projectService.getByClientId(
-                this.user?._id || ''
-            );
+      
+        if (user?.userType === UserType.Client) {
+          observable = this.projectService.getByClientId(user._id);
+          this.changeDetectorRef.detectChanges();
+        } else if (user?.userType === UserType.Professional){
+          observable = this.projectService.getByProfessionalId(user._id);
+          this.changeDetectorRef.detectChanges();
         } else {
-            observable = this.projectService.getByProfessionalId(
-                this.user?._id || ''
-            );      
+          return;  
         }
+        
         observable.pipe(first()).subscribe((projects: Project[]) => {
-            this.projects = projects;
-            const blankProject = new Project();
-            blankProject.serviceName = 'No project to show';
-
-            const newProjects = this.projects.filter(
-                (pro) => pro.state === 'Requested'
-            );
-
-            const onGoingProjects = this.projects.filter(
-                (pro) => pro.state === 'OnGoing'
-            );
-
-            const completedOrPaid = this.projects.filter(
-                (pro) => (pro.state === 'Completed' || pro.state === 'Paid')
-            );
-
-
-            console.log(newProjects, onGoingProjects);
-
-            this.dataSourceRequest = new MatTableDataSource(
-                newProjects.length !== 0 ? newProjects : [blankProject]
-            );
-            this.dataSource = new MatTableDataSource(
-                onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]
-            );
-
-            this.dataSourceCompleted = new MatTableDataSource(
-                completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]
-            );
-
-            this.changeDetectorRef.markForCheck();
+          this.projects = projects;
+          this.setupDataSource(projects);
+          this.changeDetectorRef.detectChanges(); 
         });
-    }
+      }
+      
+      private setupDataSource(projects: Project[]): void {
+        const blankProject = new Project();
+        blankProject.serviceName = 'No project to show';
+      
+        const newProjects = projects.filter((pro) => pro.state === 'Requested');
+        const onGoingProjects = projects.filter((pro) => pro.state === 'OnGoing');
+        const completedOrPaid = projects.filter((pro) => pro.state === 'Completed' || pro.state === 'Paid');
+      
+        this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
+        this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
+        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
+      
+        this.changeDetectorRef.markForCheck();  // Tell Angular to re-check the state.
+      }
+      
     
     /*
     public ngOnInit(): void {
