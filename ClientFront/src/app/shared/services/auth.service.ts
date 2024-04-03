@@ -31,13 +31,13 @@ export class AuthService {
     public setUserValue(user: User | null): void {
         console.log('setting user value', user)
         this.userSubject.next(user);
+    }
 
     public notifyAdmin(clientName: string, clientEmail: string, skill: string): Observable<any> {
         console.log(clientName, clientEmail, skill);
         const body = { clientName, clientEmail, skill };
         console.log(body);
         return this.httpClient.post<any>(`${this.API_URL}/notifyAdmin`, body);
-      }
 
     }
 

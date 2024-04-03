@@ -272,9 +272,9 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isCustomer = !this.isCustomer;
   }
 
-    public onSubmit(): void {
-        const userId = this.user?._id;
-        console.log(`OnSubmit user: ${userId}`)
+  public onSubmit(): void {
+    const userId = this.user?._id;
+      console.log(`OnSubmit user: ${userId}`)
         if (userId) {
             this.projectService
                 .commentProject(
@@ -288,13 +288,14 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                 });
         }
     }
-  }
+  
 
   // Review Dialog Modal
   openReviewDialog(): void {
     this.dialog.open(ProjectReviewDialogComponent, {
       width: "75%",
       data: { projectID: this.projectId },
-    });
+    })
   }
 }
+
