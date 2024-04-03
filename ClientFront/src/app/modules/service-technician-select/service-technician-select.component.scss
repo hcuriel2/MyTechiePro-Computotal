@@ -22,12 +22,12 @@
   margin: auto !important; 
 }
 
-::ng-deep .radius-25 .mat-form-field-flex {
-  border-radius: 25px;
+::ng-deep .radius-50 .mat-form-field-flex {
+  border-radius: 50px;
 }
 
 .mat-form-field, .submit-button, .contact-tech-btn, .tech-container {
-  border-radius: 25px !important; 
+  border-radius: 50px !important; 
 }
 
 
@@ -64,7 +64,7 @@ mat-nav-list.list-horizontal {
   margin-bottom: 20px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; 
-  border-radius: 25px !important;
+  border-radius: 50px !important;
 
   &:hover {
     transform: translateY(-5px); 
@@ -128,8 +128,71 @@ mat-nav-list.list-horizontal {
   }
 }
 
-.radius-25 {
-  border-radius: 25px !important;
+.radius-50 {
+  border-radius: 50px !important;
+}
+
+::ng-deep .radius-50 .mat-form-field-flex, .radius-50, button.radius-50 {
+  border-radius: 50px !important;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline {
+  display: none;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-ripple {
+  display: none;
+}
+
+
+::ng-deep .mat-form-field-infix input.mat-input-element {
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+::ng-deep .mat-form-field-infix .mat-form-field-label-wrapper {
+  justify-content: center !important;
+  justify-content: center !important;
+}
+
+::ng-deep .mat-form-field-infix .mat-placeholder {
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+
+::ng-deep .mat-form-field-label {
+  text-align: center;
+  width: 100%;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-label {
+  justify-content: center;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-start,
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-gap {
+  display: none;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-end {
+  border-radius: 0 !important;
+}
+
+
+::ng-deep .mat-option-text {
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-grow: 1;
+}
+
+::ng-deep .mat-option {
+  border-radius: 50px !important;
+}
+
+::ng-deep .mat-select-panel {
+  border-radius: 40px !important;
 }
 
 

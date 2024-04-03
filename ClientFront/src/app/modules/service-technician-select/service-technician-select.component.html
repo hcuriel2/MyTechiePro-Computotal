@@ -6,7 +6,7 @@
 </button>  -->
 
 <div class="mb-3 text-center">
-  <mat-form-field appearance="fill" class="radius-25 w-100 narrow-field">
+  <mat-form-field appearance="fill" class="w-100 radius-50 narrow-field">
     <mat-label>{{ "Label.AreaCode" | translate }}</mat-label>
       <input matInput placeholder="{{ areaCode }}" [(ngModel)]="areaCode" />
     </mat-form-field>
@@ -14,7 +14,7 @@
 
   <div class="row justify-content-center mb-3">
     <div class="col-12 col-md-6">
-      <mat-form-field appearance="fill" class="w-100">
+      <mat-form-field appearance="fill"  class="w-100 radius-50">
         <mat-label>{{ "Label.Distance" | translate }}</mat-label>
         <mat-select [(ngModel)]="selectedOption" (selectionChange)="onOptionsSelected()">
           <mat-option *ngFor="let o of options" [value]="o.name">{{ o.name }}</mat-option>
@@ -25,12 +25,12 @@
 
 
   <div class="text-center mb-3">
-    <button mat-raised-button color="primary" class="radius-25" (click)="findTechs()">
+    <button mat-raised-button color="primary" class="radius-50" (click)="findTechs()">
       {{ "Label.FindTechnicians" | translate }}
     </button>
 
 
-    <button (click)="notifyAdmin()">Notify Admin</button>
+    <button (click)="notifyAdmin()" class="radius-50">Notify Admin</button>
 
 
   </div>
@@ -38,7 +38,7 @@
 
 
 
-  <div class="filter-options text-center mb-3" class="w-100 narrow-field">
+  <div class="filter-options text-center mb-3" class="w-100 radius-50 narrow-field">
     <mat-form-field appearance="fill">
       <mat-label>{{ "Sort By" | translate }}</mat-label>
       <mat-select [(ngModel)]="sortOption" (selectionChange)="sortProfessionals()">

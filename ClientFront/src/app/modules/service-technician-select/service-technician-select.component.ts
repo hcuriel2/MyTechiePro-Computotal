@@ -32,7 +32,7 @@ export class ServiceTechnicianSelectComponent implements OnInit {
     public serviceSelection: string;
     public categories: Category[];
     public range: number = 10;
-    public selectedOption: string = '10';
+    public selectedOption: string = '';
     public starRating: number;
     public clientName: string;
     public clientEmail: string;
@@ -284,7 +284,7 @@ export class ServiceTechnicianSelectComponent implements OnInit {
 
 
 
-    public sortOption: string = 'ratingDesc'; 
+    public sortOption: string = ''; 
 
     public sortProfessionals(): void {
         this.filteredProfessionals.sort((a, b) => {
