@@ -42,7 +42,8 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   private destroyed: Subject<void>;
 
-  message = "";
+
+  message = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -71,36 +72,66 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  public ngOnInit(): void {
-    if (this.projectId) {
-      // Get project details from db.
-      this.projectService
-        .get(this.projectId)
-        .pipe(takeUntil(this.destroyed))
-        .subscribe((project: Project) => {
-          this.project = project;
-          this.proSkills = project.professional.skills.join(", ");
-          if (this.project.totalCost) {
-            this.projectPrice = "$" + this.project.totalCost;
-          } else {
-            this.projectPrice = "$0";
-          }
-          console.log(this.project.totalCost);
+    public ngOnInit(): void {
 
-          // if (this.project.rating != 0) {
-          //     document.getElementById("project-component-review-button")!. = "true";
-          // }
-          this.changeDetectorRef.markForCheck();
-        });
+        this.authService.checkSession().subscribe({
+            next: (user) => {
+                this.authService.setUserValue(user);
+                this.subscribeToUserChanges();
+            },
+            error: (error) => {
+                console.error('Unexpected error in user subscription', error);
+            }
+        })
     }
 
-    this.scrollToBottom();
-  }
+    private subscribeToUserChanges(): void {
+        this.authService.user.subscribe({
+            next: (user) => {
+                this.user = user;
+                this.updateUIBasedOnUser(user);
+            },
+            error: (error) => {
+                console.error('Unexpected error in user subscription', error);
+            }
+        })
+    }
 
-  public ngOnDestroy(): void {
-    this.destroyed.next();
-    this.destroyed.complete();
-  }
+    private updateUIBasedOnUser(user: User | null): void {
+        this.isCustomer = user?.userType === UserType.Client;
+        
+        if (this.projectId) {
+            // Get project details from db.
+            this.projectService
+                .get(this.projectId)
+                .pipe(takeUntil(this.destroyed))
+                .subscribe((project: Project) => {
+                    this.project = project;
+                    this.proSkills = project.professional.skills.join(', ');
+                    if (this.project.totalCost) {
+                        this.projectPrice = "$" + this.project.totalCost;
+                    } else {
+                        this.projectPrice = "$0"
+                    }
+                    //console.log(this.project.totalCost)
+
+                    // if (this.project.rating != 0) {
+                    //     document.getElementById("project-component-review-button")!. = "true";
+                    // }
+                    this.changeDetectorRef.markForCheck();
+                    
+                });
+        }
+
+        this.scrollToBottom();
+    }
+
+
+
+    public ngOnDestroy(): void {
+        this.destroyed.next();
+        this.destroyed.complete();
+    }
 
   public ngAfterViewChecked(): void {
     this.scrollToBottom();
@@ -241,15 +272,21 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isCustomer = !this.isCustomer;
   }
 
-  public onSubmit(): void {
-    const userId = this.user?._id;
-    if (userId) {
-      this.projectService
-        .commentProject(this.project._id, this.messageInput.value, userId)
-        .pipe(first())
-        .subscribe((project) => {
-          window.location.reload();
-        });
+    public onSubmit(): void {
+        const userId = this.user?._id;
+        console.log(`OnSubmit user: ${userId}`)
+        if (userId) {
+            this.projectService
+                .commentProject(
+                    this.project._id,
+                    this.messageInput.value,
+                    userId
+                )
+                .pipe(first())
+                .subscribe((project) => {
+                    window.location.reload();
+                });
+        }
     }
   }
 

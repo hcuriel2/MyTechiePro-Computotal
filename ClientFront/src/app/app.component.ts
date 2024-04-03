@@ -15,13 +15,15 @@ import { first } from "rxjs/operators";
 import { AuthService } from "./shared/services/auth.service";
 import { SignInComponent } from "./modules/sign-in/sign-in.component";
 import { Options } from "ngx-google-places-autocomplete/objects/options/options";
+import { Message } from "./shared/models/message";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class AppComponent implements OnInit, OnDestroy {
   public user: User | null | undefined;
   userAddress: string = "";
@@ -52,50 +54,86 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("ngOnDestroy");
   }
 
+  // Initialize the component
   public ngOnInit(): void {
-    this.authService.user.subscribe((user) => {
-      this.isProfessional = user?.userType === "Professional" ?? false;
-    });
-    let userCookie = localStorage.getItem("user");
+    // Subscribe once to the user Observable from AuthService.
+    this.authService.user.subscribe(user => {
+      console.log('subscribing to auth service user from app component', user);
+    this.user = user;
+    this.changeDetectorRef.detectChanges();
 
-    if (!userCookie) {
-      this.authService.signOut();
+    if (user) {
+      this.isProfessional = user.userType === 'Professional' ?? false;
+      this.updateUIBasedOnUser(user);
+      this.changeDetectorRef.detectChanges();
+
+    } else {
+      this.isProfessional = false;
+      // New
+      this.changeDetectorRef.detectChanges();
     }
-    // Checks the usertype so that clients and techies cannot go to unnecessary pages.
-    if (localStorage.getItem("user")) {
-      const user = JSON.parse(localStorage.getItem("user")!);
-      this.isProfessional = user.userType === "Professional";
+    this.changeDetectorRef.detectChanges();
+   })
 
-      const signupBtn = document.getElementById("app-menu-signup-btn");
-      const joinBtn = document.getElementById("app-menu-join-btn");
-      const projectBtn = document.getElementById("app-menu-project-btn");
-      const userInfo = document.getElementById("app-menu-user-info");
-      const toolbar = document.getElementById("app-toolbar");
-      const footer = document.getElementById("footer");
+   this.authService.checkSession().subscribe({
+    next: (user) => {
+      console.log('subscribing to auth service checksession from app component', user);
 
-      if (signupBtn) {
-        signupBtn.style.display = "none";
-      }
-      if (joinBtn) {
-        joinBtn.style.display = "none";
-      }
-      if (projectBtn) {
-        projectBtn.style.display = "block";
-      }
-      if (userInfo) {
-        userInfo.style.display = "block";
-      }
-      if (toolbar && footer) {
-        if (user.userType === "Professional") {
-          toolbar.style.backgroundColor = "#ef0078";
-          footer.style.background = "#ef0078";
-        }
-      }
+      this.user = user;
+      // NEW
+      this.subscribeToUserChanges();
+      this.changeDetectorRef.detectChanges();
+
+    }, error: (error) => {
+      //console.log('Unexpected error in user subscription', error);
     }
-
-    console.log("ngOnInit");
+   });
   }
 
+  private subscribeToUserChanges(): void {
+    this.authService.user.subscribe({
+      next: (user) => {
+        this.user = user;
+        this.isProfessional = user?.userType === "Professional" ?? false;
+        this.updateUIBasedOnUser(user);
+      }, 
+      error: (error) => {
+        console.error('Unexpected error in user subscription', error);
+      }
+    });
+  }
+
+  private updateUIBasedOnUser(user: User | null): void {
+    // Checks the userType to adjust UI elements accordingly
+    const signupBtn = document.getElementById("app-menu-signup-btn");
+    const joinBtn = document.getElementById("app-menu-join-btn");
+    const projectBtn = document.getElementById("app-menu-project-btn");
+    const userInfo = document.getElementById("app-menu-user-info");
+    const toolbar = document.getElementById("app-toolbar");
+    const footer = document.getElementById("footer");
+
+    if (signupBtn) {
+      signupBtn.style.display = "none";
+    }
+    if (joinBtn) {
+      joinBtn.style.display = "none";
+    }
+    if (projectBtn) {
+      projectBtn.style.display = "block";
+    }
+    if (userInfo) {
+      userInfo.style.display = "block";
+    }
+    if (toolbar && footer) {
+      if (this.user?.userType === "Professional") {
+        toolbar.style.backgroundColor = "#ef0078";
+        footer.style.background = "#ef0078";
+      }
+    }
+
+    this.changeDetectorRef.detectChanges();
+  }
+  
   /**
    * Assigns the user's latitude, longitude, and formatted address.
    * @param address
@@ -110,65 +148,49 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("something");
   }
 
-  // Opens sign-in dialog, logs user in if information is valid, logs an error if information is invalid
   public signIn(): void {
     const dialogConfig = new MatDialogConfig();
-
+  
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-
+  
     this.dialog
       .open(SignInComponent, dialogConfig)
       .afterClosed()
       .subscribe((user: User) => {
         if (user != null) {
         } else {
-          console.log("sign-in failed");
+          
         }
       });
   }
 
-  // Signs out the user and redirects to homepage
-  public signOut(): void {
-    const keys = ["Message.LoggedOut", "Dictionary.OK"];
-    let cookie = getCookie("user");
-    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    this.translateService
-      .get(keys)
-      .pipe(first())
-      .subscribe((translations) => {
-        this.snackbar.open(translations[keys[0]], translations[keys[1]]);
-      });
+public signOut(): void {
+  this.authService.signOut().subscribe(response => {
+    
+  },
+  error => {
+    console.log('Error in sign out function', error);
+  })
 
-    this.authService.signOut();
+  this.router.navigateByUrl("/").then(() => {
+    window.location.reload();
+  });
+}
 
-    this.router.navigateByUrl("/").then(() => {
-      window.location.reload();
-    });
-  }
-
+  // Navigates to the Home page
   public routeToHomePage(): void {
     this.router.navigateByUrl("/");
   }
 
-  /**
-   * Navigates to the URL based on the user type stored inside of localstorage.
-   */
+
+   // Handles page routing
+  // Dependent on the userType value of the current User
   public routeBasedOnUser(): void {
-    if (localStorage.getItem("user") == null) {
-      this.router.navigateByUrl("/").then(() => {
-        //window.location.reload();
-      });
-    } else if (
-      JSON.parse(localStorage.getItem("user")!).userType == "Professional"
-    ) {
-      this.router.navigateByUrl("/projects").then(() => {
-        //window.location.reload();
-      });
+    if (this.user?.userType === 'Professional'){
+      this.router.navigateByUrl('/projects');
     } else {
-      this.router.navigateByUrl("/").then(() => {
-        //window.location.reload();
-      });
+      this.router.navigateByUrl('/');
     }
   }
 
@@ -199,7 +221,7 @@ export class AppComponent implements OnInit, OnDestroy {
         window.location.reload();
       });
   }
-  // Redirect to sign up page for technichian
+  // Redirect to sign up page for professional
   public joinPro(): void {
     this.router
       .navigate(["/sign-up"], {
@@ -212,31 +234,14 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Navigates to the User's settings page
   public settings(): void {
     this.router.navigateByUrl("/settings");
   }
 
+  // Navigates to Professional's profile
   public navigateToProProfile(): void {
     this.router.navigateByUrl("/pro-profile");
   }
 
-  // Function to toggle the menu on small screens
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
-}
-
-function getCookie(cname: string) {
-  let name = cname + "=";
-  let ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == " ") {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
 }

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { TranslateHttpLoader } from '@ngx-translate/http-loader';\nexport function createTranslateHttpLoader(httpClient) {\n  return new TranslateHttpLoader(httpClient);\n}","map":null,"metadata":{},"sourceType":"module"}

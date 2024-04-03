@@ -18,7 +18,7 @@ import { ProjectService } from 'src/app/shared/services/project.service';
     selector: 'app-projects-list',
     templateUrl: './projects-list.component.html',
     styleUrls: ['./projects-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectsListComponent implements OnInit {
 
@@ -57,14 +57,101 @@ export class ProjectsListComponent implements OnInit {
         });
     }
 
+
     public ngOnInit(): void {
-        if(JSON.parse(localStorage.getItem("user")!).userType == "Professional") {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', "red");
+        console.log('proj list initif ')
+        this.authService.checkSession().subscribe({
+            next: (user) => {
+                console.log('project list init - user data:', user)
+
+                this.user = user;
+                console.log(user);
+                this.authService.setUserValue(user);
+                this.subscribeToUserChanges();
+                this.changeDetectorRef.detectChanges();
+            },
+            error: (error) => {
+                console.error('Error fetching user', error);
+            }
+        })
+    }
+
+    private subscribeToUserChanges(): void {
+        this.authService.user.subscribe({
+          next: (user) => {
+            console.log(user);
+            this.user = user;
+            if (user?.userType === 'Professional') {
+              this.isCustomer = false;
+              this.fetchProjects(user);
+            } else if (user?.userType === 'Client') {
+              this.isCustomer = true;
+              this.fetchProjects(user);
+            }
+            this.changeDetectorRef.detectChanges();
+          },
+          error: (error) => {
+            console.error('Unexpected error in user subscription', error);
+          }
+        })
+    }
+      
+
+    private fetchProjects(user: User | null): void {
+        console.log('fetchprojects')
+        let observable: Observable<Project[]>;
+      
+        if (user?.userType === UserType.Client) {
+          observable = this.projectService.getByClientId(user._id);
+          this.changeDetectorRef.detectChanges();
+        } else if (user?.userType === UserType.Professional){
+          observable = this.projectService.getByProfessionalId(user._id);
+          this.changeDetectorRef.detectChanges();
         } else {
-            const root = document.documentElement;
-            root.style.setProperty('--background-color', "blue");
+          return;  
         }
+        
+        observable.pipe(first()).subscribe((projects: Project[]) => {
+          this.projects = projects;
+          this.setupDataSource(projects);
+          this.changeDetectorRef.detectChanges(); 
+        });
+      }
+      
+      private setupDataSource(projects: Project[]): void {
+        const blankProject = new Project();
+        blankProject.serviceName = 'No project to show';
+      
+        const newProjects = projects.filter((pro) => pro.state === 'Requested');
+        const onGoingProjects = projects.filter((pro) => pro.state === 'OnGoing');
+        const completedOrPaid = projects.filter((pro) => pro.state === 'Completed' || pro.state === 'Paid');
+      
+        this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
+        this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
+        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
+      
+        this.changeDetectorRef.markForCheck();  // Tell Angular to re-check the state.
+      }
+      
+    
+    /*
+    public ngOnInit(): void {
+        
+        //this.authService.checkSession().subscribe((user: User | null) => {
+            this.authService.user.subscribe((user: User | null) => {
+
+            this.user = user;
+            this.changeDetectorRef.detectChanges();
+
+            if (user?.userType == 'Professional') {
+                const root = document.documentElement;
+                root.style.setProperty('--background-color', 'red');
+            } else {
+                const root = document.documentElement;
+                root.style.setProperty('--background-color', 'blue');
+            }
+        })
+
 
         let observable: Observable<Project[]>;
         if (this.isCustomer) {
@@ -109,7 +196,7 @@ export class ProjectsListComponent implements OnInit {
 
             this.changeDetectorRef.markForCheck();
         });
-    }
+    }*/
 
     public applyFilterCompletedClient(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value;
@@ -136,64 +223,3 @@ export class ProjectsListComponent implements OnInit {
         this.isCustomer = !this.isCustomer;
     }
 }
-
-// export interface Project {
-//     projectID: number;
-//     status?: string;
-//     dateCreated: Date;
-//     dateCompleted?: Date;
-// }
-
-// const PROJECT_DATA: Project[] = [
-//     {
-//         projectID: 1,
-//         status: 'Accepted',
-//         dateCreated: new Date(),
-//         dateCompleted: undefined,
-//     },
-//     {
-//         projectID: 2,
-//         status: 'Accepted',
-//         dateCreated: new Date(),
-//         dateCompleted: undefined,
-//     },
-//     {
-//         projectID: 3,
-//         status: 'Dropped',
-//         dateCreated: new Date(),
-//         dateCompleted: undefined,
-//     },
-//     {
-//         projectID: 4,
-//         status: 'Completed',
-//         dateCreated: new Date(),
-//         dateCompleted: new Date(),
-//     },
-//     {
-//         projectID: 5,
-//         status: 'Completed',
-//         dateCreated: new Date(),
-//         dateCompleted: new Date(),
-//     },
-//     {
-//         projectID: 6,
-//         status: 'Completed',
-//         dateCreated: new Date(),
-//         dateCompleted: new Date(),
-//     },
-// ];
-
-// const PROJECT_DATA_REQUEST: Project[] = [
-//     {
-//         projectID: 1,
-//         dateCreated: new Date(),
-//     },
-//     {
-//         projectID: 2,
-//         dateCreated: new Date(),
-//     },
-//     {
-//         projectID: 3,
-//         dateCreated: new Date(),
-//     },
-// ];

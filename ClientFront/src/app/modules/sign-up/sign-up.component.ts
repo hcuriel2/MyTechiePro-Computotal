@@ -189,6 +189,10 @@ export class SignUpComponent implements OnInit, OnDestroy {
         (user: User) => {
           console.log("Successfully signed up!");
 
+          this.authService.setUserValue(user);
+          this.changeDetectorRef.detectChanges();
+
+
           this.translateService
             .get("Message.SignUpSuccess")
             .pipe(first())
@@ -199,16 +203,26 @@ export class SignUpComponent implements OnInit, OnDestroy {
               this.snackBar.open(translation, "", config);
             });
 
+
+            if (user.userType === 'Professional'){
+              this.router.navigateByUrl('/projects').then(() => {
+                window.location.reload();
+              })
+            } else {
+              this.router.navigateByUrl('/').then(() => {
+                window.location.reload();
+              })
+            }
           //add cookie to browser for user.
-          let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-          let cookieName =
-            "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-          document.cookie = cookieName;
-          console.log(cookieName);
-          console.log(document.cookie);
+         // let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
+        //  let cookieName =
+         //   "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
+         // document.cookie = cookieName;
+         // console.log(cookieName);
+         // console.log(document.cookie);
 
           //Send signed up user to correct page (projects if "techie" user, "home" if client)
-          if (
+          /*if (
             JSON.parse(localStorage.getItem("user")!).userType == "Professional"
           ) {
             this.router.navigateByUrl("/projects").then(() => {
@@ -218,7 +232,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
             this.router.navigateByUrl("/").then(() => {
               window.location.reload();
             });
-          }
+          }*/
         },
         (error) => {
           console.error("User signup failed", error);

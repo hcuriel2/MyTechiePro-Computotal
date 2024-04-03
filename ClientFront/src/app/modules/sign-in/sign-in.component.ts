@@ -82,61 +82,40 @@ export class SignInComponent implements OnInit {
     user.password = this.password.value;
     user.secret = this.authCode?.value;
 
-    /**
-     * if signin success -> user data will be returned to app.component.ts
-     *
-     * Retrieves the 'user' item from localstorage and checks the usertype to correctly
-     * navigate to the corresponding URL.
-     */
-    this.authService.signIn(user).subscribe(
-      (user: User) => {
-        // window.location.reload();
-        console.log(user);
-        let userType = JSON.parse(localStorage.getItem("user")!).userType;
-        if (userType == "Professional") {
-          let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-          let cookieName =
-            "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-          document.cookie = cookieName;
-          console.log(cookieName);
-          console.log(document.cookie);
+        /**
+         * if signin success -> user data will be returned to app.component.ts
+         * 
+         * Retrieves the 'user' item from localstorage and checks the usertype to correctly
+         * navigate to the corresponding URL.
+         */
+        this.authService.signIn(user).subscribe(
+            (user: User) => {
+                this.authService.setUserValue(user);
+                
+                    if (!user) return;
 
-          this.dialogRef.close(user);
-          this.router.navigateByUrl("/projects").then(() => {
-            window.location.reload();
-          });
-        } else if (userType == "Client") {
-          let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-          let cookieName =
-            "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-          document.cookie = cookieName;
-          console.log(cookieName);
-          console.log(document.cookie);
-
-          this.dialogRef.close(user);
-          this.router.navigateByUrl("/").then(() => {
-            window.location.reload();
-          });
-        } else {
-          let user = JSON.stringify(localStorage.getItem("user"));
-
-          let cookieName = "user=" + user + ";" + "domain=mytechie.pro;";
-          document.cookie = cookieName;
-          console.log(cookieName);
-          console.log(document.cookie);
-
-          window.location.href = "https://admin.mytechie.pro";
-        }
-      },
-      (error) => {
-        if (error.status == 401 && !this.authCode.value) {
-          // failed due to bad auth
-          document.getElementById("authCode")!.style.display = "block";
-        } else {
-          console.error(`Error in SignIn.signIn(): ${error}`, error);
-          document.getElementById("failedLogin")!.style.display = "block";
-        }
-      }
-    );
-  }
+                    if (user.userType == 'Professional') {
+                        this.dialogRef.close(user);
+                        this.router.navigateByUrl('/projects').then(() => {
+                            window.location.reload()
+                        })
+                    } else if (user.userType == 'Client') {
+                        this.dialogRef.close(user);
+                        this.router.navigateByUrl('/').then(() => {
+                        })
+                    } else {
+                        window.location.href = 'https://admin.mytechie.pro';
+                    }
+            },
+            (error) => {
+                if (error.status == 401 && !this.authCode.value) {
+                    // failed due to bad auth
+                    document.getElementById("authCode")!.style.display = "block";
+                } else {
+                    console.error(`Error in SignIn.signIn(): ${error}`, error);
+                    document.getElementById("failedLogin")!.style.display = "block";
+                }
+            }
+        );
+    }
 }

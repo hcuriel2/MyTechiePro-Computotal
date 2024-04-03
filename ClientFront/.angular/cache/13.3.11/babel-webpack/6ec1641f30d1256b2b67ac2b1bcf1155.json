@@ -1,0 +1,1 @@
+{"ast":null,"code":"export class Survey {\n  constructor(question, key, contents) {\n    this.question = question;\n    this.key = key;\n    this.contents = contents;\n  }\n}","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { __decorate } from \"tslib\";\nimport { Type } from 'class-transformer';\nimport { Service } from './service';\nexport class Category {}\n__decorate([Type(() => Service)], Category.prototype, \"services\", void 0);","map":null,"metadata":{},"sourceType":"module"}

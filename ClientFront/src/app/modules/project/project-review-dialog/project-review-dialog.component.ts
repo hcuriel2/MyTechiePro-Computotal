@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-project-review-dialog',
@@ -9,13 +11,17 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./project-review-dialog.component.scss'],
 })
 export class ProjectReviewDialogComponent implements OnInit {
+  private readonly API_URL: string;
   reviewForm: FormGroup;
   hoverState = 0; // Set the initial star rating to 0
   clickedState = 0;
   projectID: string; // Project ID
 
   constructor(public dialogRef: MatDialogRef<ProjectReviewDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { projectID: string }) {}
+    @Inject(MAT_DIALOG_DATA) public data: { projectID: string }) {
+      this.API_URL = `${environment.apiEndpoint}/projects`;
+
+    }
 
   ngOnInit(): void {
     this.projectID = this.data.projectID;
@@ -43,14 +49,15 @@ export class ProjectReviewDialogComponent implements OnInit {
     if (this.reviewForm.valid) {
       const data = this.reviewForm.value;
       console.log(data);
-      const url = 'http://localhost:3333/auth/reviews';
 
-      fetch(url, {
+      fetch(`${this.API_URL}/projectReview`,  {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        credentials: 'include'
       })
       .then(response => {
         if (!response.ok) {

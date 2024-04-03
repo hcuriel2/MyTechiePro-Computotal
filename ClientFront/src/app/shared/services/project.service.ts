@@ -21,9 +21,35 @@ export class ProjectService {
 
     public getProjectsByProId(id: string): Observable<Project[]> {
         return this.httpClient
-          .get<Project[]>(`${this.API_URL}/professional/${id}`)
+          .get<Project[]>(`${this.API_URL}/professional/${id}`, { withCredentials: true })
           .pipe(map((project) => plainToClass(Project, project)));
       }
+
+    
+
+    public getAll(): Observable<Project[]> {
+        return this.httpClient
+            .get<Project[]>(this.API_URL, { withCredentials: true })
+            .pipe(map((projects) => plainToClass(Project, projects)));
+    }
+
+    public get(id: string): Observable<Project> {
+        return this.httpClient
+            .get<Project>(`${this.API_URL}/${id}`, { withCredentials: true })
+            .pipe(map((project) => plainToClass(Project, project)));
+    }
+
+    public getByClientId(clientId: string): Observable<Project[]> {
+        return this.httpClient
+            .get<Project[]>(`${this.API_URL}/client/${clientId}`, { withCredentials: true })
+            .pipe(map((projects) => plainToClass(Project, projects)));
+    }
+
+    public getByProfessionalId(professionalId: string): Observable<Project[]> {
+        return this.httpClient
+            .get<Project[]>(`${this.API_URL}/professional/${professionalId}` , { withCredentials: true })
+            .pipe(map((projects) => plainToClass(Project, projects)));
+    }
 
     public create(
         categoryId: string,
@@ -39,32 +65,8 @@ export class ProjectService {
                 serviceName,
                 professionalId,
                 clientId,
-            })
+            }, { withCredentials: true })
             .pipe(map((project: Project) => plainToClass(Project, project)));
-    }
-
-    public getAll(): Observable<Project[]> {
-        return this.httpClient
-            .get<Project[]>(this.API_URL)
-            .pipe(map((projects) => plainToClass(Project, projects)));
-    }
-
-    public get(id: string): Observable<Project> {
-        return this.httpClient
-            .get<Project>(`${this.API_URL}/${id}`)
-            .pipe(map((project) => plainToClass(Project, project)));
-    }
-
-    public getByClientId(clientId: string): Observable<Project[]> {
-        return this.httpClient
-            .get<Project[]>(`${this.API_URL}/client/${clientId}`)
-            .pipe(map((projects) => plainToClass(Project, projects)));
-    }
-
-    public getByProfessionalId(professionalId: string): Observable<Project[]> {
-        return this.httpClient
-            .get<Project[]>(`${this.API_URL}/professional/${professionalId}`)
-            .pipe(map((projects) => plainToClass(Project, projects)));
     }
 
     public startProject(
@@ -79,7 +81,7 @@ export class ProjectService {
                 totalCost,
                 projectDetails,
                 professionalId,
-            }
+            }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
                 console.log('error caught in service')
@@ -115,7 +117,7 @@ export class ProjectService {
                 projectStartDate,
                 projectEndDate,
                 totalCost
-            }
+            }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
                 console.log('error caught in service')
@@ -136,7 +138,7 @@ export class ProjectService {
             `${this.API_URL}/pay/${projectId}`,
             {
                 clientId,
-            }
+            }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
                 console.log('error caught in service')
@@ -146,7 +148,7 @@ export class ProjectService {
                 window.location.reload();
                 return throwError(err);    //Rethrow it back to component
               })
-        );;;
+        );
     }
 
 
@@ -162,7 +164,7 @@ export class ProjectService {
                 rating,
                 feedback,
                 professionalId
-            }
+            }, { withCredentials: true }
         );
     }
 
@@ -176,7 +178,8 @@ export class ProjectService {
             {
                 text,
                 userId,
-            }
+            }, { withCredentials: true }
         );
     }
+    
 }

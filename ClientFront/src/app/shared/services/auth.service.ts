@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user';
 import { MfaDto } from '../models/mfaDto';
@@ -16,29 +16,21 @@ export class AuthService {
     private readonly API_URL: string;
 
     constructor(private httpClient: HttpClient) {
-        this.userSubject = new BehaviorSubject<User | null>(
-            JSON.parse(localStorage.getItem('user') || '{}')
-        );
+        this.userSubject = new BehaviorSubject<User | null>(null);
         this.user = this.userSubject.asObservable();
-
         this.API_URL = `${environment.apiEndpoint}/auth`;
     }
 
+    // Retrieves the current User's values
     public get userValue(): User | null {
+        console.log('userValue called')
         return this.userSubject.value;
     }
 
-    public registerUser(user: User): Observable<User> {
-        return this.httpClient
-            .post<User>(`${this.API_URL}/register`, user)
-            .pipe(
-                map((user: User) => {
-                    localStorage.setItem('user', JSON.stringify(user));
-                    this.userSubject.next(user);
-                    return user;
-                })
-            );
-    }
+    // Sets the current User's value
+    public setUserValue(user: User | null): void {
+        console.log('setting user value', user)
+        this.userSubject.next(user);
 
     public notifyAdmin(clientName: string, clientEmail: string, skill: string): Observable<any> {
         console.log(clientName, clientEmail, skill);
@@ -47,40 +39,71 @@ export class AuthService {
         return this.httpClient.post<any>(`${this.API_URL}/notifyAdmin`, body);
       }
 
-    public verifyMFA(id: string, token: string): Observable<Boolean> {
-        return this.httpClient
-            .post<Boolean>(`${this.API_URL}/verifyMfa`, {id, token});
     }
 
-    public setupMFA(id: string, email: string): Observable<MfaDto> {
-        return this.httpClient
-            .post<MfaDto>(`${this.API_URL}/setupMfa`, {id, email});
+    // Register a new User
+    public registerUser(user: User): Observable<User> {
+        return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  
     }
 
-    public resetMFA(id: string): Observable<MfaDto> {
-        return this.httpClient
-            .post<MfaDto>(`${this.API_URL}/resetMfa`, {id});
-    }
-
+    // Signs in a User
+    // Assigns the User's values to the UserSubject
+    // It's then accessible through the 'this.user' value
     public signIn(user: User): Observable<User> {
-        return this.httpClient.post<User>(`${this.API_URL}/login`, user).pipe(
-            map((user: User) => {
-                localStorage.setItem('user', JSON.stringify(user));
-                this.userSubject.next(user);
-                return user;
-            })
+         return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
+          tap((user: User) => {
+            console.log('siging in', user);
+            this.setUserValue(user);
+          }),
+          //switchMap(() => this.checkSession())
         );
     }
 
     // Modified the function - it needs to be a POST request in order to be secure
     public sendEmailResetPw(emailAddress: string): Observable<any> {
         const body = { emailAddress };
-        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body);
+        return this.httpClient.post<any>(`${this.API_URL}/resetPassword`, body, { withCredentials: true });
     }
 
+    // Signs out the User
+    // Updates the userSubject null, so no User values remain
+    public signOut(): Observable<any> {
+        return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
+            tap(() => {
+                console.log('siging out');
+                this.userSubject.next(null);
+            },
+            error => {
+                console.log('SIGNOUT ERROR', error);
+            })
+        )
+    }
 
-    public signOut(): void {
-        localStorage.removeItem('user');
-        this.userSubject.next(null);
+    // Retrieves the User information from the database
+    // Passes it into the userSubject - which allows the UI to be applied from the User values
+    public checkSession(): Observable<User> {
+        return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
+            tap((user: User) => {
+                console.log('checking session', user);
+                this.setUserValue(user)
+            }, error => {
+                console.log('auth service no session found or error', error);
+                this.setUserValue(null);
+                // This is commented out to handle the error gracefully
+            }            
+            )
+        );
+    }
+      
+
+    // Updates the User's information on the 'settings' page
+    // All changes will update the User entry in the database
+    updateUserSettings(userId: string, updates: any): Observable<any> {
+        console.log(userId)
+        return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates, { withCredentials: true });
+    }
+
+    getUserInfo(): Observable<any> {
+        return this.httpClient.get(`${this.API_URL}/getUserInfo`, { withCredentials: true });
     }
 }

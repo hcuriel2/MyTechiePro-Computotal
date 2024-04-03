@@ -1,0 +1,34 @@
+/* admin.middleware.ts */
+
+
+
+
+adminMiddleware
+    - needs to interact with admin collection
+
+-----------------------------------------------------------------------------------------
+
+/* auth.middleware.ts */
+    - needs to interact with pro/client collections
+    - might need to extract the usertype and add that into the function
+
+-----------------------------------------------------------------------------------------
+
+/* emailtransporter.middleware.ts */
+    - no changes
+-----------------------------------------------------------------------------------------
+
+/* error.middleware.ts */
+   - needs to interact with pro/client collections
+- might need to extract the usertype and add that into the function
+
+-----------------------------------------------------------------------------------------
+
+/* technician.middleware.ts */
+   - needs to interact with pro collection
+    - might need to extract the usertype and add that into the function
+
+-----------------------------------------------------------------------------------------
+
+/* validation.middleware.ts */
+   - no changes
