@@ -1,72 +1,92 @@
-<h2 mat-dialog-title>{{ 'Dictionary.SignIn' | translate }}</h2>
+<!-- <div class="container-fluid"> -->
+<h2 mat-dialog-title>{{ "Dictionary.SignIn" | translate }}</h2>
 
-<mat-dialog-content [formGroup]="formGroup" class="row" style="min-width: 500px">
-    <mat-form-field class="col-sm-12">
+<mat-dialog-content [formGroup]="formGroup" class="row">
+  <mat-form-field class="w-100">
+    <input
+      matInput
+      [placeholder]="'Dictionary.Email' | translate"
+      formControlName="emailAddress"
+      required
+    />
+  </mat-form-field>
+
+  <mat-form-field class="w-100" *ngIf="!isResetPw">
+    <input
+      matInput
+      type="password"
+      [placeholder]="'Dictionary.Password' | translate"
+      formControlName="password"
+      required
+    />
+  </mat-form-field>
+
+  <div id="authCode" style="display: none" class="col-md-12">
+    <div class="form-wrapper">
+      <mat-form-field class="w-100">
         <input
-            matInput
-            [placeholder]="'Dictionary.Email' | translate"
-            formControlName="emailAddress"
-            required
+          matInput
+          [placeholder]="'Dictionary.AuthenticationCode' | translate"
+          formControlName="authCode"
         />
-    </mat-form-field>
+      </mat-form-field>
+    </div>
+  </div>
 
-    <mat-form-field class="col-sm-12" *ngIf="!isResetPw">
-        <input
-            matInput
-            type="password"
-            [placeholder]="'Dictionary.Password' | translate"
-            formControlName="password"
-            required
-        />
-    </mat-form-field>
+  <mat-error
+    id="failedLogin"
+    class="col-md-12"
+    style="display: none; text-align: center; width: 100%"
+  >
+    Incorrect Credentials or Email address is not verified!
+  </mat-error>
 
-    <mat-form-field id="authCode" style="display:none" class="col-sm-12">
-        <input
-            matInput
-            [placeholder]="'Dictionary.AuthenticationCode' | translate"
-            formControlName="authCode"
-        />
-    </mat-form-field>
-
-    <mat-error id="failedLogin" style="display:none; text-align: center;">
-        Incorrect Credentials or Email address is not verified!
-    </mat-error>
-
-    <p  *ngIf="isResetEmailSend" style="margin-top: 10px; font-size: 11px; text-align: center;"> {{"Message.EmailSent"| translate}} </p>
-    
+  <div class="col-md-12" *ngIf="isResetEmailSend">
+    <p style="margin-top: 10px; font-size: 11px; text-align: center">
+      {{ "Message.EmailSent" | translate }}
+    </p>
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions class="d-flex flex-column justify-content-end">
+  <button mat-button color="accent" (click)="toggleSignInForgotPw()">
+    {{
+      isResetPw
+        ? ("Dictionary.SignIn" | translate)
+        : ("Dictionary.ForgotPassword" | translate)
+    }}
+  </button>
 
-    <button mat-button color="accent" (click)="toggleSignInForgotPw()">
-        {{ isResetPw ?  ('Dictionary.SignIn' | translate)  : 'Dictionary.ForgotPassword' | translate }}
+  <button mat-button color="accent" (click)="createAccount()">
+    {{ "Dictionary.CreateAccount" | translate }}
+  </button>
+
+  <div class="d-flex p-0 mb-4 mt-2 justify-content-end">
+    <button mat-raised-button (click)="close()">
+      {{ "Dictionary.Cancel" | translate }}
     </button>
-
-    <button mat-button color="accent" (click)="createAccount()">
-        {{ 'Dictionary.CreateAccount' | translate }}
-    </button>
-
-    <div class="d-flex p-2 justify-content-end">
-        <button mat-raised-button (click)="close()">
-            {{ 'Dictionary.Cancel' | translate }}
-        </button>
-        <button
-            mat-raised-button
-            class="mat-primary"
-            (click)="signIn()"
-            [disabled]="!formGroup.valid"
-            *ngIf="!isResetPw"
-        >
-            {{ 'Dictionary.SignIn' | translate }}
-        </button>
-        <button
-        mat-raised-button
-        class="mat-primary"
-        (click)="sendEmail()"
-        [disabled]="emailAddress.errors?.required"
-        *ngIf="isResetPw"
+    <button
+      mat-raised-button
+      class="mat-primary"
+      (click)="signIn()"
+      [disabled]="!formGroup.valid"
+      *ngIf="!isResetPw"
     >
-        {{ isResetEmailSend ? ('Dictionary.ResendEmail' | translate) : 'Dictionary.SendEmail' | translate }}
+      {{ "Dictionary.SignIn" | translate }}
     </button>
-    </div>
+    <button
+      mat-raised-button
+      class="mat-primary"
+      (click)="sendEmail()"
+      [disabled]="emailAddress.errors?.required"
+      *ngIf="isResetPw"
+    >
+      {{
+        isResetEmailSend
+          ? ("Dictionary.ResendEmail" | translate)
+          : ("Dictionary.SendEmail" | translate)
+      }}
+    </button>
+  </div>
 </mat-dialog-actions>
+<!-- </div> -->

@@ -1,5 +1,5 @@
 <div class="flex-column d-flex h-100">
-  <mat-toolbar [class.pro-navbar]="isProfessional" id="app-toolbar">
+  <nav class="navbar px-5" [class.pro-navbar]="isProfessional" id="app-toolbar">
     <button mat-button id="app-menu-title-btn" (click)="routeBasedOnUser()">
       <h5 id="app-title">{{ "App.Title" | translate }}</h5>
     </button>
@@ -37,7 +37,10 @@
     </div>
 
     <!-- Original Sign in Dropdown when not logged in -->
-    <div *ngIf="!user" class="d-flex justify-content-end">
+    <div
+      *ngIf="!user"
+      class="d-flex justify-content-sm-center justify-content-lg-end"
+    >
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="signIn()">
           {{ "Dictionary.SignIn" | translate }}
@@ -46,7 +49,6 @@
           {{ "Dictionary.SignUp" | translate }}
         </button>
       </mat-menu>
-
       <button mat-icon-button [matMenuTriggerFor]="menu" id="dropdownButton">
         <span>{{ "Dictionary.SignIn" | translate }}</span>
         <mat-icon>arrow_drop_down</mat-icon>
@@ -63,9 +65,9 @@
         {{ "Dictionary.ContactUs" | translate }}
       </button>
     </div>
-  </mat-toolbar>
+  </nav>
 
   <router-outlet></router-outlet>
 
-  <footer class="footer px-4 py-3" id="footer">&copy; 2024 Computotal</footer>
+  <footer class="footer px-5 py-3" id="footer">&copy; 2024 Computotal</footer>
 </div>

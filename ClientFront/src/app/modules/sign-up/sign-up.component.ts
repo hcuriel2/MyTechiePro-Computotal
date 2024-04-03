@@ -362,4 +362,23 @@ export class SignUpComponent implements OnInit, OnDestroy {
     console.log(address);
     // this.userCountry = address.geometry.location.country()
   }
+
+  onSkillCheckboxClicked(skillName: string): void {
+    const selectedSkills = Object.keys(this.skills).filter(
+      (name) => this.formGroup.get(name)?.value
+    );
+    if (selectedSkills.length >= 3 && !this.formGroup.get(skillName)?.value) {
+      this.formGroup.get(skillName)?.setValue(false);
+    }
+  }
+
+  getSelectedSkillsCount(): number {
+    let count = 0;
+    Object.keys(this.skills).forEach((skillName) => {
+      if (this.formGroup.get(skillName)?.value) {
+        count++;
+      }
+    });
+    return count;
+  }
 }

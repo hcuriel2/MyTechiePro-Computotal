@@ -56,55 +56,62 @@
   <div *ngIf="isFeedbackVisible" id="search-feedback">{{ searchFeedback }}</div>
 
   <div class="row" *ngIf="isCardListVisible">
-    <div class="col-lg-4 col-md-6 col-sm-12" *ngFor="let pro of filteredProfessionals">
-      <mat-card class="tech-container mb-4"
+    <div
+      class="col-lg-4 col-md-6 col-sm-12"
+      *ngFor="let pro of filteredProfessionals"
     >
-      <mat-card-header>
-        <div mat-card-avatar>
-          <mat-icon class="tech-icon">perm_identity</mat-icon>
-        </div>
-        <mat-card-title class="pro-company-name">{{
-          pro.company
-        }}</mat-card-title>
-        <mat-card-subtitle
-          >Rating:
-          <ngb-rating
-            [max]="5"
-            [rate]="pro.ratingSum / pro.ratingCount"
-            [readonly]="true"
-          ></ngb-rating>
-          &#40;{{ pro.rating }}&#41;</mat-card-subtitle
-        >
-       
-      </mat-card-header>
-
-      <mat-card-content>
-        <div class="card-content-container">
-          <div class="content-body card-content">
-            <p class="pro-bio">{{ pro.bio }}</p>
-            <p class="pricing-label">
-              {{ pro.unitPrice | currency }} per {{ pro.unitType }}
-            </p>
+      <mat-card class="tech-container mb-4">
+        <mat-card-header>
+          <div mat-card-avatar>
+            <mat-icon class="tech-icon">perm_identity</mat-icon>
           </div>
-          <mat-chip-list aria-label="Category designation" class="mb-3">
-            <mat-chip color="custom-primary-color" selected>{{ pro.skills[0] }}</mat-chip>
-            <mat-chip color="custom-primary-color" selected>{{ pro.skills[1] }}</mat-chip>
-            <mat-chip color="custom-primary-color" selected>{{ pro.skills[2] }}</mat-chip>
-          </mat-chip-list>
-          <button
-          mat-stroked-button
-          color="accent"
-          (click)="techSelectDetails(pro)"
-          [ngClass]="{ selected: selectedTechID === pro._id }"
-          class="contact-tech-btn"
-        >
-          {{ "Label.TechnicianDetails" | translate }}
-        </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+          <mat-card-title class="pro-company-name">{{
+            pro.company
+          }}</mat-card-title>
+          <mat-card-subtitle
+            >Rating:
+            <ngb-rating
+              [max]="5"
+              [rate]="pro.ratingSum / pro.ratingCount"
+              [readonly]="true"
+            ></ngb-rating>
+            &#40;{{ pro.rating }}&#41;</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="card-content-container">
+            <div class="content-body card-content">
+              <p class="pro-bio">{{ pro.bio }}</p>
+              <p class="pricing-label">
+                {{ pro.unitPrice | currency }} per {{ pro.unitType }}
+              </p>
+            </div>
+            <mat-chip-list aria-label="Category designation" class="mb-3">
+              <mat-chip color="custom-primary-color" selected>{{
+                pro.skills[0]
+              }}</mat-chip>
+              <mat-chip color="custom-primary-color" selected>{{
+                pro.skills[1]
+              }}</mat-chip>
+              <mat-chip color="custom-primary-color" selected>{{
+                pro.skills[2]
+              }}</mat-chip>
+            </mat-chip-list>
+            <button
+              mat-stroked-button
+              color="accent"
+              (click)="techSelectDetails(pro)"
+              [ngClass]="{ selected: selectedTechID === pro._id }"
+              class="contact-tech-btn"
+            >
+              {{ "Label.TechnicianDetails" | translate }}
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
 
 <div class="text-center" *ngIf="isShowMoreBtnVisible">
   <button mat-raised-button color="primary" (click)="showMore()">Show More</button>
