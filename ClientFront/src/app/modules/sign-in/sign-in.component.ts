@@ -88,14 +88,13 @@ export class SignInComponent implements OnInit {
          */
         this.authService.signIn(user).subscribe(
             (user: User) => {
-                this.authService.setUserValue(user);
                 
                     if (!user) return;
 
                     if (user.userType == 'Professional') {
                         this.dialogRef.close(user);
                         this.router.navigateByUrl('/projects').then(() => {
-                            window.location.reload()
+                            //window.location.reload()
                         })
                     } else if (user.userType == 'Client') {
                         this.dialogRef.close(user);
@@ -116,25 +115,4 @@ export class SignInComponent implements OnInit {
             }
         );
     }
-
-/*
-    private checkSession(): void {
-        this.authService.checkSession().subscribe((userInfo) => {
-            let userType = userInfo.userType;
-
-            if (userType == 'Professional') {
-                this.router.navigateByUrl('/projects').then(() => {
-                });
-            } else if (userType == 'Client') {
-                this.router.navigateByUrl('/').then(() => {
-                });
-            } else {
-                window.location.href = "https://admin.mytechie.pro";
-            }
-
-            this.dialogRef.close(userInfo);
-        }, (error) => {
-            console.error('Failed to fetch user info', error);
-        })
-    }*/
 }
