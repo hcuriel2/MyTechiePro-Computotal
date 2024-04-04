@@ -29,6 +29,7 @@ export class SettingsComponent implements OnInit {
     public verifyStatus= '';
     public mfaRequested= false;
     public formDisabled = true;
+    public editing: boolean = false; 
     public userId = '';
     
     constructor(
@@ -97,8 +98,21 @@ export class SettingsComponent implements OnInit {
 
     enableForm(): void {
          this.formDisabled = false;
+         this.editing = true;
          this.changeDetectorRef.detectChanges();
     }
+
+    cancelEdit(): void {
+        this.formDisabled = true;
+        this.editing = false;
+        if (this.user !== null) {
+            this.populateForm(this.user);
+        } else {
+            console.error("User data is unavailable");
+        }
+        this.changeDetectorRef.detectChanges();
+    }
+    
 
     submitForm(): void {
         console.log('submitting form')
@@ -120,5 +134,8 @@ export class SettingsComponent implements OnInit {
                 console.error('Error updating user info:', error);
             }
         })
+
+        this.formDisabled = true;
+        this.editing = false;
     }
 }
