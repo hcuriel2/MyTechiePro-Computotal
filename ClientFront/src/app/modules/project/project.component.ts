@@ -73,29 +73,14 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     public ngOnInit(): void {
-
-        this.authService.checkSession().subscribe({
-            next: (user) => {
-                this.authService.setUserValue(user);
-                this.subscribeToUserChanges();
-            },
-            error: (error) => {
-                console.error('Unexpected error in user subscription', error);
-            }
+        this.authService.user.subscribe(user => {
+            this.user = user;
+            this.updateUIBasedOnUser(user);
         })
+       
     }
 
-    private subscribeToUserChanges(): void {
-        this.authService.user.subscribe({
-            next: (user) => {
-                this.user = user;
-                this.updateUIBasedOnUser(user);
-            },
-            error: (error) => {
-                console.error('Unexpected error in user subscription', error);
-            }
-        })
-    }
+
 
     private updateUIBasedOnUser(user: User | null): void {
         this.isCustomer = user?.userType === UserType.Client;
@@ -276,7 +261,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.isCustomer = !this.isCustomer;
     }
 
-    public onSubmit(): void {
+    /*public onSubmit(): void {
         const userId = this.user?._id;
         console.log(`OnSubmit user: ${userId}`)
         if (userId) {
@@ -291,7 +276,28 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                     window.location.reload();
                 });
         }
+    }*/
+
+    public onSubmit(): void {
+        const userId = this.user?._id;
+        console.log(`OnSubmit user: ${userId}`);
+        if (userId && this.messageInput.value) {
+            this.projectService
+                .commentProject(this.project._id, this.messageInput.value, userId)
+                .pipe(first())
+                .subscribe({
+                    next: (project) => {
+                        this.messageInput.reset(); // Reset the input field after sending a message
+                        this.project = project; // Update the project with the new comment
+                        this.changeDetectorRef.markForCheck(); // Trigger change detection to update the view
+                    },
+                    error: (error) => {
+                        console.error("Failed to send message", error);
+                    }
+                });
+        }
     }
+    
 
 
     // Review Dialog Modal
