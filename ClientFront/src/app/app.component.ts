@@ -53,8 +53,36 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("ngOnDestroy");
   }
 
-  // Initialize the component
+
   public ngOnInit(): void {
+    if (!this.authService.isSessionChecked){
+      this.authService.checkSession().subscribe({
+        next: (user) => {
+          this.user = user;
+          console.log('boolean 1st func init', this.authService.initSessionCheck)
+
+        }
+      })
+    }
+
+    this.authService.user.subscribe((user) => {
+      console.log('boolean 2nd func init', this.authService.initSessionCheck)
+      if (user){
+        this.isProfessional = user.userType === 'Professional' ?? false;
+        this.updateUIBasedOnUser(user);
+      } else {
+        this.isProfessional = false;
+      }
+    })
+
+    console.log('end of init bool', this.authService.initSessionCheck)
+
+  }
+
+
+ 
+  // Initialize the component
+  /*public ngOnInit(): void {
     // Subscribe once to the user Observable from AuthService.
     this.authService.user.subscribe(user => {
       console.log('subscribing to auth service user from app component', user);
@@ -87,7 +115,7 @@ export class AppComponent implements OnInit, OnDestroy {
       //console.log('Unexpected error in user subscription', error);
     }
    });
-  }
+  }*/
 
   private subscribeToUserChanges(): void {
     this.authService.user.subscribe({
@@ -165,16 +193,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 public signOut(): void {
-  this.authService.signOut().subscribe(response => {
-    
-  },
-  error => {
-    console.log('Error in sign out function', error);
+  this.authService.signOut().subscribe({
+    next: () => {
+      this.authService.setUserValue(null);
+    }
   })
-
-  this.router.navigateByUrl("/").then(() => {
+  this.router.navigateByUrl('/').then(() => {
     window.location.reload();
-  });
+  })
 }
 
   // Navigates to the Home page
