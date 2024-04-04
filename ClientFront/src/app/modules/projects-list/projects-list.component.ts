@@ -51,15 +51,27 @@ export class ProjectsListComponent implements OnInit {
         private projectService: ProjectService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
-        this.authService.user.subscribe((u: User | null) => {
-            this.isCustomer = u?.userType === UserType.Client;
-            this.user = u;
-        });
+       
     }
 
 
     public ngOnInit(): void {
-        console.log('proj list initif ')
+        console.log('init proj list')
+        this.authService.user.subscribe(user => {
+            this.user = user;
+            this.changeDetectorRef.detectChanges();
+            if (user?.userType === 'Professional') {
+                this.isCustomer = false;
+                this.fetchProjects(user);
+              } else if (user?.userType === 'Client') {
+                this.isCustomer = true;
+                this.fetchProjects(user);
+              }
+              this.changeDetectorRef.detectChanges();
+
+        })
+       
+       /* console.log('proj list initif ')
         this.authService.checkSession().subscribe({
             next: (user) => {
                 console.log('project list init - user data:', user)
@@ -73,10 +85,10 @@ export class ProjectsListComponent implements OnInit {
             error: (error) => {
                 console.error('Error fetching user', error);
             }
-        })
+        })*/
     }
 
-    private subscribeToUserChanges(): void {
+   /* private subscribeToUserChanges(): void {
         this.authService.user.subscribe({
           next: (user) => {
             console.log(user);
@@ -94,7 +106,7 @@ export class ProjectsListComponent implements OnInit {
             console.error('Unexpected error in user subscription', error);
           }
         })
-    }
+    }*/
       
 
     private fetchProjects(user: User | null): void {
