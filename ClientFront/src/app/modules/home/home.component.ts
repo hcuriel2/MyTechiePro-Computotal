@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, ElementRef, HostListener } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { first } from "rxjs/operators";
 import { CategoryEnum } from "src/app/shared/enums/Category.enum";
@@ -29,7 +29,8 @@ export class HomeComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private elementRef: ElementRef
   ) {
     this.CATEGORY_ENUM = CategoryEnum;
     this.route.queryParams.subscribe((params) => {
@@ -51,6 +52,22 @@ export class HomeComponent implements OnInit {
 
     return false; // No matching results found for this category
   }
+
+  public noResult(): boolean {
+    for (const category of this.categories) {
+      if (this.hasMatchingResults(category)) {
+        return false; // Found a matching result in at least one category
+      }
+    }
+    return true; // No matching results found in any category
+  }
+
+
+    // Function to clear the search input
+    public clearSearchInput(): void {
+      this.searchQuery = "";
+      this.showResults = false;
+    }
 
 /**
  * Initialize the component by subscribing to user updates and
@@ -88,7 +105,13 @@ export class HomeComponent implements OnInit {
   }
 
 
-
+  @HostListener("document:click", ["$event"])
+  onClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      // Clicked outside the search container, hide results
+      this.showResults = false;
+    }
+  }
 
 
   
