@@ -54,54 +54,32 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log("ngOnDestroy");
   }
 
-  // Initialize the component
+
   public ngOnInit(): void {
-    // Subscribe once to the user Observable from AuthService.
-    this.authService.user.subscribe(user => {
-      console.log('subscribing to auth service user from app component', user);
-    this.user = user;
-    this.changeDetectorRef.detectChanges();
+    if (!this.authService.isSessionChecked){
+      this.authService.checkSession().subscribe({
+        next: (user) => {
+          this.user = user;
+          console.log('boolean 1st func init', this.authService.initSessionCheck)
 
-    if (user) {
-      this.isProfessional = user.userType === 'Professional' ?? false;
-      this.updateUIBasedOnUser(user);
-      this.changeDetectorRef.detectChanges();
-
-    } else {
-      this.isProfessional = false;
-      // New
-      this.changeDetectorRef.detectChanges();
+        }
+      })
     }
-    this.changeDetectorRef.detectChanges();
-   })
 
-   this.authService.checkSession().subscribe({
-    next: (user) => {
-      console.log('subscribing to auth service checksession from app component', user);
-
-      this.user = user;
-      // NEW
-      this.subscribeToUserChanges();
-      this.changeDetectorRef.detectChanges();
-
-    }, error: (error) => {
-      //console.log('Unexpected error in user subscription', error);
-    }
-   });
-  }
-
-  private subscribeToUserChanges(): void {
-    this.authService.user.subscribe({
-      next: (user) => {
-        this.user = user;
-        this.isProfessional = user?.userType === "Professional" ?? false;
+    this.authService.user.subscribe((user) => {
+      console.log('boolean 2nd func init', this.authService.initSessionCheck)
+      if (user){
+        this.isProfessional = user.userType === 'Professional' ?? false;
         this.updateUIBasedOnUser(user);
-      }, 
-      error: (error) => {
-        console.error('Unexpected error in user subscription', error);
+      } else {
+        this.isProfessional = false;
       }
-    });
+    })
+
+    console.log('end of init bool', this.authService.initSessionCheck)
+
   }
+
 
   private updateUIBasedOnUser(user: User | null): void {
     // Checks the userType to adjust UI elements accordingly
@@ -166,16 +144,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 public signOut(): void {
-  this.authService.signOut().subscribe(response => {
-    
-  },
-  error => {
-    console.log('Error in sign out function', error);
+  this.authService.signOut().subscribe({
+    next: () => {
+      this.authService.setUserValue(null);
+    }
   })
-
-  this.router.navigateByUrl("/").then(() => {
+  this.router.navigateByUrl('/').then(() => {
     window.location.reload();
-  });
+  })
 }
 
   // Navigates to the Home page

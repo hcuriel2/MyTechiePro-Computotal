@@ -13,6 +13,7 @@ import { SettingsComponent } from './modules/settings/settings.component';
 import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 import { ProDetailsComponent } from './modules/pro-details/pro-details.component';
 import { ProProfileComponent } from './modules/pro-profile/pro-profile.component';
+import { AuthGuard } from './shared/guards/auth.guard';
 
 
 const routes: Routes = [
@@ -27,15 +28,15 @@ const routes: Routes = [
         path: 'service-tech-select',
         component: ServiceTechnicianSelectComponent,
     },
-    { path: 'project/:id', component: ProjectComponent },
-    { path: 'projects', component: ProjectsListComponent },
+    { path: 'project/:id', component: ProjectComponent,   },
+    { path: 'projects', component: ProjectsListComponent,   },
     {
         path: 'service-tech-select',
         component: ServiceTechnicianSelectComponent,
     },
     { path: 'project/:id', component: ProjectComponent },
-    { path: 'projects', component: ProjectsListComponent },
-    { path: 'settings', component: SettingsComponent },
+    { path: 'projects', component: ProjectsListComponent,   },
+    { path: 'settings', component: SettingsComponent,   },
     { path: 'resetPassword/:id', component: ResetPasswordComponent },
     { path: 'proDetails', component: ProDetailsComponent },
 ];

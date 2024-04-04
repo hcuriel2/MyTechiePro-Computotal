@@ -90,14 +90,13 @@ export class SignInComponent implements OnInit {
          */
         this.authService.signIn(user).subscribe(
             (user: User) => {
-                this.authService.setUserValue(user);
                 
                     if (!user) return;
 
                     if (user.userType == 'Professional') {
                         this.dialogRef.close(user);
                         this.router.navigateByUrl('/projects').then(() => {
-                            window.location.reload()
+                            //window.location.reload()
                         })
                     } else if (user.userType == 'Client') {
                         this.dialogRef.close(user);

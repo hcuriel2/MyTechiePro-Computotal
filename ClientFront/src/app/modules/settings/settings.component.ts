@@ -42,37 +42,15 @@ export class SettingsComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-        this.authService.checkSession().subscribe({
-            next: (user) => {
-                this.authService.setUserValue(user);
-                this.subscribeToUserChanges();
-                
+        this.authService.user.subscribe(user => {
+            this.user = user;
+
+            if (user) {
+                this.populateForm(user);
             }
         })
     }
 
-
-    private subscribeToUserChanges(): void {
-        this.authService.user.subscribe({
-            next: (user) => {
-                this.user = user;
-                this.updateUIBasedOnUser(user);
-            },
-            error: (error) => {
-                console.error('Unexpected error in user subscription', error);
-            }
-        })
-    }
-
-    private updateUIBasedOnUser(user: User | null):void {
-        if (!this.user){
-            console.error('User data is unavailable');
-            return;
-        }
-
-        this.populateForm(this.user);
-    }
-   
 
     // user form
     public populateForm(user: User) {

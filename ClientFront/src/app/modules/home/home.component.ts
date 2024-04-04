@@ -104,17 +104,13 @@ export class HomeComponent implements OnInit {
     });
   }
 
-
   @HostListener("document:click", ["$event"])
   onClick(event: MouseEvent) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       // Clicked outside the search container, hide results
       this.showResults = false;
     }
-  }
-
-
-  
+  } 
 
   // Search bar method, redirects to tech select when category is selected
   public selectService(

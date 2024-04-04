@@ -14,12 +14,33 @@ export class AuthService {
     private userSubject: BehaviorSubject<User | null>;
     public user: Observable<User | null>;
     private readonly API_URL: string;
+    private initialSessionChecked: boolean = false;
 
     constructor(private httpClient: HttpClient) {
         this.userSubject = new BehaviorSubject<User | null>(null);
         this.user = this.userSubject.asObservable();
         this.API_URL = `${environment.apiEndpoint}/auth`;
     }
+
+
+    // Called on app init to check for an existing session
+    public get isSessionChecked(): boolean {
+        return this.initialSessionChecked;
+    }
+
+    public initSessionCheck(): void {
+        if (!this.initSessionCheck) {
+            this.checkSession().subscribe({
+                next: (user) => {
+
+                },
+                error: (error) => {
+                    console.error('Error during session check', error);
+                }
+            })
+        }
+    }
+
 
     // Retrieves the current User's values
     public get userValue(): User | null {
@@ -70,11 +91,11 @@ export class AuthService {
     public signOut(): Observable<any> {
         return this.httpClient.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).pipe(
             tap(() => {
-                console.log('siging out');
                 this.userSubject.next(null);
+                this.initialSessionChecked = false;
             },
             error => {
-                console.log('SIGNOUT ERROR', error);
+                console.log('Error in auth service', error);
             })
         )
     }
@@ -85,13 +106,13 @@ export class AuthService {
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
                 console.log('checking session', user);
-                this.setUserValue(user)
+                this.setUserValue(user);
+                this.initialSessionChecked = true;
             }, error => {
                 console.log('auth service no session found or error', error);
                 this.setUserValue(null);
-                // This is commented out to handle the error gracefully
-            }            
-            )
+                this.initialSessionChecked = true;
+            })
         );
     }
       
