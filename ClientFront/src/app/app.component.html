@@ -7,7 +7,7 @@
     <!-- User Menu Dropdown when logged in as a Client-->
     <div *ngIf="user" class="d-flex justify-content-end">
       <span *ngIf="isProfessional" id="pro-greeting">
-        Welcome back, {{ user?.firstName }}
+       <strong> Welcome back, {{ user?.firstName }} </strong>
       </span>
       <button
         mat-icon-button
@@ -25,7 +25,7 @@
           My Projects
         </button>
         <button mat-menu-item (click)="settings()">
-          {{ "Dictionary.Settings" | translate }}
+          <label>Your Profile</label>
         </button>
         <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
           {{ "Label.JoinPro" | translate }}

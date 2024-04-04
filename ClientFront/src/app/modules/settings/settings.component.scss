@@ -1,27 +1,100 @@
 @use "../../../assets/scss/computotal-theme.scss" as theme;
 
+
+
 .row {
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
 }
 
-.flex-align-top {
-  align-items: normal;
+.column {
+  padding: 0 15px;
+  flex: 50%;
+  max-width: 50%;
 }
 
 .bg-primary-lighter {
   background-color: map-get(theme.$computotal-app-primary, "lighter");
 }
 
-a.serviceItem {
+.form-container {
+  max-width: 70%;
+  margin: 0 auto;
+  padding: 15px;
+  overflow: hidden;
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 45px;
+  background-color: #174e89;
+  color: white;
+  border: none;
   cursor: pointer;
 }
 
-.noItems {
-  color: dimgrey;
+button:last-child {
+  margin-right: 0;
 }
 
-.noItems:not(:last-child) {
-  display: none;
+button:hover {
+  background-color: #89c0f8;
+  color: rgb(0, 0, 0);
+}
+
+
+.cancel-button {
+  background-color: transparent; 
+  color: #767676; 
+  border: 2px solid #767676; 
+  padding: 0.5rem 1rem;
+  border-radius: 45px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.cancel-button:hover {
+  background-color: #767676; 
+  color: #ffffff; 
+}
+
+
+
+.h1{
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-size: large;
+  text-align: left;
+  justify-content: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.form-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .column {
+    flex: 100%;
+    max-width: 100%;
+  }
 }

@@ -1,40 +1,51 @@
-<p class="h1 text-center">
-    {{'Settings' | translate }}
-</p>
-<div class="full-width mt-5 py-5 mat-toolbar mat-primary text-center">
-    <form (ngSubmit)="submitForm()" class="text-center">
-        <label>First Name</label>
-        <br/>
-        <input type="text" id='firstName' [disabled]="formDisabled">
-        <br/>
-        <label>Last Name</label>
-        <br/>
-        <input type="text" id='lastName' [disabled]="formDisabled">
-        <br/>
-        <label>Email</label>
-        <br/>
-        <input type="email" id="email" [disabled]="formDisabled">
-        <br/>
-        <label>Street</label>
-        <br/>
-        <input type="text" id='street' [disabled]="formDisabled">
-        <br/>
-        <label>City</label>
-        <br/>
-        <input type="text" id='city' [disabled]="formDisabled">
-        <br/>
-        <label>Country</label>
-        <br/>
-        <input type="text" id='country' [disabled]="formDisabled">
-        <br/>
-        <label>Postal Code</label>
-        <br/>
-        <input type="text" id='postalCode' [disabled]="formDisabled">
-        <br/>
-        <button (click)="enableForm()" *ngIf="formDisabled">Edit</button>
-        <button type="submit" [disabled]="formDisabled">Submit</button>
-
+<br><br>
+<div class="form-container">
+    <h1 class="form-title text-center"><strong>{{ editing ? 'Edit Your Profile' : 'Your Profile' }}</strong></h1>
+    <br><br>
+    <form (ngSubmit)="submitForm()">
+      <div class="row">
+        <div class="column">
+          <label for="firstName"><strong>First Name</strong></label>
+          <input type="text" id="firstName" [disabled]="formDisabled">
+        </div>
+        <div class="column">
+          <label for="lastName"><strong>Last Name</strong></label>
+          <input type="text" id="lastName" [disabled]="formDisabled">
+        </div>
+      </div>
+      <div class="row">
+        <div class="column">
+          <label for="email"><strong>Email</strong></label>
+          <input type="email" id="email" [disabled]="formDisabled">
+        </div>
+        <div class="column">
+          <label for="street"><strong>Street</strong></label>
+          <input type="text" id="street" [disabled]="formDisabled">
+        </div>
+      </div>
+      <div class="row">
+        <div class="column">
+          <label for="city"><strong>City</strong></label>
+          <input type="text" id="city" [disabled]="formDisabled">
+        </div>
+        <div class="column">
+          <label for="country"><strong>Country</strong></label>
+          <input type="text" id="country" [disabled]="formDisabled">
+        </div>
+      </div>
+      <div class="row">
+        <div class="column">
+          <label for="postalCode"><strong>Postal Code</strong></label>
+          <input type="text" id="postalCode" [disabled]="formDisabled">
+        </div>
+      </div>
+      <br><br>
+      <div class="text-center">
+        <button (click)="enableForm()" *ngIf="formDisabled"><strong>Edit Your Profile</strong></button>
+        <button *ngIf="editing" class="cancel-button" (click)="cancelEdit()"><strong>Cancel</strong></button>
+        <button type="submit" [disabled]="formDisabled" *ngIf="editing"><strong>Save</strong></button>
+    </div>
     </form>
-</div>
-
-<router-outlet></router-outlet>
+    <br><br><br><br>
+  </div>
+  
