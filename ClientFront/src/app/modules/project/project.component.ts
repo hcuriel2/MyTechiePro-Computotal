@@ -261,22 +261,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.isCustomer = !this.isCustomer;
     }
 
-    /*public onSubmit(): void {
-        const userId = this.user?._id;
-        console.log(`OnSubmit user: ${userId}`)
-        if (userId) {
-            this.projectService
-                .commentProject(
-                    this.project._id,
-                    this.messageInput.value,
-                    userId
-                )
-                .pipe(first())
-                .subscribe((project) => {
-                    window.location.reload();
-                });
-        }
-    }*/
+
 
     public onSubmit(): void {
         const userId = this.user?._id;
@@ -289,7 +274,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                     next: (project) => {
                         this.messageInput.reset(); // Reset the input field after sending a message
                         this.project = project; // Update the project with the new comment
-                        this.changeDetectorRef.markForCheck(); // Trigger change detection to update the view
+                        this.changeDetectorRef.markForCheck();
                     },
                     error: (error) => {
                         console.error("Failed to send message", error);
