@@ -86,11 +86,6 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-
-
-
-
-
   
 
   // Search bar method, redirects to tech select when category is selected
