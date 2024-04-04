@@ -32,8 +32,11 @@ export class ServiceTechnicianSelectComponent implements OnInit {
     public serviceSelection: string;
     public categories: Category[];
     public range: number = 10;
-    public selectedOption: string = '10';
+    public selectedOption: string = '';
     public starRating: number;
+    public clientName: string;
+    public clientEmail: string;
+    public skill: string;
     
     // toggle visibilty variables
     public searchFeedback: string;
@@ -87,7 +90,6 @@ export class ServiceTechnicianSelectComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-        // Autodetect the current position and provide the first 3 digits of postal code.
         this.getAreaCode();
     }
 
@@ -115,6 +117,26 @@ export class ServiceTechnicianSelectComponent implements OnInit {
         // this.createProject();
     }
 
+
+
+    
+    notifyAdmin(): void {
+        this.authService.notifyAdmin(this.clientName, this.clientEmail, this.skill).subscribe({
+            next: (response) => {
+                console.log('Admin notified successfully', response);
+                this.snackBar.open('The admin has been notified!', 'Close', { duration: 3000 });
+            },
+            error: (error) => {
+                console.error('Error notifying admin:', error);
+            }
+        });
+    }
+
+      
+    
+
+      
+      
     /**
      * Create a project listing with selected techie and redirect user to project page.
      */
@@ -181,27 +203,42 @@ export class ServiceTechnicianSelectComponent implements OnInit {
             ])
                 .pipe(
                     map(([users, categories]) => {
+                        console.log("Raw professionals data:", users); 
+                        console.log("Raw categories data:", categories);
+    
                         for(let i=0; i<users.length; i++) {
                             if (users[i].ratingSum == 0 || users[i].ratingSum == null) {
-                                users[i].rating = "No reviews yet!"
+                                users[i].rating = "No reviews yet!";
                             } else {
-                                users[i].rating = (users[i].ratingSum / users[i].ratingCount).toString();
+                                users[i].rating = (users[i].ratingSum / users[i].ratingCount).toFixed(2); 
                             }
                         }
                         this.professionals = users;
                         this.categories = categories;
+    
+                        console.log("Processed professionals data:", this.professionals); 
+                        this.professionals.forEach(pro => {
+                            console.log(`Processed professional: ${pro.firstName}, Rating: ${pro.rating}`);
+                        });
                     })
                 )
                 .subscribe(() => {
+                    console.log("Data ready for rendering.");
                     this.changeDetectorRef.markForCheck();
                     resolve('success');
+                    console.log("Final list of professionals for rendering:", this.professionals);
+
+                }, error => {
+                    console.error("Failed to fetch data:", error); 
+                    reject(error);
                 });
         });
     }
-
+    
     private calculateRating(sum: number, count: number) {
-        return sum / count
+        return sum / count;
     }
+    
 
     /**
      * Find and filter techies based on area code and distance parameters.
@@ -245,12 +282,39 @@ export class ServiceTechnicianSelectComponent implements OnInit {
         }
     }
 
+
+
+    public sortOption: string = ''; 
+
+    public sortProfessionals(): void {
+        this.filteredProfessionals.sort((a, b) => {
+          const ratingA = a.ratingCount > 0 ? a.ratingSum / a.ratingCount : 0;
+          const ratingB = b.ratingCount > 0 ? b.ratingSum / b.ratingCount : 0;
+                switch (this.sortOption) {
+            case 'ratingDesc':
+              return ratingB - ratingA;
+            case 'ratingAsc':
+              return ratingA - ratingB;
+            case 'priceDesc':
+              return b.unitPrice - a.unitPrice;
+            case 'priceAsc':
+              return a.unitPrice - b.unitPrice;
+            default:
+              return 0; 
+          }
+        });
+      
+        this.changeDetectorRef.markForCheck(); 
+      }
+      
+
     /**
      * Toggle the showMore button visibility and displays all current professionals.
      */
-    public showMore(){
+    public showMore() {
         this.isShowMoreBtnVisible = false;
-        this.filteredProfessionals = this.professionals;
+        this.filteredProfessionals = [...this.professionals]; 
+        this.sortProfessionals(); 
     }
 
     /**

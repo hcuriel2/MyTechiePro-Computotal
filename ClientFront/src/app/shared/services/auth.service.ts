@@ -54,6 +54,14 @@ export class AuthService {
         this.userSubject.next(user);
     }
 
+    public notifyAdmin(clientName: string, clientEmail: string, skill: string): Observable<any> {
+        console.log(clientName, clientEmail, skill);
+        const body = { clientName, clientEmail, skill };
+        console.log(body);
+        return this.httpClient.post<any>(`${this.API_URL}/notifyAdmin`, body);
+
+    }
+
     // Register a new User
     public registerUser(user: User): Observable<User> {
         return this.httpClient.post<User>(`${this.API_URL}/register`, user, { withCredentials: true });  

@@ -1,33 +1,33 @@
 <div class="survey-container">
-    <div class="border rounded" id="survey">
-        <button
-            class="back-arrow center-v"
-            mat-fab
-            color="primary"
-            (click)="prevSurvey()"
-        >
-            <mat-icon aria-hidden="false" aria-label="Example home icon"
-                >arrow_back</mat-icon
-            >
-        </button>
-        <h2 class="center">Summary</h2>
-
-        <div class="summary-container">
-            <p *ngFor="let choice of summary" class=".mat-body-strong">
-                {{ choice }}
-            </p>
-        </div>
-    </div>
+  <div class="border rounded" id="survey">
     <button
-        #nextbtn
-        mat-raised-button
-        color="primary"
-        class="pull-right"
-        id="next-btn"
-        (click)="pushSurvey()"
+      class="back-arrow center-v"
+      mat-fab
+      color="primary"
+      (click)="prevSurvey()"
     >
-        {{ 'Dictionary.Submit' | translate }}
+      <mat-icon aria-hidden="false" aria-label="Example home icon"
+        >arrow_back</mat-icon
+      >
     </button>
+    <h2 class="center m-2">Summary</h2>
+
+    <div class="summary-container">
+      <p *ngFor="let choice of summary" class=".mat-body-strong">
+        {{ choice }}
+      </p>
+    </div>
+  </div>
+  <button
+    #nextbtn
+    mat-raised-button
+    color="primary"
+    class="pull-right"
+    id="next-btn"
+    (click)="pushSurvey()"
+  >
+    {{ "Dictionary.Submit" | translate }}
+  </button>
 </div>
 
 <script src="../node_modules/jquery/dist/jquery.js"></script>

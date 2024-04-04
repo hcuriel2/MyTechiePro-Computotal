@@ -31,58 +31,65 @@
           placeholder="Search"
           [(ngModel)]="searchQuery"
           (ngModelChange)="showResults = searchQuery !== ''"
-        /><button
+        />
+        <button
           mat-icon-button
           matSuffix
           class="search-button"
-          (click)="showResults = !showResults"
+          (click)="clearSearchInput()"
         >
           <mat-icon>{{ !showResults ? "search" : "clear" }}</mat-icon>
         </button>
+      </div>
+      <div
+        *ngIf="showResults"
+        class="container-fluid search-results-container w-100"
+      >
+        <div class="row">
+          <div class="col-12">
+            <div class="search-results" #searchContainer>
+              <ng-container *ngFor="let category of categories">
+                <div
+                  class="category-container"
+                  *ngIf="hasMatchingResults(category)"
+                >
+                  <h3 class="category-name">{{ category.name }}</h3>
+                  <div class="services-list">
+                    <ng-container
+                      *ngFor="
+                        let service of category.services | filter : searchQuery
+                      "
+                    >
+                      <div class="service-item-container">
+                        <a
+                          class="service-item"
+                          (click)="selectService(category.name, service.name)"
+                        >
+                          {{ service.name }}
+                        </a>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-container>
+
+              <div *ngIf="noResult()" class="no-results">
+                <i>{{ "Message.NoMatchingResults" | translate }}</i>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div
-  *ngIf="showResults"
-  class="row flex-align-top px-4 full-width bg-primary-lighter"
-  id="resultRow"
->
-  <ng-container *ngFor="let category of categories">
-    <ng-container *ngIf="hasMatchingResults(category); else noResults">
-      <mat-list class="col-12 col-md-6 col-lg-1 my-2 p-0" id="resultList">
-        <h3 matSubheader class="pl-0" id="categoryName">{{ category.name }}</h3>
-        <p
-          mat-list-item
-          *ngFor="let service of category.services | filter : searchQuery"
-        >
-          <a
-            class="serviceItem"
-            id="serverItem"
-            (click)="selectService(category.name, service.name)"
-          >
-            {{ service.name }}
-          </a>
-        </p>
-      </mat-list>
-    </ng-container>
-    <ng-template #noResults>
-      <mat-list class="col-12 col-md-6 col-lg-1 my-2 p-0" id="resultList">
-        <h3 matSubheader class="pl-0" id="categoryName">{{ category.name }}</h3>
-        <div>
-          <p class="noItems">
-            <i>{{ "Message.NoMatchingResults" | translate }}</i>
-          </p>
-        </div>
-      </mat-list>
-    </ng-template>
-  </ng-container>
-</div>
-
-<div class="container-fluid mt-5 mb-5">
+<div class="container-fluid mt-5 mb-5 px-4 col-md-8">
   <div class="row justify-content-around align-items-start">
-    <div class="col-md-1" *ngFor="let category of categories">
+    <div
+      class="col-md-3 col-sm-6 col-12 mb-5"
+      *ngFor="let category of categories"
+    >
       <div class="row justify-content-center align-items-center">
         <button
           mat-fab
@@ -94,9 +101,23 @@
         </button>
       </div>
       <div class="row justify-content-center">
-        <span class="mt-2 h7">{{ category.name }}</span>
+        <span class="mt-2 h7 text-center">{{ category.name }}</span>
       </div>
     </div>
   </div>
 </div>
+
+<mat-card id="aboutUs">
+  <mat-card-title>About Us</mat-card-title>
+  <mat-card-content>
+    Computotal provides quality advice and support to its clients regarding
+    network and computing systems by proactively planning, designing,
+    installing, and maintaining computer networks. Computotal wants to provide a
+    single platform for the clients to directly connect with the right IT
+    technicians to provide them with the services they need. Additionally, the
+    technicians/service providers should also be able to join the IT Pros
+    network by registering through the platform.
+  </mat-card-content>
+</mat-card>
+
 <router-outlet></router-outlet>

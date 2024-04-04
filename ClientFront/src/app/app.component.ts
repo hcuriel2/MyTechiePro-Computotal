@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   userLatitude: string = "";
   userLongitude: string = "";
   isProfessional: boolean = false;
+  isMenuOpen: boolean = false;
 
   constructor(
     private dialog: MatDialog,
