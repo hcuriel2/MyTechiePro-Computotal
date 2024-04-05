@@ -44,20 +44,20 @@ export class AuthService {
 
     // Retrieves the current User's values
     public get userValue(): User | null {
-        console.log('userValue called')
+        
         return this.userSubject.value;
     }
 
     // Sets the current User's value
     public setUserValue(user: User | null): void {
-        console.log('setting user value', user)
+        
         this.userSubject.next(user);
     }
 
     public notifyAdmin(clientName: string, clientEmail: string, skill: string): Observable<any> {
-        console.log(clientName, clientEmail, skill);
+        
         const body = { clientName, clientEmail, skill };
-        console.log(body);
+        
         return this.httpClient.post<any>(`${this.API_URL}/notifyAdmin`, body);
 
     }
@@ -73,7 +73,7 @@ export class AuthService {
     public signIn(user: User): Observable<User> {
          return this.httpClient.post<User>(`${this.API_URL}/login`, user, { withCredentials: true }).pipe(
           tap((user: User) => {
-            console.log('siging in', user);
+            
             this.setUserValue(user);
           }),
           //switchMap(() => this.checkSession())
@@ -95,7 +95,7 @@ export class AuthService {
                 this.initialSessionChecked = false;
             },
             error => {
-                console.log('Error in auth service', error);
+                
             })
         )
     }
@@ -105,11 +105,11 @@ export class AuthService {
     public checkSession(): Observable<User> {
         return this.httpClient.get<User>(`${this.API_URL}/checkSession`, { withCredentials: true }).pipe(
             tap((user: User) => {
-                console.log('checking session', user);
+                
                 this.setUserValue(user);
                 this.initialSessionChecked = true;
             }, error => {
-                console.log('auth service no session found or error', error);
+                
                 this.setUserValue(null);
                 this.initialSessionChecked = true;
             })
@@ -120,7 +120,7 @@ export class AuthService {
     // Updates the User's information on the 'settings' page
     // All changes will update the User entry in the database
     updateUserSettings(userId: string, updates: any): Observable<any> {
-        console.log(userId)
+        
         return this.httpClient.patch(`${this.API_URL}/settings/${userId}`, updates, { withCredentials: true });
     }
 

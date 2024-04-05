@@ -111,7 +111,7 @@ class ProjectController implements Controller {
     //     response: Response
     // ) => {
     //     const { categoryName, categoryId, serviceName, serviceId, professionalId } = request.body;
-    //     // console.log(request.user._id, request.user.userType)
+    //     // 
     //     if ( request.user.userType !== "Client") {
     //         response.send("It's not the client creating the project.");
     //     } else {
@@ -146,7 +146,7 @@ class ProjectController implements Controller {
     //     const {totalCost, projectStartDate, projectEndDate, projectDetails} = request.body;
     //     const startDate = new Date(projectStartDate);
     //     const endDate = new Date(projectEndDate);
-    //     // console.log(request.user)
+    //     // 
     //     await this.project.findOneAndUpdate({_id:id ,state: "Requested", professional:request.user},
     //     {state:"OnGoing" , totalCost:totalCost, projectStartDate:startDate, projectEndDate:endDate,projectDetails:projectDetails },
     //     {returnOriginal:false}, function(err, result) {
@@ -360,12 +360,12 @@ class ProjectController implements Controller {
     ) => {
         const id = request.params.id;
         const {eTransferEmail, professionalId, projectStartDate, projectEndDate, totalCost} = request.body;
-        console.log("Given Start date:");
-        console.log(projectStartDate);
-        console.log("Given End date:");
-        console.log(projectEndDate);
-        console.log("Given totalCost:");
-        console.log(totalCost);
+        
+        
+        
+        
+        
+        
         const startDate = new Date(projectStartDate);
         const endDate = new Date(projectEndDate);
         await this.project.findOneAndUpdate({_id:id, state: "OnGoing", professional: professionalId}, 
@@ -385,7 +385,7 @@ class ProjectController implements Controller {
         let users = null;
         try {
             users = await this.user.find({ userType: userType });
-            console.log("findUsersByType was successful.")
+            
         } catch (e) {
             console.error('findUsersByTpe failed.', e);
         }
@@ -397,7 +397,7 @@ class ProjectController implements Controller {
         request: Request,
         response: Response
     ) => {
-        console.log(request.body);
+        
         const projectID = request.body.projectID; 
         const review = request.body.review;
         const rating = request.body.rating;
@@ -411,7 +411,7 @@ class ProjectController implements Controller {
         // Retrieve project object
         try {
             projectObj = await this.project.findOne({ _id: projectID });
-            console.log("found project");
+            
         } catch (e) {
             console.error(e);
         }
@@ -451,7 +451,7 @@ class ProjectController implements Controller {
         // Update the project object 
         try {
             const result = await this.project.updateOne({ _id: projectID }, updateOperation);
-            console.log("Project review successfully added: ", result);
+            
             response.json({ message: "Project updated successfully", result: result })
 
         } catch (e) {
@@ -463,7 +463,7 @@ class ProjectController implements Controller {
 
         // If the rating is below 3, a notification needs to be sent to the admin
         if (rating < 3) {
-            console.log('\n\n\n\n\n Negative review detected\n\n\n\n\n')
+            
             let admins =  await this.findUsersByType('Admin');
             let emailList = null;
 
@@ -474,7 +474,7 @@ class ProjectController implements Controller {
 
             // Feature is designed to work with the admin list
             // Currently the only email is set in the ENV file
-            console.log('Admin list:', emailList);
+            
 
             let html = `
                 <h1>Unsatisfied Customer</h1>
@@ -505,10 +505,10 @@ class ProjectController implements Controller {
         }
         emailtransporter.sendMail(email, function(error, info) {
             if (error){
-                console.log(error);
+                
                 
             } else {
-                console.log("Poor review notification sent to admins.");
+                
             }
         })
     }
@@ -521,8 +521,8 @@ class ProjectController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        console.log(request.params.id);
-        console.log('starting review function')
+        
+        
         const id = request.params.id;
         const {rating, feedback, professionalId} = request.body;
         await this.project.findOneAndUpdate({_id:id}, 
@@ -530,7 +530,7 @@ class ProjectController implements Controller {
         {returnOriginal:false}
         , function(err, result) {
             if(result) {  
-                console.log("fired");
+                
                 response.send(result);
             } else {
                 next(new NotFoundprojectException(id));
@@ -544,9 +544,9 @@ class ProjectController implements Controller {
                 , function(err, result) {
                     if(result) {  
                         //response.send(result)
-                        console.log("396");
+                        
                     } else {
-                        console.log(err);
+                        
                         // next(new NotFoundprojectException(id));
                     }
                 });

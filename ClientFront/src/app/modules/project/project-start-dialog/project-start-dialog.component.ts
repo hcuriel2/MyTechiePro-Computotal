@@ -49,10 +49,10 @@ export class ProjectStartDialogComponent implements OnInit {
     }
 
     public onSubmit(): void {
-        // console.log(this.startDate.value);
-        // console.log(this.endDate.value);
-        console.log(this.price.value);
-        console.log(this.detailText.value);
+        // 
+        // 
+        
+        
         this.data.totalCost = this.price.value;
         this.data.projectDetail = this.detailText.value;
 

@@ -9,11 +9,11 @@ function validationMiddleware<T>(
     skipMissingProperties = false
 ): RequestHandler {
     return (req, res, next) => {
-        console.log(req.body);
+        
         validate(plainToClass(type, req.body), { skipMissingProperties }).then(
             (errors: ValidationError[]) => {
                 if (errors.length > 0) {
-                    console.log("Validation errors: ", JSON.stringify(errors, null, 4));
+                    
                     const message = errors
                         .map((error: ValidationError) => {
                             // Check if error.constraints is truthy before attempting to access its values

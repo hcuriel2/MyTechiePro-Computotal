@@ -143,7 +143,7 @@ class CategoryController implements Controller {
         const categoryData: CreateCategoryDto = request.body;
         // const findUser = await this.user.findById(request.user._id);
         const findUser = await this.user.findById(hardCodedId);
-        console.log(findUser);
+        
 
         const createdCategory = new this.category({
             ...categoryData,

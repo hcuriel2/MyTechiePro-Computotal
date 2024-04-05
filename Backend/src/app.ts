@@ -21,7 +21,7 @@ class App {
 
     public listen() {
         this.app.listen(process.env.PORT, () => {
-            console.log(`App listening on the port ${process.env.PORT}`);
+            
         });
     }
 
@@ -63,7 +63,7 @@ class App {
     }
 
     private connectToTheDatabase() {
-        console.log('Connecting to the database...');
+        
 
         const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH } = process.env;
         mongoose.connect(
@@ -76,7 +76,7 @@ class App {
               },
         );
 
-        console.log('Database successfully connected.');
+        
     }
 }
 

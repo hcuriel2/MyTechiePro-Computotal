@@ -63,23 +63,23 @@ export class ProjectsComponent implements OnInit {
      )
       .subscribe((projects: ProjectWithUserNames[]) => {
         this.dataSourceProjectsWithNames = projects;
-        console.log("Logging switchmap results")
-        console.log(projects)
+        
+        
         let badProjectsList = []
         for (let i = 0; i < projects.length; i++) {
           if (projects[i].rating! < 3.0 && projects[i].rating! != null) {
             badProjectsList.push(projects[i]);
           }
         }
-        console.log("logging bad projects list")
-        console.log(badProjectsList)
+        
+        
         this.dataSourceProjectsWithNames = badProjectsList
         this.dataSourceBad = new MatTableDataSource(this.dataSourceProjectsWithNames);
         this.dataSource = new MatTableDataSource(projects);
         this.dataSource.sort = this.sort;
 
-        console.log("logging datasource")
-        console.log(this.dataSource);
+        
+        
 
         this.changeDetectorRef.markForCheck();
       });
@@ -103,8 +103,8 @@ export class ProjectsComponent implements OnInit {
       tempProjectUserName.clientName = "";
       tempProjectsWithNames.push(tempProjectUserName)
     }
-    console.log("logging projectwithNames array");
-    console.log(tempProjectsWithNames);
+    
+    
     return tempProjectsWithNames;
   }
 
@@ -113,7 +113,7 @@ export class ProjectsComponent implements OnInit {
       .getById(id)
       .pipe(first())
       .subscribe((user: User) => {
-        console.log(this.user.firstName + ' ' + this.user.lastName);
+        
         return this.user.firstName + ' ' + this.user.lastName;
       });
   }
@@ -149,7 +149,7 @@ export class ProjectsComponent implements OnInit {
       } else {
         this.router.navigateByUrl('/customerDetails', { state: user });
       }
-      console.log('Pro page', user);
+      
     });
   }
 }

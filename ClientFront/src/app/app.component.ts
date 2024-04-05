@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = "computer-guy-frontend";
 
   public ngOnDestroy(): void {
-    console.log("ngOnDestroy");
+    
   }
 
 
@@ -60,14 +60,14 @@ export class AppComponent implements OnInit, OnDestroy {
       this.authService.checkSession().subscribe({
         next: (user) => {
           this.user = user;
-          console.log('boolean 1st func init', this.authService.initSessionCheck)
+          
 
         }
       })
     }
 
     this.authService.user.subscribe((user) => {
-      console.log('boolean 2nd func init', this.authService.initSessionCheck)
+      
       if (user){
         this.isProfessional = user.userType === 'Professional' ?? false;
         this.updateUIBasedOnUser(user);
@@ -76,7 +76,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     })
 
-    console.log('end of init bool', this.authService.initSessionCheck)
+    
 
   }
 
@@ -123,7 +123,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public onClick(): void {
-    console.log("something");
+    
   }
 
   public signIn(): void {

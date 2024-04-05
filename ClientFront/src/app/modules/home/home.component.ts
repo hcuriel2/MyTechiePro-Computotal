@@ -89,7 +89,7 @@ export class HomeComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
 
         if (!userData){
-          console.log('no user data in authservice sub in home component')
+          
         } 
 
         // Use setTimeout to delay redirection logic to the end of the event loop,

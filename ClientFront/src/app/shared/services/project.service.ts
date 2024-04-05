@@ -84,7 +84,7 @@ export class ProjectService {
             }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
-                console.log('error caught in service')
+                
                 console.error(err);
        
                 //Handle the error here
@@ -95,7 +95,7 @@ export class ProjectService {
     }
 
     // public startProject( projectId: string, totalCost: string, projectStartDate: string, projectEndDate: string, projectDetails: string, professionalId: string) {
-    //     console.log("startProject");
+    //     
     //     this.router.navigateByUrl('/project/${project_id}').then(() => {
     //         window.location.reload();
     //     });
@@ -120,7 +120,7 @@ export class ProjectService {
             }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
-                console.log('error caught in service')
+                
                 console.error(err);
        
                 //Handle the error here
@@ -141,7 +141,7 @@ export class ProjectService {
             }, { withCredentials: true },
         ).pipe(
             catchError((err) => {
-                console.log('error caught in service')
+                
                 console.error(err);
        
                 //Handle the error here

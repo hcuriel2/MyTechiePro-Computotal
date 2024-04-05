@@ -187,7 +187,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe(
         (user: User) => {
-          console.log("Successfully signed up!");
+          
 
           this.authService.setUserValue(user);
           this.changeDetectorRef.detectChanges();
@@ -218,8 +218,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
         //  let cookieName =
          //   "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
          // document.cookie = cookieName;
-         // console.log(cookieName);
-         // console.log(document.cookie);
+         // 
+         // 
 
           //Send signed up user to correct page (projects if "techie" user, "home" if client)
           /*if (
@@ -330,7 +330,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
    */
   handleAddressChange(address: any) {
     let addressComponents = address.address_components;
-    console.log(addressComponents.length);
+    
 
     this.userAddress = address.formatted_address;
     this.userLatitude = address.geometry.location.lat();
@@ -366,14 +366,14 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.city.patchValue(this.userCity);
     this.street.patchValue(this.userStreetAddress);
     this.postalCode.patchValue(this.userPostal);
-    console.log(this.userCountry);
-    console.log(this.userPostal);
-    console.log(this.userCity);
-    console.log(this.userStreetAddress);
-    console.log(this.userLatitude);
-    console.log(this.userLongitude);
-    console.log(this.userPlaceId);
-    console.log(address);
+    
+    
+    
+    
+    
+    
+    
+    
     // this.userCountry = address.geometry.location.country()
   }
 

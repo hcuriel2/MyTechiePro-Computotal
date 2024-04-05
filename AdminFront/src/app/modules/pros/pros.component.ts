@@ -38,7 +38,7 @@ export class ProsComponent implements OnInit {
       );
 
 
-      console.log(this.pros);
+      
 
       // var userPerformance;
       // var ratingSum = 0;
@@ -46,7 +46,7 @@ export class ProsComponent implements OnInit {
 
       // iterates over each user in pros array. The variable users is an index value, ex- 0, 1, 2 ,etc.
       // for (var users in this.pros) {
-        // console.log(this.pros[users].performance);
+        // 
         // userPerformance = this.pros[users].performance;
         // pros[users].rating = this.pros[users].ratingSum / this.pros[users].ratingCount;
 
@@ -57,7 +57,7 @@ export class ProsComponent implements OnInit {
         //   }
         //   avg = ratingSum / userPerformance.length;
         //   pros[users].rating = avg;
-        //   console.log('avg: ', avg)
+        //   
         // }
       //}
     });
@@ -76,7 +76,7 @@ export class ProsComponent implements OnInit {
     this.userService.getById(id).subscribe((pro: User) => {
       this.pro = pro;
       this.router.navigateByUrl('/proDetails', { state: this.pro });
-      console.log('Pro page', this.pro);
+      
     });
   }
 

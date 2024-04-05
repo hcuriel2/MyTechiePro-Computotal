@@ -63,7 +63,7 @@ export class ServiceSurveyModuleComponent implements OnInit {
     nextSurvey(event: any): void {
         // No choice on survey
         if (this.choice == null) {
-            console.log('Invalid Choice');
+            
             this.message = 'Required!';
         } else {
             this.nextSurveyRequest.next(this.choice);
@@ -77,7 +77,7 @@ export class ServiceSurveyModuleComponent implements OnInit {
             this.choice = this.lastChoices[this.lastChoices.length - 1];
             this.prevSurveyRequest.next();
         } else {
-            console.log('Unable to backtrack');
+            
         }
     }
 }

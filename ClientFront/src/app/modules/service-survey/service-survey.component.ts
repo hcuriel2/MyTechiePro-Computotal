@@ -92,7 +92,7 @@ export class ServiceSurveyComponent implements OnInit {
         this.survey = temp;
 
         const lastChoice = this.choices.pop()?.getAnswer();
-        // console.log("Popped: " + lastChoice);
+        // 
 
         // Nests in a level deeper for the next survey.
         this.currentModule = Object.keys(this.survey.contents);
@@ -101,7 +101,7 @@ export class ServiceSurveyComponent implements OnInit {
     }
 
     public renderTechSelection(): void {
-        console.log('renderTechSelection');
+        
 
         this.router.navigate(['/service-tech-select'], {
             queryParams: {

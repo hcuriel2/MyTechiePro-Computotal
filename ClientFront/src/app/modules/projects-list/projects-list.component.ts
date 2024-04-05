@@ -59,13 +59,13 @@ export class ProjectsListComponent implements OnInit {
 
 
     public ngOnInit(): void {
-        console.log('proj list initif ')
+        
         this.authService.checkSession().subscribe({
             next: (user) => {
-                console.log('project list init - user data:', user)
+                
 
                 this.user = user;
-                console.log(user);
+                
                 this.authService.setUserValue(user);
                 this.subscribeToUserChanges();
                 this.changeDetectorRef.detectChanges();
@@ -79,7 +79,7 @@ export class ProjectsListComponent implements OnInit {
     private subscribeToUserChanges(): void {
         this.authService.user.subscribe({
           next: (user) => {
-            console.log(user);
+            
             this.user = user;
             if (user?.userType === 'Professional') {
               this.isCustomer = false;
@@ -98,7 +98,7 @@ export class ProjectsListComponent implements OnInit {
       
 
     private fetchProjects(user: User | null): void {
-        console.log('fetchprojects')
+        
         let observable: Observable<Project[]>;
       
         if (user?.userType === UserType.Client) {
@@ -134,7 +134,7 @@ export class ProjectsListComponent implements OnInit {
         this.dataSource = new MatTableDataSource(onGoingProjects.length > 0 ? onGoingProjects : [blankProject]);
         this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length > 0 ? completedOrPaid : [blankProject]);
 
-        console.log("DataSource projects:", projects);
+        
 
 
         this.changeDetectorRef.markForCheck();  // Tell Angular to re-check the state.
@@ -188,7 +188,7 @@ export class ProjectsListComponent implements OnInit {
             );
 
 
-            console.log(newProjects, onGoingProjects);
+            
 
             this.dataSourceRequest = new MatTableDataSource(
                 newProjects.length !== 0 ? newProjects : [blankProject]
@@ -221,7 +221,7 @@ export class ProjectsListComponent implements OnInit {
     }
 
     public goToProject(projectID: number): void {
-        console.log(projectID);
+        
         var routeString = '/project/' + projectID;
         this.router.navigate([routeString]);
     }

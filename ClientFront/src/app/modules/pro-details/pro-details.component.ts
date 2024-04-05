@@ -130,7 +130,7 @@ export class ProDetailsComponent implements OnInit {
   }
 
   public view_account_info() {
-    console.log("history.state", history.state);
+    
     this.id = history.state.pro._id;
     this.alias = history.state.pro.alias;
     this.name = history.state.pro.firstName + " " + history.state.pro.lastName;
@@ -172,7 +172,7 @@ export class ProDetailsComponent implements OnInit {
     this.selectedTechID = id;
     this.createProject();
     // const serviceName = history.state.serviceName;
-    //  console.log(serviceName + " " + this.categorySelection + " " + history.state.serviceId);
+    //  
   }
 
   // Create a project listing with selected techie and redirect user to project page.
@@ -237,11 +237,11 @@ export class ProDetailsComponent implements OnInit {
       .getProjectsByProId(history.state._id)
       .pipe(first())
       .subscribe((projects: Project[]) => {
-        // console.log(projects);
+        // 
         this.dataSourceProjects = projects;
         // this.dataSource = new MatTableDataSource(this.dataSourceProjects);
         // this.dataSource.sort = this.sort;
-        console.log("proj", this.dataSourceProjects);
+        
       });
   }
 }

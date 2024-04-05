@@ -24,7 +24,7 @@ export class ClientRequestComponent implements OnInit {
         this.clientRequests = clientRequests;
         this.dataSource = new MatTableDataSource(this.clientRequests);
         this.dataSource.sort = this.sort;
-        console.log(this.dataSource);
+        
       });
   }
 

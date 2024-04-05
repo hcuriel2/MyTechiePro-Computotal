@@ -174,7 +174,7 @@ class UserController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        console.log('getAllProfessionalsBySkill called with params:', request.params);
+        
 
 
         //given object with filtering requirements

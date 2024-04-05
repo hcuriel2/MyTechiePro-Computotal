@@ -17,13 +17,13 @@ export class ServiceSurveyModuleSummaryComponent implements OnInit {
     ngOnInit(): void {}
 
     prevSurvey(): void {
-        console.log('prevSurvey');
+        
         this.prevSurveyRequest.next();
     }
 
     pushSurvey(): void {
-        console.log('Survey Post');
+        
         this.goToTechSelectionRequest.next();
-        console.log('uhhhh');
+        
     }
 }
