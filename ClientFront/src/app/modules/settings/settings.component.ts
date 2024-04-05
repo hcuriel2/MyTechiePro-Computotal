@@ -115,5 +115,6 @@ export class SettingsComponent implements OnInit {
 
         this.formDisabled = true;
         this.editing = false;
+        window.location.reload();
     }
 }
