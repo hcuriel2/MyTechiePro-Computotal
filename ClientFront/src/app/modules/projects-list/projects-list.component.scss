@@ -50,10 +50,34 @@ table {
 }
 
 th {
-  background-color: #dcdcdc;
+  // background-color: #dcdcdc;
   color: #000000;
   font-weight: bold;
 }
+
+
+
+::ng-deep .mat-header-cell {
+  border-color: transparent !important;
+}
+
+::ng-deep .mat-header-cell {
+  border-bottom-color: transparent !important;
+}
+
+::ng-deep .mat-tab-group .mat-table th.mat-header-cell {
+  border-bottom: none !important; 
+}
+
+
+::ng-deep .mat-tab-group .mat-tab-label,
+::ng-deep .mat-tab-group .mat-tab-link {
+    border-bottom: 2px solid transparent;
+}
+::ng-deep .mat-tab-group .mat-ink-bar {
+  background-color: transparent; 
+}
+
 
 th, td {
   // text-align: left;
@@ -63,6 +87,7 @@ th, td {
   flex: 1 !important; 
   justify-content: center !important; 
   text-align: center !important; 
+  border-radius: 40px !important;
 }
 
 
@@ -95,6 +120,11 @@ th, td {
 }
 
 
+::ng-deep .mat-ink-bar {
+  display: none !important;
+}
+
+
 .mat-form-field {
   width: 100%;
   margin-bottom: 1rem;
@@ -124,12 +154,18 @@ input.mat-input-element {
 ::ng-deep .mat-tab-label {
   padding: 12px 8px; 
   font-size: 20px; 
-  border-radius: 40px !important;
+  // border-radius: 40px !important;
 }
 .mat-tab-label {
   font-weight: 500;
 
 }
+
+
+// ::ng-deep .mat-tab-body-wrapper {
+//   padding-top: 40px; /* Adjust the space as needed */
+// }
+
 
 
 .border.rounded.center {
@@ -189,3 +225,7 @@ input.mat-input-element {
       margin: 10px auto; 
   }
 }
+
+
+
+
