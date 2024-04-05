@@ -243,7 +243,7 @@ button {
         min-width: 80px;
       }
       
-      .btnProfiles:hover, .btnProfiles:focus {
+      .completedButtons:hover, .completedButtons:focus {
         background-color: #07213b;
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
@@ -267,7 +267,7 @@ button {
         min-width: 80px;
       }
       
-      .btnProfiles:hover, .btnProfiles:focus {
+      .reviewButton:hover, .reviewButton:focus {
         background-color: #07213b;
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
@@ -291,7 +291,7 @@ button {
         min-width: 80px;
       }
       
-      .btnProfiles:hover, .btnProfiles:focus {
+      .paidButton:hover, .paidButton:focus {
         background-color: #07213b;
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);

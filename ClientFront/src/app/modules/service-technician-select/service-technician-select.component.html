@@ -25,12 +25,9 @@
 
 
   <div class="text-center mb-3">
-    <button mat-raised-button color="primary" class="radius-50" (click)="findTechs()">
-      {{ "Label.FindTechnicians" | translate }}
+    <button mat-raised-button class="findTechs" (click)="findTechs()">
+   <strong>   {{ "Label.FindTechnicians" | translate }} </strong>
     </button>
-
-
-    <button (click)="notifyAdmin()" class="radius-50">Notify Admin</button>
 
 
   </div>
@@ -53,7 +50,17 @@
   
 
 
-  <div *ngIf="isFeedbackVisible" id="search-feedback">{{ searchFeedback }}</div>
+  <div *ngIf="searchFeedback === 'No Technicians found, please change distance radius or contact Admin'">
+    <div class="search-feedback" *ngIf="searchFeedback">
+      {{ searchFeedback }}
+  </div>
+    <button (click)="notifyAdmin()" class="notifyAdmin">
+        <strong>No Technicians? Notify Admin</strong>
+    </button>
+
+  
+</div>
+
 
   <div class="row" *ngIf="isCardListVisible">
     <div class="col-lg-4 col-md-6 col-sm-12" *ngFor="let pro of filteredProfessionals">
@@ -93,12 +100,11 @@
           </mat-chip-list>
           <button
           mat-stroked-button
-          color="accent"
           (click)="techSelectDetails(pro)"
           [ngClass]="{ selected: selectedTechID === pro._id }"
           class="contact-tech-btn"
-        >
-          {{ "Label.TechnicianDetails" | translate }}
+        > <strong>
+          {{ "Label.TechnicianDetails" | translate }} </strong>
         </button>
         </div>
       </mat-card-content>
