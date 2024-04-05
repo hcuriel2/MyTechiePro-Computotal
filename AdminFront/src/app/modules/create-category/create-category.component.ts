@@ -30,8 +30,8 @@ export class CreateCategoryComponent implements OnInit {
 
   onClicked(value: string) {
     this.newCategoryNameFromInput = value;
-    console.log(this.newCategoryNameFromInput);
-    console.log(value);
+    
+    
   }
   onClicked2(value: string) {
     this.newMaterialIconFromInput = value;
@@ -41,12 +41,12 @@ export class CreateCategoryComponent implements OnInit {
   }
 
   loggingValue() {
-    console.log(this.newCategoryNameFromInput)
-    console.log(this.newMaterialIconFromInput)
-    console.log(this.newServicesFromInput)
+    
+    
+    
 
     this.newServicesFromInputArr = this.newServicesFromInput!.split(',');
-    console.log(this.newServicesFromInputArr)
+    
 
     const tryObject = { "test": "hello", "work": "please" };
 
@@ -63,9 +63,9 @@ export class CreateCategoryComponent implements OnInit {
         keywords: ["keyword1", "keyword2"],
       };
     });
-    console.log("this category values:" + this.category.name, this.category.icon, this.category.services)
+    
     this.createCategoryService.createANewCategory(this.category).subscribe((data: Category) => {
-      console.log("this is where the data is" + data);
+      
     }
     );
     //route back to the admin dashboard

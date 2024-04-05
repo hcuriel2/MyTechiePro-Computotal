@@ -22,15 +22,15 @@ export class AppComponent {
     if (!userCookie || JSON.parse(JSON.parse(userCookie)).userType != "Admin") {
       // window.location.href = "https://mytechie.pro";
     } else {
-      console.log(userCookie);
-      console.log(JSON.parse(userCookie));
+      
+      
       let json = JSON.parse(userCookie);
       let user = JSON.parse(json);
-      console.log(user);
+      
       let firstName = user.firstName;
       let lastName = user.lastName;
       let fullName = firstName + " " + lastName;
-      console.log(firstName);
+      
       // Assigns name displayed on the admin page to the name based on the user cookie.
       document.getElementById("fullName")!.innerHTML = fullName;
 

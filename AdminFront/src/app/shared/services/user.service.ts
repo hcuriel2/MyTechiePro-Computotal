@@ -68,8 +68,8 @@ export class UserService {
 
   // Registers a new admin from the admin panel
   public registerUser(user: User): Observable<User> {
-    console.log("Given Admin to backend");
-    console.log(user);
+    
+    
     return this.httpClient
       .post<User>(`${this.AUTH_API_URL}/register`, user)
       .pipe(

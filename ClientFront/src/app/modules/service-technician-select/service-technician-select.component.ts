@@ -111,7 +111,7 @@ export class ServiceTechnicianSelectComponent implements OnInit {
             ?.services.find((s) => s.name === this.serviceSelection)?._id;
 
         const serviceName = this.serviceSelection;
-        console.log(categoryId + " " + serviceId + " " + serviceName)
+        
         this.router.navigateByUrl('/proDetails', { state: {pro, categoryId, serviceId, serviceName }});
         // this.router.navigateByUrl('/proDetails', { state: this.pro });
         // this.createProject();
@@ -123,7 +123,7 @@ export class ServiceTechnicianSelectComponent implements OnInit {
     notifyAdmin(): void {
         this.authService.notifyAdmin(this.clientName, this.clientEmail, this.skill).subscribe({
             next: (response) => {
-                console.log('Admin notified successfully', response);
+                
                 this.snackBar.open('The admin has been notified!', 'Close', { duration: 3000 });
             },
             error: (error) => {
@@ -203,8 +203,8 @@ export class ServiceTechnicianSelectComponent implements OnInit {
             ])
                 .pipe(
                     map(([users, categories]) => {
-                        console.log("Raw professionals data:", users); 
-                        console.log("Raw categories data:", categories);
+                        
+                        
     
                         for(let i=0; i<users.length; i++) {
                             if (users[i].ratingSum == 0 || users[i].ratingSum == null) {
@@ -216,17 +216,17 @@ export class ServiceTechnicianSelectComponent implements OnInit {
                         this.professionals = users;
                         this.categories = categories;
     
-                        console.log("Processed professionals data:", this.professionals); 
+                        
                         this.professionals.forEach(pro => {
-                            console.log(`Processed professional: ${pro.firstName}, Rating: ${pro.rating}`);
+                            
                         });
                     })
                 )
                 .subscribe(() => {
-                    console.log("Data ready for rendering.");
+                    
                     this.changeDetectorRef.markForCheck();
                     resolve('success');
-                    console.log("Final list of professionals for rendering:", this.professionals);
+                    
 
                 }, error => {
                     console.error("Failed to fetch data:", error); 
@@ -333,19 +333,19 @@ export class ServiceTechnicianSelectComponent implements OnInit {
         return new Promise((resolve, reject) => {
             let url = `${this.googleMapApiUrl}?address=${this.areaCode}&key=${this.googleMapApiKey}`;
             this.http.get(url).subscribe((response: any) => {
-                console.log("Geocoding response:", response); // Log the full response
+                
     
                 if (response.status === "ZERO_RESULTS") {
                     this.latitude = 0;
                     this.longitude = 0;
-                    console.log("No results found for this area code."); // Log no results
+                    
                 } else if (response.results && response.results.length > 0) {
                     let results = response.results;
                     this.latitude = results[0].geometry.location.lat;
                     this.longitude = results[0].geometry.location.lng;
-                    console.log("Coordinates found:", this.latitude, this.longitude); // Log the coordinates
+                    
                 } else {
-                    console.log("Unexpected response format:", response); // Log unexpected format
+                    
                 }
                 resolve(response.status);
             }, error => {
@@ -374,7 +374,7 @@ export class ServiceTechnicianSelectComponent implements OnInit {
                 }
             )
         } catch (error) {
-            console.log("Current geolocation coordinates not found");
+            
         }
     }
 }

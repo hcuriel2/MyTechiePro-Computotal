@@ -93,7 +93,7 @@ export class SettingsComponent implements OnInit {
     
 
     submitForm(): void {
-        console.log('submitting form')
+        
         const updatedUserInfo = {
             firstName: (document.getElementById('firstName') as HTMLInputElement).value,
             lastName: (document.getElementById('lastName') as HTMLInputElement).value,
@@ -106,7 +106,7 @@ export class SettingsComponent implements OnInit {
 
         this.authService.updateUserSettings(this.userId, updatedUserInfo).subscribe({
             next: (response) => {
-                console.log('Update successful', response);
+                
             },
             error: (error) => {
                 console.error('Error updating user info:', error);

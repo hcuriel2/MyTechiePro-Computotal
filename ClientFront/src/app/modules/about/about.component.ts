@@ -33,7 +33,7 @@ export class AboutComponent implements OnInit {
 
   handleAddressChange(address: any) {
     let addressComponents = address.address_components;
-    console.log(addressComponents.length);
+    
 
     this.userAddress = address.formatted_address;
     this.userLatitude = address.geometry.location.lat();
@@ -63,11 +63,11 @@ export class AboutComponent implements OnInit {
       }
       this.userStreetAddress = streetNumber + " " + streetName;
     }
-    console.log(this.userCountry);
-    console.log(this.userPostal);
-    console.log(this.userCity);
-    console.log(this.userStreetAddress);
-    console.log(address);
+    
+    
+    
+    
+    
     // this.userCountry = address.geometry.location.country()
   }
 }

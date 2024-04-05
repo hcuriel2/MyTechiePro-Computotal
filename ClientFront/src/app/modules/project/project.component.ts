@@ -99,7 +99,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                     } else {
                         this.projectPrice = "$0"
                     }
-                    //console.log(this.project.totalCost)
+                    //
 
                     // if (this.project.rating != 0) {
                     //     document.getElementById("project-component-review-button")!. = "true";
@@ -137,7 +137,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
    * Displays dialog box for tech to change Project cost.
    */
   public onStartProject(): void {
-    console.log("onStartProject");
+    
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.autoFocus = true;
@@ -146,7 +146,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       .open(ProjectStartDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe((data: any) => {
-        console.log("onStartProject after close after subscribe");
+        
         this.projectService
           .startProject(
             this.project._id,
@@ -156,7 +156,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
           )
           .pipe(first())
           .subscribe((project) => {
-            console.log("onStartProject after pipe after subscribe");
+            
             this.router.navigateByUrl(`/project/${project._id}`).then(() => {
               window.location.reload();
             });
@@ -165,11 +165,11 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public onProjectOnGoing(): void {
-    console.log("onProjectOnGoing");
+    
   }
 
   public onCompleteProject(): void {
-    console.log("onCompleteProject");
+    
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.autoFocus = true;
@@ -183,7 +183,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       .open(ProjectCompleteDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe((data: any) => {
-        console.log("onStartProject after close after subscribe");
+        
         this.projectService
           .completeProject(
             this.project._id,
@@ -195,7 +195,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
           )
           .pipe(first())
           .subscribe((project) => {
-            console.log("onStartProject after pipe after subscribe");
+            
             this.router.navigateByUrl(`/project/${project._id}`).then(() => {
               window.location.reload();
             });
@@ -235,7 +235,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       .open(ProjectReviewDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe((feedback: string) => {
-        console.log(feedback);
+        
         let feedobj = JSON.parse(feedback);
         this.projectService
           .rateProject(
@@ -246,7 +246,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
           )
           .pipe(first())
           .subscribe((project) => {
-            console.log("onStartProject after pipe after subscribe");
+            
             this.router.navigateByUrl(`/project/${project._id}`).then(() => {
               window.location.reload();
             });
@@ -260,7 +260,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     public onSubmit(): void {
         const userId = this.user?._id;
-        console.log(`OnSubmit user: ${userId}`);
+        
         if (userId && this.messageInput.value) {
             this.projectService
                 .commentProject(this.project._id, this.messageInput.value, userId)

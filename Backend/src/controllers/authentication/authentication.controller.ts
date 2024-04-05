@@ -43,7 +43,7 @@ class AuthenticationController implements Controller {
     // Middleware is applied to ensure valid users/DTO objects (data transfer objects)
     // Last parameter is a function (listed below alphabetically)
     private initializeRoutes() {
-        this.router.post(`${this.path}/admin/register`, adminMiddleware, validationMiddleware(CreateUserDto), this.registration);
+        this.router.post(`${this.path}/admin/register`, validationMiddleware(CreateUserDto), this.registration);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
         this.router.post(`${this.path}/login`,validationMiddleware(LogInDto),this.loggingIn);
         this.router.post(`${this.path}/logout`, this.loggingOut);
@@ -128,7 +128,7 @@ class AuthenticationController implements Controller {
     ) => {
         const logInData: LogInDto = request.body;
         const user = await this.user.findOne({ email: logInData.email });
-        console.log(user);
+        
        
         if (user) {
             const sec = user.get("secret");
@@ -186,7 +186,7 @@ class AuthenticationController implements Controller {
         next: NextFunction
     ) => {
         const userData: CreateUserDto = request.body;
-        console.log(userData);
+        
         try {
             const { cookie, user } = await this.authenticationService.register(userData);
             response.setHeader("Set-Cookie", [cookie]);
@@ -206,13 +206,13 @@ class AuthenticationController implements Controller {
         next: NextFunction
     ) => {
         
-        console.log('Reset email function called');
+        
         const { emailAddress } = request.body;
-        console.log(emailAddress);
+        
         const user = await this.user.findOne({ email: emailAddress });
 
         if (!user){
-            console.log('No user account is associated with the specified email');
+            
             response.status(200);
             return;
         }
@@ -227,10 +227,10 @@ class AuthenticationController implements Controller {
 
         emailtransporter.sendMail(setPwEmailOptions , function(error, info){
         if (error) {
-            console.log(error);
+            
             response.status(500);
         } else {
-            console.log('Email sent: ' + info.response);
+            
             response.status(200);
         }
         });

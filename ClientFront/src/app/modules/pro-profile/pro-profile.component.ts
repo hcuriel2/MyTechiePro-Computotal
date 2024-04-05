@@ -26,7 +26,7 @@ export class ProProfileComponent implements OnInit {
     if (userProfileString && userProfileString !== '{}') {
       this.userProfile = JSON.parse(userProfileString);
     } else {
-      console.log('No user profile information found in local storage.');
+      
     }
   }
 

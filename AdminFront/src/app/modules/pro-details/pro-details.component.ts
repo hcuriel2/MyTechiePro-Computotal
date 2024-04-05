@@ -49,7 +49,7 @@ export class ProDetailsComponent implements OnInit {
   }
 
   public view_account_info() {
-    console.log('history.state', history.state);
+    
     this.alias = history.state.alias;
     this.name = history.state.firstName + ' ' + history.state.lastName;
     this.companyName = history.state.company;
@@ -90,11 +90,11 @@ export class ProDetailsComponent implements OnInit {
       .getProjectsByProId(history.state._id)
       .pipe(first())
       .subscribe((projects: Project[]) => {
-        console.log(projects);
+        
         this.dataSourceProjects = projects;
         // this.dataSource = new MatTableDataSource(this.dataSourceProjects);
         // this.dataSource.sort = this.sort;
-        console.log('proj', this.dataSourceProjects);
+        
       });
   }
 }

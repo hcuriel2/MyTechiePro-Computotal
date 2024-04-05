@@ -41,7 +41,7 @@ export class CustomerDetailsComponent implements OnInit {
   }
 
   public view_account_info() {
-    console.log('history.state', history.state);
+    
     this.name = history.state.firstName + ' ' + history.state.lastName;
     this.companyName = history.state.company;
     this.email = history.state.email;

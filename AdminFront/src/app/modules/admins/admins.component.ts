@@ -32,17 +32,17 @@ export class AdminsComponent implements OnInit {
     //get list of current admins
     this.userService.getAllAdmins().subscribe((admins: User[]) => {
       this.admins = admins;
-      console.log("test");
-      console.log(this.admins);
+      
+      
     });
   }
 
   routeToAdminDetails(id: any) {
-    console.log(id);
+    
   }
 
   public onAdminCreate(): void {
-    console.log("On Admin Create");
+    
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.autoFocus = true;
@@ -56,17 +56,17 @@ export class AdminsComponent implements OnInit {
       .open(AdminCreateDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe((data: any) => {
-        console.log("onAdminCreate after close after subscribe");
+        
         this.admin = data;
-        console.log("User on admin.compnent.ts");
+        
         this.admin.userType = "Admin";
-        console.log(this.admin);
+        
         this.userService
           .registerUser(this.admin
           )
           .pipe(first())
           .subscribe((project) => {
-            console.log("admin create dialog subscribed");
+            
             window.location.reload();
           });
       });

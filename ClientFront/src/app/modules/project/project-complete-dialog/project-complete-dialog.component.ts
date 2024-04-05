@@ -48,8 +48,8 @@ export class ProjectCompleteDialogComponent implements OnInit {
     public onSubmit(): void {
         this.data.startDate = this.startDate.value;
         this.data.endDate = this.endDate.value;
-        console.log(this.data.startDate);
-        console.log(this.data.endDate);
+        
+        
 
         this.data.totalCost = this.price.value;
         this.data.email = this.eTransferEmail.value

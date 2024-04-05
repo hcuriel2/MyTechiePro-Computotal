@@ -48,7 +48,7 @@ export class ProjectReviewDialogComponent implements OnInit {
   onSubmit(): void {
     if (this.reviewForm.valid) {
       const data = this.reviewForm.value;
-      console.log(data);
+      
 
       fetch(`${this.API_URL}/projectReview`,  {
         method: 'POST',
@@ -67,7 +67,7 @@ export class ProjectReviewDialogComponent implements OnInit {
         
       })
       .then(data => {
-        console.log('Response: ', data);
+        
         this.dialogRef.close(this.reviewForm.value);
       })
       .catch(error => {

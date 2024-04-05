@@ -22,8 +22,8 @@ export class CreateCategoryService {
 
   // Create  a new category from the create category panel
   public createANewCategory(newCategory: Category) {
-    console.log('Created a new category from AdminFont');
-    console.log("here is the new category created" + newCategory.name + newCategory.icon + newCategory.services);
+    
+    
     return this.httpClient
       .post<Category>(`${this.API_URL}`, newCategory)
       // .pipe(

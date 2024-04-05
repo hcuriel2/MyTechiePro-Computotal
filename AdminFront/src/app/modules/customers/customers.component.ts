@@ -26,7 +26,7 @@ export class CustomersComponent implements OnInit {
   ngOnInit() {
     this.userService.getAllClients().subscribe((customers: User[]) => {
       this.customers = customers;
-      console.log(this.customers);
+      
     });
   }
 
@@ -38,7 +38,7 @@ export class CustomersComponent implements OnInit {
     this.userService.getById(id).subscribe((customer: User) => {
       this.customer = customer;
       this.router.navigateByUrl('/customerDetails', { state: this.customer });
-      console.log('Customer page', this.customer);
+      
     });
   }
 }

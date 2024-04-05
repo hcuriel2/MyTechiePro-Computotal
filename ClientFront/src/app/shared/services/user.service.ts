@@ -59,7 +59,7 @@ export class UserService {
         };
     
         let filterString = encodeURIComponent(JSON.stringify(filterReq));
-        console.log(`Final request URL: ${this.API_URL}/professionals/${filterString}`);
+        
     
         return this.httpClient
             .get<User[]>(`${this.API_URL}/professionals/${filterString}`)
@@ -70,7 +70,7 @@ export class UserService {
                     professionals.forEach(pro => {
                         const proLat = pro.address?.lat ?? 'Not provided';
                         const proLng = pro.address?.lng ?? 'Not provided';
-                        console.log(`Pro Name: ${pro.firstName}, Location: Lat ${proLat}, Lng ${proLng}`);
+                        
                     });
                     return professionals;
                 })

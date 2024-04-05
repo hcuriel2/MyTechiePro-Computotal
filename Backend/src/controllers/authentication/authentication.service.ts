@@ -66,9 +66,9 @@ class AuthenticationService {
               }
         emailtransporter.sendMail(verifyEmailOptions , function(error, info){
             if (error) {
-                console.log(error);
+                
             } else {
-                console.log('Email sent: ' + info.response);
+                
             }
             });
     
@@ -91,9 +91,9 @@ class AuthenticationService {
                   }
                 emailtransporter.sendMail(mailOptions , function(error, info){
                     if (error) {
-                      console.log(error);
+                      
                     } else {
-                      console.log('Email sent: ' + info.response);
+                      
                     }
                   });
                 }
