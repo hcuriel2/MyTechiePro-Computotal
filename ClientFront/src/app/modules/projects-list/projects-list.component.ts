@@ -126,10 +126,17 @@ export class ProjectsListComponent implements OnInit {
         const onGoingProjects = projects.filter((pro) => pro.state === 'OnGoing');
         const completedOrPaid = projects.filter((pro) => pro.state === 'Completed' || pro.state === 'Paid');
       
-        this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
-        this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
-        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
+        // this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
+        // this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
+        // this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
       
+        this.dataSourceRequest = new MatTableDataSource(newProjects.length > 0 ? newProjects : [blankProject]);
+        this.dataSource = new MatTableDataSource(onGoingProjects.length > 0 ? onGoingProjects : [blankProject]);
+        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length > 0 ? completedOrPaid : [blankProject]);
+
+        console.log("DataSource projects:", projects);
+
+
         this.changeDetectorRef.markForCheck();  // Tell Angular to re-check the state.
       }
       

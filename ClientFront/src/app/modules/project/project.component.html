@@ -1,11 +1,12 @@
+<br><br>
 <div class="project-container">
     <div class="content-container border rounded center">
-        <mat-tab-group mat-align-tabs="start">
+        <mat-tab-group  [(selectedIndex)]="activeTabIndex" mat-align-tabs="start">
             <!-- Overview Start -->
             <mat-tab label="{{ 'Dictionary.Overview' | translate }}">
                 <div class="tab-container">
-                    <h1>
-                        {{ 'Dictionary.YourProject' | translate }}
+                    <h1 class="responsive-heading"> <strong>
+                        {{ 'Your Project' | translate }} </strong>
                     </h1>
                     <h3>
                         {{ 'Label.ProjectState' | translate }}:
@@ -20,10 +21,10 @@
                          {{ projectPrice }}
                     </h3>
 
-                    <br />
+                    <br>         <br>
 
                     <h2>
-                        {{ 'Label.ProjectDetail' | translate }}
+                        {{ 'Project Details' | translate }}
                     </h2>
                     <h3>
                         {{ 'Dictionary.Service' | translate }}:
@@ -56,7 +57,7 @@
 
                         <!-- Adding Button to trigger modal -->
                         <!-- Inside project.component.html -->
-                        <button mat-raised-button color="primary" (click)="openReviewDialog()">Complete Job</button>
+                        <button mat-raised-button class="completeJob" (click)="openReviewDialog()"><strong>Complete Job</strong></button>
 
 
                     </div>
@@ -83,19 +84,18 @@
                     </div>
 
                     <button
+                    class="reviewButton"
                         mat-raised-button
                         id="project-component-review-button"
                         aria-label="Search"
-                        color="primary"
                         *ngIf="isCustomer && project.state == 'Completed' && project.rating == 0"
                         (click)="onReviewProject()"
-                    >
-                        {{ 'Label.ReviewService' | translate }}
+                    > <strong>
+                        {{ 'Label.ReviewService' | translate }} </strong>
                     </button>
-                    <button
+                    <button class="startProject"
                         mat-raised-button
                         aria-label="Start Project"
-                        color="primary"
                         *ngIf="!isCustomer && project.state == 'Requested'"
                         (click)="onStartProject()"
                     >
@@ -111,22 +111,22 @@
                         {{ 'Message.MarkProjectOngoing' | translate }}
                     </button>
                     <button
+                    class="completedButtons"
                         mat-raised-button
                         aria-label="Mark Project Completed"
-                        color="primary"
                         *ngIf="!isCustomer && project.state == 'OnGoing'"
                         (click)="onCompleteProject()"
                     >
                         {{ 'Message.MarkComplete' | translate }}
                     </button>
                     <button
+                    class="paidButton"
                         mat-raised-button
                         aria-label="Mark Project Paid"
-                        color="primary"
                         *ngIf="isCustomer && project.state == 'Completed'"
                         (click)="onPayProject()"
-                    >
-                        {{ 'Message.MarkProjectPaid' | translate }}
+                    ><strong>
+                        {{ 'Message.MarkProjectPaid' | translate }} </strong>
                     </button>
                 </div>
             </mat-tab>
@@ -142,26 +142,26 @@
                         {{ project.professional.lastName }}
                         | {{ project.professional.company }}
                     </h1>
-                    <h3>
-                        {{ 'Dictionary.Email' | translate }}:
+                    <h3 class="important"> 
+                   <strong>     {{ 'Dictionary.Email' | translate }}: </strong>
                         {{ project.professional.email }}
                     </h3>
                     <h3>
-                        {{ 'Dictionary.Address' | translate }}:
+                        <strong>    {{ 'Dictionary.Address' | translate }}: </strong>
                         {{ project.professional.address?.street }},
                         {{ project.professional.address?.city }}
                     </h3>
-                    <h3>
-                        {{ 'Dictionary.Phone' | translate }}:
+                    <h3 class="important">
+                        <strong>       {{ 'Dictionary.Phone' | translate }}: </strong>
                         {{ project.professional.phoneNumber }}
                     </h3>
-                    <h3>
-                        {{ 'Dictionary.Rate' | translate }}:
+                    <h3 class="important">
+                        <strong>         {{ 'Dictionary.Rate' | translate }}: </strong>
                         {{ project.professional.unitPrice | currency }} per
                         {{ project.professional.unitType }}
                     </h3>
-                    <h3>
-                        {{ 'Dictionary.Skills' | translate }}:
+                    <h3 class="skills">
+                        <strong>       {{ 'Dictionary.Skills' | translate }}: </strong>
                         {{ proSkills }}
                     </h3>
                 </div>
@@ -274,8 +274,7 @@
                     <button
                         mat-raised-button
                         aria-label="Search"
-                        class="search-btn float-right mr-5"
-                        color="primary"
+                        class="search-btn"
                         (click)="onSubmit()"
                     >
                         {{ 'Dictionary.send' | translate }}

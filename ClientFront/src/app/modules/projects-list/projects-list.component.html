@@ -1,5 +1,9 @@
+<br><br>
 <div class="content-container">
     <div *ngIf="isCustomer">
+        <!-- <h1 class="responsive-heading"> <strong>
+            {{ 'Your Project' | translate }} </strong>
+        </h1> -->
         <h1 class="mat-display-1 header">
           <strong>  {{ user?.firstName }}'s Projects </strong>
         </h1>
@@ -34,15 +38,16 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button
-                                        *ngIf="element.state"
-                                        mat-raised-button
-                                        class="btnProfiles"
-                                        (click)="goToProject(element._id)"
-                                    >
-                                        {{
-                                            'Dictionary.ViewProject' | translate
-                                        }}
-                                    </button>
+                                    *ngIf="element.state && element.serviceName !== 'No project to show'"
+                                    mat-raised-button
+                                    class="btnProfiles"
+                                    (click)="goToProject(element._id)"
+                                >
+                                    {{ 'Dictionary.ViewProject' | translate }}
+                                </button>
+                                
+                                  
+                                
                                 </td>
                             </ng-container>
 
@@ -62,7 +67,7 @@
                 </mat-tab>
                 <mat-tab label="Projects Ongoing">
                     <div>
-                        <mat-form-field>
+                        <!-- <mat-form-field>
                             <mat-label>Filter</mat-label>
                             <input
                                 matInput
@@ -70,7 +75,7 @@
                                 placeholder=""
                                 #input
                             />
-                        </mat-form-field>
+                        </mat-form-field> -->
                         <table
                             mat-table
                             [dataSource]="dataSource"
@@ -116,14 +121,14 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button
-                                        mat-raised-button
-                                        class="btnProfiles"
-                                        (click)="goToProject(element._id)"
-                                    >
-                                        {{
-                                            'Dictionary.ViewProject' | translate
-                                        }}
-                                    </button>
+                                    *ngIf="element.state && element.serviceName !== 'No project to show'"
+                                    mat-raised-button
+                                    class="btnProfiles"
+                                    (click)="goToProject(element._id)"
+                                >
+                                    {{ 'Dictionary.ViewProject' | translate }}
+                                </button>
+                                
                                 </td>
                             </ng-container>
 
@@ -140,7 +145,7 @@
                 </mat-tab>
                 <mat-tab label="Projects Completed">
                     <div>
-                        <mat-form-field>
+                        <!-- <mat-form-field>
                             <mat-label>Filter</mat-label>
                             <input
                                 matInput
@@ -148,7 +153,7 @@
                                 placeholder=""
                                 #input
                             />
-                        </mat-form-field>
+                        </mat-form-field> -->
                         <table
                             mat-table
                             [dataSource]="dataSourceCompleted"
@@ -194,14 +199,14 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button
-                                        mat-raised-button
-                                        class="btnProfiles"
-                                        (click)="goToProject(element._id)"
-                                    >
-                                        {{
-                                            'Dictionary.ViewProject' | translate
-                                        }}
-                                    </button>
+                                    *ngIf="element.state && element.serviceName !== 'No project to show'"
+                                    mat-raised-button
+                                    class="btnProfiles"
+                                    (click)="goToProject(element._id)"
+                                >
+                                    {{ 'Dictionary.ViewProject' | translate }}
+                                </button>
+                                
                                 </td>
                             </ng-container>
 
@@ -218,91 +223,22 @@
                 </mat-tab>
             </mat-tab-group>
         </div>
-        <!-- <div>
-            <mat-form-field>
-                <mat-label>Filter</mat-label>
-                <input
-                    matInput
-                    (keyup)="applyFilter($event)"
-                    placeholder=""
-                    #input
-                />
-            </mat-form-field>
-            -<table
-                mat-table
-                [dataSource]="dataSource"
-                class="mat-elevation-z8 tableStyle"
-            >
-                <ng-container matColumnDef="serviceName">
-                    <th mat-header-cell *matHeaderCellDef>
-                        {{ 'Label.ServiceName' | translate }}
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.serviceName }}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef>
-                        {{ 'Dictionary.Status' | translate }}
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.state }}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="dateCreated">
-                    <th mat-header-cell *matHeaderCellDef>
-                        {{ 'Dictionary.DateCreated' | translate }}
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.createdAt | date }}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="dateCompleted">
-                    <th mat-header-cell *matHeaderCellDef>
-                        {{ 'Dictionary.DateCompleted' | translate }}
-                    </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{ element.projectEndDate | date }}
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="viewProject">
-                    <th mat-header-cell *matHeaderCellDef></th>
-                    <td mat-cell *matCellDef="let element">
-                        <button
-                            *ngIf="element.state"
-                            mat-raised-button
-                            class="btnProfiles"
-                            (click)="goToProject(element._id)"
-                        >
-                            {{ 'Dictionary.ViewProject' | translate }}
-                        </button>
-                    </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr
-                    mat-row
-                    *matRowDef="let row; columns: displayedColumns"
-                ></tr>
-            </table>
-        </div> -->
+      
     </div>
 
     <!-- Start of tech view -->
 
     <div *ngIf="!isCustomer">
         <div class="header">
-            <h1 class="mat-display-1 head-title">My Projects</h1>
+            <h1 class="mat-display-1 head-title"><strong> {{ user?.firstName }}'s Projects </strong></h1>
             <mat-slide-toggle [(ngModel)]="isActive" class="status"
                 ><span>{{
                     isActive ? 'I am Available' : 'I am Busy'
                 }}</span></mat-slide-toggle
             >
+            <br>
         </div>
+        <br><br>
         <div class="border rounded center">
             <mat-tab-group mat-align-tabs="start" id="tabgroup" >
                 <mat-tab label="Project Requests">
@@ -334,15 +270,14 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button
-                                        *ngIf="element.state"
-                                        mat-raised-button
-                                        class="btnProfiles"
-                                        (click)="goToProject(element._id)"
-                                    >
-                                        {{
-                                            'Dictionary.ViewProject' | translate
-                                        }}
-                                    </button>
+                                    *ngIf="element.state && element.serviceName !== 'No project to show'"
+                                    mat-raised-button
+                                    class="btnProfiles"
+                                    (click)="goToProject(element._id)"
+                                >
+                                    {{ 'Dictionary.ViewProject' | translate }}
+                                </button>
+                                
                                 </td>
                             </ng-container>
 
@@ -362,7 +297,7 @@
                 </mat-tab>
                 <mat-tab label="Projects Ongoing">
                     <div>
-                        <mat-form-field>
+                        <!-- <mat-form-field>
                             <mat-label>Filter</mat-label>
                             <input
                                 matInput
@@ -370,7 +305,7 @@
                                 placeholder=""
                                 #input
                             />
-                        </mat-form-field>
+                        </mat-form-field> -->
                         <table
                             mat-table
                             [dataSource]="dataSource"
@@ -416,14 +351,14 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button
-                                        mat-raised-button
-                                        class="btnProfiles"
-                                        (click)="goToProject(element._id)"
-                                    >
-                                        {{
-                                            'Dictionary.ViewProject' | translate
-                                        }}
-                                    </button>
+                                    *ngIf="element.state && element.serviceName !== 'No project to show'"
+                                    mat-raised-button
+                                    class="btnProfiles"
+                                    (click)="goToProject(element._id)"
+                                >
+                                    {{ 'Dictionary.ViewProject' | translate }}
+                                </button>
+                                
                                 </td>
                             </ng-container>
 
@@ -440,7 +375,7 @@
                 </mat-tab>
                 <mat-tab label="Projects Completed">
                     <div>
-                        <mat-form-field>
+                        <!-- <mat-form-field>
                             <mat-label>Filter</mat-label>
                             <input
                                 matInput
@@ -448,7 +383,7 @@
                                 placeholder=""
                                 #input
                             />
-                        </mat-form-field>
+                        </mat-form-field> -->
                         <table
                             mat-table
                             [dataSource]="dataSourceCompleted"
@@ -494,14 +429,14 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button
-                                        mat-raised-button
-                                        class="btnProfiles"
-                                        (click)="goToProject(element._id)"
-                                    >
-                                        {{
-                                            'Dictionary.ViewProject' | translate
-                                        }}
-                                    </button>
+                                    *ngIf="element.state && element.serviceName !== 'No project to show'"
+                                    mat-raised-button
+                                    class="btnProfiles"
+                                    (click)="goToProject(element._id)"
+                                >
+                                    {{ 'Dictionary.ViewProject' | translate }}
+                                </button>
+                                
                                 </td>
                             </ng-container>
 

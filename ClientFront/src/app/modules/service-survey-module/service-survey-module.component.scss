@@ -47,6 +47,27 @@
 .pull-right {
   margin-top: 15px;
   float: right;
+  margin-top: 5vh !important;
+  background-color: #225d9c;
+  color: white;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  min-width: 80px;
+}
+
+.btnProfiles:hover, .btnProfiles:focus {
+  background-color: #07213b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+
 }
 
 #survey {

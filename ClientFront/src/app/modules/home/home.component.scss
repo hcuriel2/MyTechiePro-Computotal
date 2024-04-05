@@ -32,7 +32,7 @@ a.serviceItem {
 }
 
 .search-input {
-  background-color: #fff; // This sets the input field background to white
+  background-color: #fff; 
   border-radius: 50px;
   color: black;
   height: 50px;
@@ -40,19 +40,17 @@ a.serviceItem {
   border: 1px solid #ccc;
   padding: 8px 20px;
 
-  // If you are using Angular Material, you might also need to set the color of the underline to transparent
   &.mat-input-element {
     background-color: #ffffff;
   }
 
-  // Ensure the ripple effect (if any) is also white or transparent
   .mat-form-field-ripple {
     background-color: transparent;
   }
 }
 
 .search-button {
-  background-color: #f94144; // Change to the color used in the screenshot
+  background-color: #f94144; 
   color: white;
   position: absolute;
   right: 5px;
@@ -133,7 +131,7 @@ mat-form-field {
 }
 
 .client-banner-color {
-  background-color: #105081; // Replace with the color you want for the client
+  background-color: #105081; 
 }
 
 .default-banner-color {
