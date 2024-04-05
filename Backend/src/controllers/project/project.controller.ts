@@ -404,6 +404,8 @@ class ProjectController implements Controller {
         let projectObj = null;
         let clientID = null;
         let clientName = null;
+        let clientEmail = null;
+        let clientPhoneNumber = null;
 
 
         // Retrieve project object
@@ -422,7 +424,12 @@ class ProjectController implements Controller {
             let clientObj = await this.user.findOne({ _id: clientID });
             let fName = clientObj.firstName;
             let lName = clientObj.lastName;
+            
             clientName = `${fName} ${lName}`;
+            clientEmail = clientObj.email;
+            clientPhoneNumber = clientObj.phoneNumber;
+
+
         } catch (e) {
             console.error(e);
         }
@@ -464,18 +471,30 @@ class ProjectController implements Controller {
                 emailList += `${admin.email}, `
                 
             }
-            console.log(emailList);
+
+            // Feature is designed to work with the admin list
+            // Currently the only email is set in the ENV file
+            console.log('Admin list:', emailList);
 
             let html = `
                 <h1>Unsatisfied Customer</h1>
-                <p>Please contact the customer immediately</p>
+                <br/>
+                <p><b>Please contact the customer immediately</b></p>
                 <p>Client: ${clientName}
-                ClientID: ${clientID}</p>
+                <br/>
+                <p>Email: ${clientEmail}</p>
+                <p>Phone Number: ${clientPhoneNumber}</p>
+                <br/>
+                <br/>
+                <h3>Client Review (${rating}/5)</h3>
+                <p>${review}</p>
+
             `
 
-            this.sendEmail("willondrik@outlook.com", "Notification of Negative Review", html);
+            this.sendEmail(process.env.ADMIN_EMAIL, "Notification of Negative Review", html);
         }
     }
+
 
     private async sendEmail(recipients, subject, message){
         let email = {
