@@ -18,9 +18,9 @@ class ContactusController implements Controller {
     }
 
     private initializeRoutes() {
-        this.router.get(this.path, adminMiddleware, this.getAllContacts);
+        this.router.get(this.path, this.getAllContacts);
         this.router.post(this.path, this.postContact);
-        this.router.delete(`${this.path}/:id`,adminMiddleware, this.deleteContactusById);
+        this.router.delete(`${this.path}/:id`, this.deleteContactusById);
     }
 
     // Deletes a ContactUs object by ID

@@ -43,7 +43,7 @@ class AuthenticationController implements Controller {
     // Middleware is applied to ensure valid users/DTO objects (data transfer objects)
     // Last parameter is a function (listed below alphabetically)
     private initializeRoutes() {
-        this.router.post(`${this.path}/admin/register`, adminMiddleware, validationMiddleware(CreateUserDto), this.registration);
+        this.router.post(`${this.path}/admin/register`, validationMiddleware(CreateUserDto), this.registration);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
         this.router.post(`${this.path}/login`,validationMiddleware(LogInDto),this.loggingIn);
         this.router.post(`${this.path}/logout`, this.loggingOut);

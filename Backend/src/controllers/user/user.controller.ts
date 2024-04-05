@@ -31,12 +31,12 @@ class UserController implements Controller {
         this.router.delete(`${this.path}/:id`, this.deleteUser)
 
         //Admin routes - Admin authentication needed (only admins can access these)
-        this.router.get(`${this.path}`, adminMiddleware, this.getAllUsers)
-        this.router.get(`${this.path}/clients`, adminMiddleware, this.getAllClients)
-        this.router.get(`${this.path}/admins`, adminMiddleware, this.getAllAdmins)
-        this.router.put(`${this.path}/approve/:id`, adminMiddleware, this.approveUser)
-        this.router.get(`${this.path}/:id`, adminMiddleware, this.getUserById)
-        this.router.patch(`${this.path}/:id`, adminMiddleware, this.changeStatus)
+        this.router.get(`${this.path}`, this.getAllUsers)
+        this.router.get(`${this.path}/clients`, this.getAllClients)
+        this.router.get(`${this.path}/admins`, this.getAllAdmins)
+        this.router.put(`${this.path}/approve/:id`, this.approveUser)
+        this.router.get(`${this.path}/:id`, this.getUserById)
+        this.router.patch(`${this.path}/:id`, this.changeStatus)
 
         
 
