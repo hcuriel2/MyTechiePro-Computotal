@@ -29,6 +29,7 @@ import { ProjectStartDialogComponent } from "./project-start-dialog/project-star
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
+  activeTabIndex = 0;
   @ViewChild("chatRoom") private myScrollContainer?: any;
 
   public isCustomer = true;

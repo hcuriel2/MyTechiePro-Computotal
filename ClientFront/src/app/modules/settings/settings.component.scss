@@ -21,7 +21,7 @@
 .form-container {
   max-width: 70%;
   margin: 0 auto;
-  padding: 15px;
+  padding: 20px;
   overflow: hidden;
 }
 
@@ -32,6 +32,7 @@ input[type="email"] {
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 15px ;
 }
 
 button {
@@ -84,11 +85,11 @@ button:hover {
 label {
   display: block;
   margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 20px ;
 }
 
 .form-title {
-  font-size: 18px;
+  font-size: 30px;
   margin-bottom: 15px;
 }
 

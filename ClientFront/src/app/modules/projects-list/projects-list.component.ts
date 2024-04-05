@@ -51,25 +51,51 @@ export class ProjectsListComponent implements OnInit {
         private projectService: ProjectService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
-       
+        this.authService.user.subscribe((u: User | null) => {
+            this.isCustomer = u?.userType === UserType.Client;
+            this.user = u;
+        });
     }
 
 
     public ngOnInit(): void {
-        console.log('init proj list')
-        this.authService.user.subscribe(user => {
-            this.user = user;
-            this.changeDetectorRef.detectChanges();
-            if (user?.userType === 'Professional') {
-                this.isCustomer = false;
-                this.fetchProjects(user);
-              } else if (user?.userType === 'Client') {
-                this.isCustomer = true;
-                this.fetchProjects(user);
-              }
-              this.changeDetectorRef.detectChanges();
-            })
+        console.log('proj list initif ')
+        this.authService.checkSession().subscribe({
+            next: (user) => {
+                console.log('project list init - user data:', user)
+
+                this.user = user;
+                console.log(user);
+                this.authService.setUserValue(user);
+                this.subscribeToUserChanges();
+                this.changeDetectorRef.detectChanges();
+            },
+            error: (error) => {
+                console.error('Error fetching user', error);
+            }
+        })
     }
+
+    private subscribeToUserChanges(): void {
+        this.authService.user.subscribe({
+          next: (user) => {
+            console.log(user);
+            this.user = user;
+            if (user?.userType === 'Professional') {
+              this.isCustomer = false;
+              this.fetchProjects(user);
+            } else if (user?.userType === 'Client') {
+              this.isCustomer = true;
+              this.fetchProjects(user);
+            }
+            this.changeDetectorRef.detectChanges();
+          },
+          error: (error) => {
+            console.error('Unexpected error in user subscription', error);
+          }
+        })
+    }
+      
 
     private fetchProjects(user: User | null): void {
         console.log('fetchprojects')
@@ -100,13 +126,84 @@ export class ProjectsListComponent implements OnInit {
         const onGoingProjects = projects.filter((pro) => pro.state === 'OnGoing');
         const completedOrPaid = projects.filter((pro) => pro.state === 'Completed' || pro.state === 'Paid');
       
-        this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
-        this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
-        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
+        // this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
+        // this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
+        // this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
       
-        this.changeDetectorRef.markForCheck(); 
+        this.dataSourceRequest = new MatTableDataSource(newProjects.length > 0 ? newProjects : [blankProject]);
+        this.dataSource = new MatTableDataSource(onGoingProjects.length > 0 ? onGoingProjects : [blankProject]);
+        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length > 0 ? completedOrPaid : [blankProject]);
+
+        console.log("DataSource projects:", projects);
+
+
+        this.changeDetectorRef.markForCheck();  // Tell Angular to re-check the state.
       }
       
+    
+    /*
+    public ngOnInit(): void {
+        
+        //this.authService.checkSession().subscribe((user: User | null) => {
+            this.authService.user.subscribe((user: User | null) => {
+
+            this.user = user;
+            this.changeDetectorRef.detectChanges();
+
+            if (user?.userType == 'Professional') {
+                const root = document.documentElement;
+                root.style.setProperty('--background-color', 'red');
+            } else {
+                const root = document.documentElement;
+                root.style.setProperty('--background-color', 'blue');
+            }
+        })
+
+
+        let observable: Observable<Project[]>;
+        if (this.isCustomer) {
+            observable = this.projectService.getByClientId(
+                this.user?._id || ''
+            );
+        } else {
+            observable = this.projectService.getByProfessionalId(
+                this.user?._id || ''
+            );      
+        }
+        observable.pipe(first()).subscribe((projects: Project[]) => {
+            this.projects = projects;
+            const blankProject = new Project();
+            blankProject.serviceName = 'No project to show';
+
+            const newProjects = this.projects.filter(
+                (pro) => pro.state === 'Requested'
+            );
+
+            const onGoingProjects = this.projects.filter(
+                (pro) => pro.state === 'OnGoing'
+            );
+
+            const completedOrPaid = this.projects.filter(
+                (pro) => (pro.state === 'Completed' || pro.state === 'Paid')
+            );
+
+
+            console.log(newProjects, onGoingProjects);
+
+            this.dataSourceRequest = new MatTableDataSource(
+                newProjects.length !== 0 ? newProjects : [blankProject]
+            );
+            this.dataSource = new MatTableDataSource(
+                onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]
+            );
+
+            this.dataSourceCompleted = new MatTableDataSource(
+                completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]
+            );
+
+            this.changeDetectorRef.markForCheck();
+        });
+    }*/
 
     public applyFilterCompletedClient(event: Event): void {
         const filterValue = (event.target as HTMLInputElement).value;
