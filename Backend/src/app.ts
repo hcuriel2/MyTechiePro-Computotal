@@ -30,7 +30,7 @@ class App {
     }
 
     private initializeMiddlewares() {
-        const allowedOrigins = ['*', '*'];
+        const allowedOrigins = ['http://localhost:8080', 'http://localhost:8081'];
         this.app.use(bodyParser.json());
         this.app.use(cookieParser());
 
