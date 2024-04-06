@@ -56,11 +56,24 @@ class App {
     //   this.app.use(errorMiddleware);
     //}
 
+    // DEV VERSION
+    // private initializeControllers(controllers: Controller[]) {
+    //     controllers.forEach((controller) => {
+    //         this.app.use("/", controller.router);
+    //     });
+    // }
+
+    // DEPLOYMENT VERSION
     private initializeControllers(controllers: Controller[]) {
+        // Define the global prefix for all routes
+        const apiPrefix = '/api';
+
         controllers.forEach((controller) => {
-            this.app.use("/", controller.router);
+            // Prepend the prefix to the path of each controller
+            this.app.use(apiPrefix, controller.router);
         });
     }
+
 
     private connectToTheDatabase() {
 
