@@ -10,7 +10,7 @@ import categoryModel from "../../models/category/category.model";
 import userModel from "../../models/user/user.model";
 
 class CategoryController implements Controller {
-    public path = "/api/categories";
+    public path = "/categories";
     public router = Router();
     private category = categoryModel;
     private user = userModel;
