@@ -21,7 +21,7 @@ class App {
 
     public listen() {
         this.app.listen(process.env.PORT, () => {
-            
+            console.log(`App listening on the port ${process.env.PORT}`);
         });
     }
 
@@ -36,7 +36,7 @@ class App {
 
 
         this.app.use(cors({
-            origin: function(origin, callback) {
+            origin: function (origin, callback) {
                 if (!origin) return callback(null, true);
                 if (allowedOrigins.indexOf(origin) === -1) {
                     var msg = 'the CORS policy for this site does not allow access from this origin';
@@ -53,7 +53,7 @@ class App {
     }
 
     //private initializeErrorHandling() {
-     //   this.app.use(errorMiddleware);
+    //   this.app.use(errorMiddleware);
     //}
 
     private initializeControllers(controllers: Controller[]) {
@@ -63,7 +63,7 @@ class App {
     }
 
     private connectToTheDatabase() {
-        
+
 
         const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH } = process.env;
         mongoose.connect(
@@ -73,10 +73,10 @@ class App {
                 useCreateIndex: true,
                 useUnifiedTopology: true,
                 useFindAndModify: false,
-              },
+            },
         );
 
-        
+
     }
 }
 
