@@ -10,7 +10,7 @@ import categoryModel from "../../models/category/category.model";
 import userModel from "../../models/user/user.model";
 
 class CategoryController implements Controller {
-    public path = "/categories";
+    public path = "/api/categories";
     public router = Router();
     private category = categoryModel;
     private user = userModel;
@@ -70,7 +70,7 @@ class CategoryController implements Controller {
     ) => {
         const id = request.params.id;
         const serviceId = request.params.serviceId;
-        const category = await this.category.findOne({_id:id, "services.id":serviceId});
+        const category = await this.category.findOne({ _id: id, "services.id": serviceId });
         if (category) {
             response.send(category);
         } else {
@@ -103,11 +103,11 @@ class CategoryController implements Controller {
         next: NextFunction
     ) => {
         const id = request.params.id;
-        const {name, keywords} = request.body;
+        const { name, keywords } = request.body;
         try {
             const category = await this.category.findByIdAndUpdate(
                 id,
-                { $push: { services: {name:name, keywords:keywords} } },
+                { $push: { services: { name: name, keywords: keywords } } },
                 { new: true }
             );
             response.send(category);
@@ -123,11 +123,11 @@ class CategoryController implements Controller {
     ) => {
         const id = request.params.id;
         const serviceId = request.params.serviceId;
-        const {name,keywords} = request.body;
+        const { name, keywords } = request.body;
         try {
             const category = await this.category.updateOne(
-                {_id:id, "services._id":serviceId},
-                { $set: {name:name, keywords:keywords } },
+                { _id: id, "services._id": serviceId },
+                { $set: { name: name, keywords: keywords } },
             );
             response.send(category);
         } catch (e) {
@@ -143,7 +143,7 @@ class CategoryController implements Controller {
         const categoryData: CreateCategoryDto = request.body;
         // const findUser = await this.user.findById(request.user._id);
         const findUser = await this.user.findById(hardCodedId);
-        
+
 
         const createdCategory = new this.category({
             ...categoryData,
@@ -178,14 +178,14 @@ class CategoryController implements Controller {
         const successResponse = await this.category.findByIdAndUpdate(
             id,
             {
-              $pull: {
-                services: {_id: serviceId},
-              },
+                $pull: {
+                    services: { _id: serviceId },
+                },
             },
             {
-              new: true,
+                new: true,
             }
-          );
+        );
         if (successResponse) {
             response.send(200);
         } else {
