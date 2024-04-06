@@ -27,13 +27,13 @@ import { validate, ValidationError } from "class-validator";
 
 
 class AuthenticationController implements Controller {
-    public path = "/auth";
+    public path = "/api/auth";
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
     public URL = process.env.SERVER_URL;
     public CLIENT_URL = process.env.CLIENT_URL;
-    
+
 
     constructor() {
         this.initializeRoutes();
@@ -45,15 +45,15 @@ class AuthenticationController implements Controller {
     private initializeRoutes() {
         this.router.post(`${this.path}/admin/register`, validationMiddleware(CreateUserDto), this.registration);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
-        this.router.post(`${this.path}/login`,validationMiddleware(LogInDto),this.loggingIn);
+        this.router.post(`${this.path}/login`, validationMiddleware(LogInDto), this.loggingIn);
         this.router.post(`${this.path}/logout`, this.loggingOut);
-        this.router.post(`${this.path}/professional/register`,validationMiddleware(CreateUserDto),this.registration);
-        this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto),this.registration);
+        this.router.post(`${this.path}/professional/register`, validationMiddleware(CreateUserDto), this.registration);
+        this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto), this.registration);
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
         this.router.patch(`${this.path}/settings/:id`, authMiddleware, this.updateUserSettings);
         this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
         this.router.get(`${this.path}/getUserInfo`, authMiddleware, this.getUserInfo);
-        
+
     }
 
     public getUserInfo = async (request: RequestWithUser, response: Response, next: NextFunction) => {
@@ -89,7 +89,7 @@ class AuthenticationController implements Controller {
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
             userType: user.userType
-            
+
         };
         return {
             expiresIn,
@@ -128,15 +128,15 @@ class AuthenticationController implements Controller {
     ) => {
         const logInData: LogInDto = request.body;
         const user = await this.user.findOne({ email: logInData.email });
-        
-       
+
+
         if (user) {
             const sec = user.get("secret");
             const isPasswordMatching = await bcrypt.compare(
                 logInData.password,
                 user.get("password", null, { getters: false })
             );
-            if(!user.verified) {
+            if (!user.verified) {
                 next(new UserNotVerify());
             }
             if (isPasswordMatching) {
@@ -145,9 +145,9 @@ class AuthenticationController implements Controller {
                         next(new MfaVerificationInvalidException());
                     }
                     const isMfaVerified = speakeasy.totp.verify({
-                        secret:sec,
-                        encoding:"base32",
-                        token:logInData.secret
+                        secret: sec,
+                        encoding: "base32",
+                        token: logInData.secret
                     });
                     if (!isMfaVerified) {
                         next(new MfaVerificationInvalidException());
@@ -158,7 +158,7 @@ class AuthenticationController implements Controller {
                 response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
                 //response.send({ message: 'Login successful' });
                 response.send(user);
-                
+
             } else {
                 next(new WrongCredentialsException());
             }
@@ -173,7 +173,7 @@ class AuthenticationController implements Controller {
 
         // Clear the cookie with matching attributes, except Max-Age which is set to expire the cookie
         response.setHeader('Set-Cookie', 'Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None');
-    
+
         response.send(200);
     };
 
@@ -186,7 +186,7 @@ class AuthenticationController implements Controller {
         next: NextFunction
     ) => {
         const userData: CreateUserDto = request.body;
-        
+
         try {
             const { cookie, user } = await this.authenticationService.register(userData);
             response.setHeader("Set-Cookie", [cookie]);
@@ -205,34 +205,34 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        
-        
+
+
         const { emailAddress } = request.body;
-        
+
         const user = await this.user.findOne({ email: emailAddress });
 
-        if (!user){
-            
+        if (!user) {
+
             response.status(200);
             return;
         }
-        
-        let setPwEmailOptions  = {
+
+        let setPwEmailOptions = {
             from: 'noreply.mytechie.pro@gmail.com',
             to: emailAddress,
             subject: "Reset Password",
             html: "<b>Reset Password</b><br/><br/>" +
-            `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
-          }
-
-        emailtransporter.sendMail(setPwEmailOptions , function(error, info){
-        if (error) {
-            
-            response.status(500);
-        } else {
-            
-            response.status(200);
+                `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
         }
+
+        emailtransporter.sendMail(setPwEmailOptions, function (error, info) {
+            if (error) {
+
+                response.status(500);
+            } else {
+
+                response.status(200);
+            }
         });
     };
 
@@ -245,7 +245,7 @@ class AuthenticationController implements Controller {
         const userId = request.user._id;
 
         const { firstName, lastName, email, street, city, country, postalCode } = request.body;
-    
+
         try {
             let user = await this.user.findById(userId);
 
@@ -265,9 +265,9 @@ class AuthenticationController implements Controller {
             }
 
             await user.save();
-        
+
             return response.status(200).json({ message: 'Update successful' });
-        
+
         } catch (error) {
             console.error('Error updating user:', error);
             return response.status(500).json({ message: 'Failed to update user', error: error.message });
