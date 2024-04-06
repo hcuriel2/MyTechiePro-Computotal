@@ -30,26 +30,26 @@ class App {
     }
 
     private initializeMiddlewares() {
-        const allowedOrigins = ['http://localhost:8080', 'http://localhost:8081'];
-        this.app.use(bodyParser.json());
-        this.app.use(cookieParser());
+        // const allowedOrigins = ['http://localhost:8080', 'http://localhost:8081'];
+        // this.app.use(bodyParser.json());
+        // this.app.use(cookieParser());
 
 
+        // this.app.use(cors({
+        //     origin: function (origin, callback) {
+        //         if (!origin) return callback(null, true);
+        //         if (allowedOrigins.indexOf(origin) === -1) {
+        //             var msg = 'the CORS policy for this site does not allow access from this origin';
+        //             return callback(new Error(msg), false);
+        //         }
+        //         return callback(null, true);
+        //     }, credentials: true
+        // }))
+
         this.app.use(cors({
-            origin: function (origin, callback) {
-                if (!origin) return callback(null, true);
-                if (allowedOrigins.indexOf(origin) === -1) {
-                    var msg = 'the CORS policy for this site does not allow access from this origin';
-                    return callback(new Error(msg), false);
-                }
-                return callback(null, true);
-            }, credentials: true
-        }))
-        /*
-        this.app.use(cors({
-            origin: 'http://localhost:8080',
+            origin: '*',
             credentials: true
-        }));*/
+        }));
     }
 
     //private initializeErrorHandling() {
