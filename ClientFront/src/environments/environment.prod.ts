@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiEndpoint: 'http://mytechie.pro/api'
+  apiEndpoint: 'http://localhost:3333/api'
 };
