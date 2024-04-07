@@ -37,6 +37,7 @@ class App {
 
         this.app.use(cors({
             origin: function (origin, callback) {
+                console.log('Origin of request:', origin); // This will output the origin to the console
                 if (!origin) return callback(null, true);
                 if (allowedOrigins.indexOf(origin) === -1) {
                     var msg = 'the CORS policy for this site does not allow access from this origin';
