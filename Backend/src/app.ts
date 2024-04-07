@@ -30,7 +30,7 @@ class App {
     }
 
     private initializeMiddlewares() {
-        const allowedOrigins = ['http://mytechie.pro/', 'http://mytechie.pro/api/*', 'http://localhost:80'];
+        const allowedOrigins = ['http://mytechie.pro', 'http://mytechie.pro/api/*', 'http://localhost:80'];
         this.app.use(bodyParser.json());
         this.app.use(cookieParser());
 
