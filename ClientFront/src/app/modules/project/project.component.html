@@ -8,29 +8,29 @@
                     <h1 class="responsive-heading"> <strong>
                         {{ 'Your Project' | translate }} </strong>
                     </h1>
-                    <h3>
+                    <h3 class="h3Details">
                         {{ 'Label.ProjectState' | translate }}:
                         {{ project.state }}
                     </h3>
-                    <h3>
+                    <h3 class="h3Details">
                         {{ 'Label.UpdatedDate' | translate }}:
                         {{ project.updatedAt | date }}
                     </h3>
-                    <h3>
+                    <h3 class="h3Details">
                         {{ 'Label.BillingCost' | translate }}:
                          {{ projectPrice }}
                     </h3>
 
                     <br> 
 
-                    <h2>
+                    <h2 class="h3Details">
                         {{ 'Project Details' | translate }}
                     </h2>
-                    <h3>
+                    <h3 class="h3Details">
                         {{ 'Dictionary.Service' | translate }}:
                         {{ project.serviceName }}
                     </h3>
-                    <h3>
+                    <h3 class="h3Details">
                         {{ 'Label.CreatedDate' | translate }}:
                         {{ project.createdAt | date }}
                     </h3>
@@ -38,26 +38,26 @@
                     <div *ngIf="isCustomer">
                         <hr />
 
-                        <h2 class="yourTechieLabel">
+                        <h2 class="yourTechieLabel h3Details">
                             {{ 'Label.YourTechie' | translate }}
                         </h2>
-                        <h3>
+                        <h3 class="techDetails">
                             {{ 'Dictionary.Name' | translate }}:
                             {{ project.professional.firstName }}
                             {{ project.professional.lastName }}
                         </h3>
-                        <h3>
+                        <h3 class="techDetails">
                             {{ 'Dictionary.Company' | translate }}:
                             {{ project.professional.company }}
                         </h3>
-                        <h3>
+                        <h3 class="techDetails">
                             {{ 'Dictionary.Email' | translate }}:
                             {{ project.professional.email }}
                         </h3>
 
                         <!-- Adding Button to trigger modal -->
                         <!-- Inside project.component.html -->
-                        <button mat-raised-button class="completeJob" (click)="openReviewDialog()"><strong>Complete Job</strong></button>
+                        <button mat-raised-button class="completeJob" (click)="openReviewDialog()"><strong>Rate your Techie</strong></button>
 
 
                     </div>
@@ -65,19 +65,19 @@
                     <div *ngIf="!isCustomer">
                         <hr />
 
-                        <h2>
+                        <h2 class="yourTechieLabel h3Details">
                             {{ 'Label.YourCustomer' | translate }}
                         </h2>
-                        <h3>
+                        <h3 class="customerDetails">
                             {{ 'Dictionary.Name' | translate }}:
                             {{ project.client.firstName }}
                             {{ project.client.lastName }}
                         </h3>
-                        <h3>
+                        <h3 class="customerDetails">
                             {{ 'Dictionary.Company' | translate }}:
                             {{ project.client.company }}
                         </h3>
-                        <h3>
+                        <h3 class="customerDetails">
                             {{ 'Dictionary.Email' | translate }}:
                             {{ project.client.email }}
                         </h3>
@@ -111,8 +111,8 @@
                         {{ 'Message.MarkProjectOngoing' | translate }}
                     </button>
                     <button
-                    class="completedButtons"
-                        mat-raised-button
+                    class="markCompleted"
+         
                         aria-label="Mark Project Completed"
                         *ngIf="!isCustomer && project.state == 'OnGoing'"
                         (click)="onCompleteProject()"
