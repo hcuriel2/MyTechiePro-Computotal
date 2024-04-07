@@ -27,7 +27,7 @@ import { validate, ValidationError } from "class-validator";
 
 
 class AuthenticationController implements Controller {
-    public path = "/api/auth";
+    public path = "/auth";
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
