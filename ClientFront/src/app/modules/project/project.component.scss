@@ -9,10 +9,14 @@
     border-radius: 40px !important;
 }
 .tab-container {
-    width: 50%;
+    width: 100%;
     height: 100%;
-    padding: 30px;
+
+    // display: flex;
+    flex-direction: column;
     border-radius: 40px !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 .button-container {
     padding-top: 1vh;
@@ -24,6 +28,73 @@
 .select-button {
     margin-right: 10px;
     width: 100px;
+}
+
+
+.markCompleted{
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background-color: rgb(31, 71, 135) !important;
+    border-radius: 45px !important;
+    color: white !important;
+    margin-top: 50px;
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+    size: 3vh;
+  
+}
+
+
+
+
+
+.completeJob {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background-color: rgb(31, 71, 135) !important;
+    border-radius: 45px !important;
+    color: white !important;
+    margin-top: 50px;
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+    size: 3vh;
+  
+}
+
+.completeJob:hover {
+    background-color: rgb(41, 81, 145) !important;
+    transform: scale(1.05); 
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+
+}
+
+
+.techDetails {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+}
+
+
+
+.customerDetails {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+}
+
+.h3Details {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 ::ng-deep .mat-tab-labels {
@@ -57,11 +128,11 @@
     justify-content: center !important;
     align-items: center !important;
     flex: 1; 
-    padding: 20px; 
+    padding: 50px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border: 1px solid #c0c0c0 !important; 
     border-radius: 8px;
-    margin: 10px;
+    // margin: 50px;
     overflow: auto; 
     border-radius: 40px !important;
 
@@ -105,20 +176,6 @@
 
 }
 
-.completeJob {
-    background-color: rgb(31, 71, 135) !important;
-    border-radius: 45px !important;
-    color: white !important;
-    margin-top: 50px;
-    transition: background-color 0.3s ease, transform 0.3s ease; 
-    size: 3vh;
-}
-
-.completeJob:hover {
-    background-color: rgb(41, 81, 145) !important;
-    transform: scale(1.05); 
-
-}
 
 
 h1 {
@@ -160,14 +217,35 @@ h1 {
     margin-bottom: 5%;
     font-size: 2.5rem; 
     color: #164983; 
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 
+.completeJob, .reviewButton, .startProject, .completedButtons, .paidButton {
+    margin: 20px auto; 
+    display: block; 
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .yourTechieLabel {
- 
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     font-size: 1.5rem;
     color: #164983;
 
+}
+
+.yourCustomer {
+    font-size: 1.5rem;
+    color: #164983;
 }
 
 
@@ -341,6 +419,15 @@ h3.skills {
     display: inline-block;
     margin-top: 6%; 
     margin-bottom: 6%; 
+}
+
+
+.important, .skills {
+    margin-top: 10px; 
+    margin-bottom: 10px; 
+    padding: 5px 0; 
+    font-size: 0.9rem; 
+    line-height: 1.2;
 }
 
 @media (max-width: 768px) {
