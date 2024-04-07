@@ -25,12 +25,15 @@ async function authMiddleware(
                 request.user = user;
                 next();
             } else {
+                console.error(`User not found during authentication, ID: ${id}`);
                 next(new WrongAuthenticationTokenException());
             }
         } catch (error) {
+            console.error(`JWT Verification Error: ${error.message}`);
             next(new WrongAuthenticationTokenException());
         }
     } else {
+        console.error('No Authorization cookie found');
         next(new AuthenticationTokenMissingException());
     }
 }
