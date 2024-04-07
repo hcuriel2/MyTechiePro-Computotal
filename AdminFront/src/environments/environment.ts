@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiEndpoint: '/api'
+  apiEndpoint: 'https://mytechie.pro/api'
 };
 
 /*
