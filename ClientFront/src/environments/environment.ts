@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiEndpoint: 'http://mytechie.pro/api' //'http://backenduploadfiles-env.eba-fbpxbdmr.us-west-2.elasticbeanstalk.com'
+  apiEndpoint: 'https://mytechie.pro/api' //'http://backenduploadfiles-env.eba-fbpxbdmr.us-west-2.elasticbeanstalk.com'
 };
 
 /*
