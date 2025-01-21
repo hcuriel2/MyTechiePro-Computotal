@@ -33,7 +33,7 @@ class App {
         this.app.use(bodyParser.json());
         this.app.use(cookieParser());
         this.app.use(cors({
-            origin: 'http://localhost:8080'
+            origin: 'http://localhost:4200'
         }));
     }
 
