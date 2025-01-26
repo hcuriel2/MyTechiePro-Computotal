@@ -7,14 +7,14 @@ import {
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { first, map, concatMap, take, tap, switchMap } from 'rxjs/operators';
+import { first, map, concatMap, take, tap, switchMap, catchError } from 'rxjs/operators';
 import { Project } from 'src/app/shared/models/project';
 import { User } from 'src/app/shared/models/user';
 import { ProjectService } from 'src/app/shared/services/project.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { Router } from '@angular/router';
 import { ProjectWithUserNames } from 'src/app/shared/models/projectWithUserNames';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-projects',
@@ -123,7 +123,7 @@ export class ProjectsComponent implements OnInit {
       map(user => ({
         ...project,
         professionalName: user.firstName + " " + user.lastName
-      }))
+      }))    
     )
   }
 
@@ -132,14 +132,14 @@ export class ProjectsComponent implements OnInit {
       map(user => ({
         ...project,
         clientName: user.firstName + " " + user.lastName
-      }))
+      }))    
     )
   }
 
   public getNameV2(id: string) {
     return this.userService
       .getById(id)
-      .pipe(first())
+      .pipe(first(), catchError(() => of({ firstName: 'N/A', lastName: '' })))
   }
 
   public routeToUserDetails(id: any) {
