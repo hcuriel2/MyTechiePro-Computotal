@@ -72,7 +72,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "AdminFront:build"
+            "browserTarget": "AdminFront:build",
+            "port":4200
           },
           "configurations": {
             "production": {

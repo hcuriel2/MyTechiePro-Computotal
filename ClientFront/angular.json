@@ -74,7 +74,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "computer-guy-frontend:build"
+            "browserTarget": "computer-guy-frontend:build",
+            "port": 8080
           },
           "configurations": {
             "production": {
