@@ -67,9 +67,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     this.authService.user.subscribe((user) => {
-      
-      if (user){
-        this.isProfessional = user.userType === 'Professional' ?? false;
+      if (user) {
+        this.isProfessional = (user.userType === 'Professional');
         this.updateUIBasedOnUser(user);
       } else {
         this.isProfessional = false;

@@ -11,6 +11,7 @@ import { AuthService } from "src/app/shared/services/auth.service";
 import { first, map } from "rxjs/operators";
 import { plainToClass } from "class-transformer";
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-sign-in",
@@ -103,7 +104,7 @@ export class SignInComponent implements OnInit {
           this.router.navigateByUrl('/').then(() => {
           })
         } else {
-          window.location.href = 'https://mytechie.pro/admin';
+          window.location.href = environment.adminUrl;
         }
       },
       (error) => {

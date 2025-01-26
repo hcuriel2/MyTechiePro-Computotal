@@ -170,11 +170,18 @@ class AuthenticationController implements Controller {
     // Logs the User out
     // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
+        try {
+            // Clear the Authorization cookie
+            response.setHeader('Set-Cookie', [
+                'Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None',
+                'user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None'
+            ]);
 
-        // Clear the cookie with matching attributes, except Max-Age which is set to expire the cookie
-        response.setHeader('Set-Cookie', 'Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None');
-
-        response.send(200);
+            response.sendStatus(200);
+        } catch (error) {
+            console.error('Logout error:', error);
+            response.sendStatus(500);
+        }
     };
 
     // Registers a new User
