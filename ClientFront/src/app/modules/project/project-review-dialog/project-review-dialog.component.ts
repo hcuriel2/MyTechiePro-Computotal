@@ -159,7 +159,16 @@ export class ProjectReviewDialogComponent implements OnInit {
         }
         return response.json();
       })
-      
+      .then((result) => {
+        console.log('Submission result:', result);
+        this.successMessage = 'Your review has been submitted successfully!';
+        this.errorMessage = '';
+        this.reviewForm.reset(); 
+
+        setTimeout(() => {
+          this.dialogRef.close(data);
+        }, 2000);
+      })
       .catch((error) => {
         console.error('API Error:', error);
         this.errorMessage = 'Failed to submit your review. Please try again.';
