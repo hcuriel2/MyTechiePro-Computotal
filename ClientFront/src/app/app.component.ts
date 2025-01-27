@@ -23,7 +23,6 @@ import { Message } from "./shared/models/message";
   styleUrls: ["./app.component.scss"],
   //changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class AppComponent implements OnInit, OnDestroy {
   public user: User | null | undefined;
   userAddress: string = "";
@@ -50,35 +49,26 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   title = "computer-guy-frontend";
 
-  public ngOnDestroy(): void {
-    
-  }
-
+  public ngOnDestroy(): void {}
 
   public ngOnInit(): void {
-    if (!this.authService.isSessionChecked){
+    if (!this.authService.isSessionChecked) {
       this.authService.checkSession().subscribe({
         next: (user) => {
           this.user = user;
-          
-
-        }
-      })
+        },
+      });
     }
 
     this.authService.user.subscribe((user) => {
       if (user) {
-        this.isProfessional = (user.userType === 'Professional');
+        this.isProfessional = user.userType === "Professional";
         this.updateUIBasedOnUser(user);
       } else {
         this.isProfessional = false;
       }
-    })
-
-    
-
+    });
   }
-
 
   private updateUIBasedOnUser(user: User | null): void {
     // Checks the userType to adjust UI elements accordingly
@@ -110,7 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.changeDetectorRef.detectChanges();
   }
-  
+
   /**
    * Assigns the user's latitude, longitude, and formatted address.
    * @param address
@@ -121,51 +111,47 @@ export class AppComponent implements OnInit, OnDestroy {
     this.userLongitude = address.geometry.location.lng();
   }
 
-  public onClick(): void {
-    
-  }
+  public onClick(): void {}
 
   public signIn(): void {
     const dialogConfig = new MatDialogConfig();
-  
+
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-  
+
     this.dialog
       .open(SignInComponent, dialogConfig)
       .afterClosed()
       .subscribe((user: User) => {
         if (user != null) {
         } else {
-          
         }
       });
   }
 
-public signOut(): void {
-  this.authService.signOut().subscribe({
-    next: () => {
-      this.authService.setUserValue(null);
-    }
-  })
-  this.router.navigateByUrl('/').then(() => {
-    window.location.reload();
-  })
-}
+  public signOut(): void {
+    this.authService.signOut().subscribe({
+      next: () => {
+        this.authService.setUserValue(null);
+      },
+    });
+    this.router.navigateByUrl("/").then(() => {
+      window.location.reload();
+    });
+  }
 
   // Navigates to the Home page
   public routeToHomePage(): void {
     this.router.navigateByUrl("/");
   }
 
-
-   // Handles page routing
+  // Handles page routing
   // Dependent on the userType value of the current User
   public routeBasedOnUser(): void {
-    if (this.user?.userType === 'Professional'){
-      this.router.navigateByUrl('/projects');
+    if (this.user?.userType === "Professional") {
+      this.router.navigateByUrl("/projects");
     } else {
-      this.router.navigateByUrl('/');
+      this.router.navigateByUrl("/");
     }
   }
 
@@ -186,27 +172,19 @@ public signOut(): void {
 
   // Redirect to sign up page
   public signUp(): void {
-    this.router
-      .navigate(["/sign-up"], {
-        queryParams: {
-          forPro: false,
-        },
-      })
-      .then(() => {
-        window.location.reload();
-      });
+    this.router.navigate(["/sign-up"], {
+      queryParams: {
+        forPro: false,
+      },
+    });
   }
   // Redirect to sign up page for professional
   public joinPro(): void {
-    this.router
-      .navigate(["/sign-up"], {
-        queryParams: {
-          forPro: true,
-        },
-      })
-      .then(() => {
-        window.location.reload();
-      });
+    this.router.navigate(["/sign-up"], {
+      queryParams: {
+        forPro: true,
+      },
+    });
   }
 
   // Navigates to the User's settings page
@@ -218,5 +196,4 @@ public signOut(): void {
   public navigateToProProfile(): void {
     this.router.navigateByUrl("/pro-profile");
   }
-
 }
