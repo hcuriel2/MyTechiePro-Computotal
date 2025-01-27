@@ -172,19 +172,34 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Redirect to sign up page
   public signUp(): void {
-    this.router.navigate(["/sign-up"], {
-      queryParams: {
-        forPro: false,
-      },
-    });
+    const currentUrl = this.router.url;
+    const isOnSignUpPage = currentUrl.includes('sign-up');
+  
+    if (isOnSignUpPage) {
+      window.location.reload();
+    } else {
+      this.router.navigate(['/sign-up'], {
+        queryParams: {
+          forPro: false,
+        },
+      });
+    }
   }
+
   // Redirect to sign up page for professional
   public joinPro(): void {
-    this.router.navigate(["/sign-up"], {
-      queryParams: {
-        forPro: true,
-      },
-    });
+    const currentUrl = this.router.url;
+    const isOnSignUpPage = currentUrl.includes('sign-up');
+    
+    if (isOnSignUpPage) {
+      window.location.reload();
+    } else {
+      this.router.navigate(['/sign-up'], {
+        queryParams: {
+          forPro: true,
+        },
+      });
+    }
   }
 
   // Navigates to the User's settings page
