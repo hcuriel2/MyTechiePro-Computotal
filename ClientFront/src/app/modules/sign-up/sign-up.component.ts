@@ -234,19 +234,40 @@ export class SignUpComponent implements OnInit, OnDestroy {
             });
           }*/
         },
+        // *old error message
+        // (error) => {
+        //   console.error("User signup failed", error);
+
+        //   this.translateService
+        //     .get("Message.SignUpFailure")
+        //     .pipe(first())
+        //     .subscribe((translation) => {
+        //       const config = new MatSnackBarConfig();
+        //       config.duration = Constants.ShortDuration;
+
+        //       this.snackBar.open(translation, "", config);
+        //     });
+        // }
+        // *C-06: fix for error message
         (error) => {
-          console.error("User signup failed", error);
-
-          this.translateService
-            .get("Message.SignUpFailure")
-            .pipe(first())
-            .subscribe((translation) => {
-              const config = new MatSnackBarConfig();
-              config.duration = Constants.ShortDuration;
-
-              this.snackBar.open(translation, "", config);
-            });
+          console.error("User signup failed:", error.error || error.message || error);
+          
+          let errorMessage = "Sign up failed"; 
+          if (error.error && typeof error.error === 'string' && error.error.includes('</html>')) {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(error.error, 'text/html');
+            const preElement = htmlDoc.querySelector('pre');
+            if (preElement && preElement.textContent) {
+              const fullMessage = preElement.textContent;
+              errorMessage = fullMessage.split('at ')[0].trim();
+            }
+          }        
+          const config = new MatSnackBarConfig();
+          config.duration = Constants.ShortDuration;
+          
+          this.snackBar.open(errorMessage, "", config);
         }
+
       );
   }
 
