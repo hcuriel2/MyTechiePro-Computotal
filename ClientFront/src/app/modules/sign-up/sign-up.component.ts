@@ -41,6 +41,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   public password: FormControl;
   public confirmPassword: FormControl;
   public companyName: FormControl;
+  public location: FormControl;
   public city: FormControl;
   public country: FormControl;
   public street: FormControl;
@@ -273,10 +274,11 @@ export class SignUpComponent implements OnInit, OnDestroy {
     ]);
     this.phoneNumber = new FormControl(null);
     this.companyName = new FormControl(null);
-    this.city = new FormControl(null);
-    this.country = new FormControl(null);
-    this.street = new FormControl(null);
-    this.postalCode = new FormControl(null);
+    this.location = new FormControl(null, Validators.required);
+    this.city = new FormControl(null, Validators.required);
+    this.country = new FormControl(null, Validators.required);
+    this.street = new FormControl(null, Validators.required);
+    this.postalCode = new FormControl(null, Validators.required);
 
     this.formGroup = this.formBuilder.group({
       firstName: this.firstName,
@@ -286,6 +288,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       confirmPassword: this.confirmPassword,
       phoneNumber: this.phoneNumber,
       companyName: this.companyName,
+      location: this.location, 
       city: this.city,
       country: this.country,
       street: this.street,
