@@ -135,7 +135,37 @@ export class ProjectReviewDialogComponent implements OnInit {
     this.hoverState = 0;
   }
 
-  
+  onSubmit(): void {
+    if (this.reviewForm.invalid) {
+      this.errorMessage = 'Please provide a rating and a comment.';
+      this.successMessage = '';
+      return;
+    }
+
+    const data = this.reviewForm.value;
+
+    fetch(`${this.API_URL}/projectReview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    })
+      .then((response) => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      
+      .catch((error) => {
+        console.error('API Error:', error);
+        this.errorMessage = 'Failed to submit your review. Please try again.';
+        this.successMessage = ''; 
+      });
+  }
 
   onCancel(): void {
     this.dialogRef.close();
