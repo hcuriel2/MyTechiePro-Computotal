@@ -194,5 +194,27 @@ export class SettingsComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  
+  submitForm(): void {
+    if (this.settingsForm.valid) {
+      const updatedUserInfo = this.settingsForm.value;
+
+      this.authService.updateUserSettings(this.userId, updatedUserInfo).subscribe({
+        next: (response) => {
+          this.originalUserData = { ...this.originalUserData, ...updatedUserInfo };
+          this.formDisabled = true;
+          this.editing = false;
+
+          this.successMessage = 'Profile info saved successfully!';
+          setTimeout(() => {
+            this.successMessage = ''; 
+          }, 3000);
+        },
+        error: (error) => {
+          console.error('Error updating user info:', error);
+        },
+      });
+    } else {
+      console.error('Form is invalid.');
+    }
+  }
 }
