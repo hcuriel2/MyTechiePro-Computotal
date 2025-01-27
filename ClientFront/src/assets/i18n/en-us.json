@@ -182,11 +182,15 @@
     "NoMatchingResults": "(No matching results)",
     "Review": "Write a review",
     "SignInFirst": "To use this feature, please sign in first.",
-    "SignUpFailure": "Sign up failed. Please retry.",
     "SignUpSuccess": "Successfully signed up!",
     "StartProject": "Start Project",
     "WhatService": "What kind of service do you need?",
-    "EmailSent": "Reset password email sent. Please check your email!"
+    "EmailSent": "Reset password email sent. Please check your email!",
+    "SignUpFailure": "Sign up failed. Please retry.",
+    "EmailExists": "The email address you provided is already registered. Please use a different email.",
+    "InvalidEmail": "Please enter a valid email address.",
+    "WeakPassword": "Password is too weak, please use a stronger password.",
+    "ServerError": "Server error occurred. Please try again later."
   },
   "Warning": {
     "PasswordRequired": "Please enter your new password",

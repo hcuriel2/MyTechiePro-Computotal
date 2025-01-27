@@ -250,22 +250,35 @@ export class SignUpComponent implements OnInit, OnDestroy {
         // }
         // *C-06: fix for error message
         (error) => {
-          console.error("User signup failed:", error.error || error.message || error);
+          console.error("User signup failed", error);
           
-          let errorMessage = "Sign up failed"; 
+
+          let messageKey = "Message.SignUpFailure"; 
+          
           if (error.error && typeof error.error === 'string' && error.error.includes('</html>')) {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(error.error, 'text/html');
             const preElement = htmlDoc.querySelector('pre');
             if (preElement && preElement.textContent) {
-              const fullMessage = preElement.textContent;
-              errorMessage = fullMessage.split('at ')[0].trim();
+              const errorText = preElement.textContent.toLowerCase();
+              if (errorText.includes('email') && errorText.includes('exists')) {
+                messageKey = "Message.EmailExists";
+              } else if (errorText.includes('invalid email')) {
+                messageKey = "Message.InvalidEmail";
+              } else if (errorText.includes('password')) {
+                messageKey = "Message.WeakPassword";
+              }
             }
-          }        
-          const config = new MatSnackBarConfig();
-          config.duration = Constants.ShortDuration;
-          
-          this.snackBar.open(errorMessage, "", config);
+          }
+        
+          this.translateService
+            .get(messageKey)
+            .pipe(first())
+            .subscribe((translation) => {
+              const config = new MatSnackBarConfig();
+              config.duration = Constants.ShortDuration;
+              this.snackBar.open(translation, "", config);
+            });
         }
 
       );
