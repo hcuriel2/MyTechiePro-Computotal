@@ -30,6 +30,11 @@ export class AppComponent {
           }
           document.getElementById("fullName")!.innerHTML = 
             `${user.firstName} ${user.lastName}`;
+          
+          const avatar = document.getElementById("userAvatar");
+          if (avatar) {
+            avatar.setAttribute('src', `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&background=edf2fa`);
+          }
   
           this.observer.observe(['(max-width: 800px)']).subscribe((res) => {
             if (res.matches) {

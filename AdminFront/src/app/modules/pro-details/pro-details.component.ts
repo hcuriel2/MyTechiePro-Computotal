@@ -26,7 +26,7 @@ export class ProDetailsComponent implements OnInit {
   public bio: string;
   public status: string;
   public avgRating: number;
-  public rating: number;
+  public rating: number | string;
   public website: string;
 
 
@@ -68,7 +68,9 @@ export class ProDetailsComponent implements OnInit {
       '$' + history.state.unitPrice + '/' + history.state.unitType;
     this.bio = history.state.bio;
     this.status = history.state.proStatus;
-    this.rating = history.state.ratingSum / history.state.ratingCount
+    this.rating = history.state.ratingSum && history.state.ratingCount
+    ? parseFloat((history.state.ratingSum / history.state.ratingCount).toFixed(2))
+    : "N/A";
     this.website = history.state.website;
 
     this.dataSource = [

@@ -48,8 +48,16 @@
       <!-- Rating Column -->
       <ng-container matColumnDef="rating">
         <th mat-header-cell *matHeaderCellDef>Rating</th>
-        <td mat-cell *matCellDef="let element"> {{element.ratingSum / element.ratingCount}} </td>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.ratingSum && element.ratingCount; else noRating">
+            {{ (element.ratingSum / element.ratingCount) % 1 === 0 
+              ? (element.ratingSum / element.ratingCount) 
+              : (element.ratingSum / element.ratingCount) | number: '1.2-2' }}
+          </ng-container>
+          <ng-template #noRating>N/A</ng-template>
+        </td>
       </ng-container>
+      
     
       <!-- View Profile Button -->
       <ng-container matColumnDef="viewProfile">
