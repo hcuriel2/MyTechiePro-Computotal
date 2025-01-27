@@ -54,6 +54,11 @@
     {{ errorMessage }}
   </div>
 
+  
+  <div *ngIf="successMessage" class="success">
+    {{ successMessage }}
+  </div>
+</mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>
