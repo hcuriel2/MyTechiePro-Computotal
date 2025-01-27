@@ -237,17 +237,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
         (error) => {
           console.error("User signup failed", error);
 
-          let errorMessage = 'Message.SignUpFailure';
-          if (error.error && typeof error.error === 'string') {
-            if (error.error.includes('email')) {
-              errorMessage = 'Message.emailAlreadyExists';
-            } else if (error.error.includes('address')) {
-              errorMessage = 'Message.addressInvalid';
-            }
-          }
-
           this.translateService
-            .get(errorMessage)
+            .get("Message.SignUpFailure")
             .pipe(first())
             .subscribe((translation) => {
               const config = new MatSnackBarConfig();

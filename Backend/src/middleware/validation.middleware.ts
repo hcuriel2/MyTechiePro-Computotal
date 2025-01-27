@@ -9,19 +9,17 @@ function validationMiddleware<T>(
     skipMissingProperties = false
 ): RequestHandler {
     return (req, res, next) => {
+        
         validate(plainToClass(type, req.body), { skipMissingProperties }).then(
             (errors: ValidationError[]) => {
                 if (errors.length > 0) {
                     
                     const message = errors
                         .map((error: ValidationError) => {
-                            const property = error.property;
-                            
-                            const constraintMessages = error.constraints 
-                                ? Object.values(error.constraints)
-                                : ['Invalid input'];
-                            
-                            return `${property}: ${constraintMessages.join(', ')}`;
+                            // Check if error.constraints is truthy before attempting to access its values
+                            return error.constraints
+                                ? Object.values(error.constraints).join(", ")
+                                : 'Validation error without constraints message'; // Provide a generic message or handle this case as needed
                         })
                         .join(", ");
                     next(new HttpException(400, message));
@@ -29,9 +27,7 @@ function validationMiddleware<T>(
                     next();
                 }
             }
-        ).catch(err => {
-            next(new HttpException(500, 'Validation process failed'));
-        });
+        );
     };
 }
 

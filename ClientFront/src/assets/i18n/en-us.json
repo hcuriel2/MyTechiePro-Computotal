@@ -183,8 +183,6 @@
     "Review": "Write a review",
     "SignInFirst": "To use this feature, please sign in first.",
     "SignUpFailure": "Sign up failed. Please retry.",
-    "addressInvalid": "The address you provided is invalid. Please try again.",
-    "emailAlreadyExists": "The email address you provided is already registered. Please use a different email.",
     "SignUpSuccess": "Successfully signed up!",
     "StartProject": "Start Project",
     "WhatService": "What kind of service do you need?",
