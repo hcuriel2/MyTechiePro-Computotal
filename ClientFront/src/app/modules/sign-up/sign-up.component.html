@@ -148,6 +148,7 @@
                 name="Rate Type"
                 id="RateType"
                 formControlName="unitType"
+                required
               >
                 <mat-option value="Hour">Hour</mat-option>
                 <mat-option value="Flat fee">Flat fee</mat-option>
@@ -238,6 +239,8 @@
               autocomplete="off"
               ngx-google-places-autocomplete
               (onAddressChange)="handleAddressChange($event)"
+              formControlName="location"
+              required
             />
           </mat-form-field>
         </div>
@@ -246,13 +249,13 @@
         <div class="col-md-12 col-lg-6">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.Street" | translate }}</mat-label>
-            <input matInput formControlName="street" type="text" />
+            <input matInput formControlName="street" type="text" required />
           </mat-form-field>
         </div>
         <div class="col-md-12 col-lg-6">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.City" | translate }}</mat-label>
-            <input matInput formControlName="city" type="text" id="cityField" />
+            <input matInput formControlName="city" type="text" id="cityField" required />
           </mat-form-field>
         </div>
       </div>
@@ -266,6 +269,7 @@
               formControlName="country"
               type="text"
               id="countryField"
+              required
             />
           </mat-form-field>
         </div>
@@ -279,6 +283,7 @@
               formControlName="postalCode"
               type="text"
               [showMaskTyped]="true"
+              required
             />
           </mat-form-field>
         </div>
