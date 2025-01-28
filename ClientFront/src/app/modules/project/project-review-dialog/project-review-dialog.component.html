@@ -1,23 +1,29 @@
 <h2 mat-dialog-title>Review Your Experience</h2>
 
 <mat-dialog-content [formGroup]="reviewForm">
-    <div class="rating">
-        <svg *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
-             class="star"
-             (mouseover)="hoveredOver(star)"
-             (mouseleave)="hoveredLeave()"
-             (click)="onRate(star)"
-             [class.selected]="star <= hoverState || star <= reviewForm.value.rating"
-             viewBox="0 0 53.867 53.867">
-          <polygon points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182"/>
-        </svg>
-      </div>
-      
+  <div class="rating">
+    <svg *ngFor="let star of [1, 2, 3, 4, 5]; let i = index" class="star" (mouseover)="hoveredOver(star)"
+      (mouseleave)="hoveredLeave()" (click)="onRate(star)"
+      [class.selected]="star <= hoverState || star <= reviewForm.value.rating" viewBox="0 0 53.867 53.867">
+      <polygon
+        points="26.934,1.318 35.256,18.182 53.867,20.887 40.4,34.013 43.579,52.549 26.934,43.798 10.288,52.549 13.467,34.013 0,20.887 18.611,18.182" />
+    </svg>
+  </div>
 
   <mat-form-field id="textInput" appearance="fill">
     <mat-label>Comment</mat-label>
     <textarea matInput formControlName="review"></textarea>
   </mat-form-field>
+
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+
+  <div *ngIf="successMessage" class="success">
+    {{ successMessage }}
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
