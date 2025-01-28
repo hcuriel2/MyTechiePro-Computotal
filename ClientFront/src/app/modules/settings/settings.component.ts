@@ -1,8 +1,8 @@
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { User } from 'src/app/shared/models/user';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-settings',
@@ -10,21 +10,28 @@ import { User } from 'src/app/shared/models/user';
   styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent implements OnInit {
-  public formDisabled = true; 
+  public formDisabled = true;
   public editing = false;
   public userId = '';
   public settingsForm: FormGroup;
   public successMessage: string = '';
-  private originalUserData: User | null = null; 
-  private editSnapshot: any = null; 
+  public errorMessage: string = '';
+  private messages: any = {};
+  private originalUserData: User | null = null;
+  private editSnapshot: any = null;
 
   constructor(
     private fb: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private http: HttpClient
+  ) { }
 
   ngOnInit(): void {
+    this.http.get('/assets/i18n/en-us.json').subscribe((data) => {
+      this.messages = data;
+    });
+
     this.settingsForm = this.fb.group({
       firstName: [{ value: '', disabled: true }, Validators.required],
       lastName: [{ value: '', disabled: true }, Validators.required],
@@ -87,7 +94,7 @@ export class SettingsComponent implements OnInit {
       const updatedUserInfo = this.settingsForm.value;
 
       this.authService.updateUserSettings(this.userId, updatedUserInfo).subscribe({
-        next: (response) => {
+        next: () => {
           this.originalUserData = { ...this.originalUserData, ...updatedUserInfo };
           this.formDisabled = true;
           this.editing = false;
@@ -96,17 +103,32 @@ export class SettingsComponent implements OnInit {
             this.settingsForm.get(key)?.disable();
           });
 
-          this.successMessage = 'Profile info saved successfully!';
+          if (this.messages?.Message?.ProfileSaveSuccess) {
+            this.successMessage = this.messages.Message.ProfileSaveSuccess;
+          }
+
           setTimeout(() => {
             this.successMessage = '';
           }, 3000);
         },
-        error: (error) => {
-          console.error('Error updating user info:', error);
+        error: () => {
+          if (this.messages?.Message?.ProfileSaveError) {
+            this.errorMessage = this.messages.Message.ProfileSaveError;
+          }
+
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 3000);
         },
       });
     } else {
-      console.error('Form is invalid.');
+      if (this.messages?.Message?.FormInvalid) {
+        this.errorMessage = this.messages.Message.FormInvalid;
+      }
+
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 3000);
     }
   }
 }
