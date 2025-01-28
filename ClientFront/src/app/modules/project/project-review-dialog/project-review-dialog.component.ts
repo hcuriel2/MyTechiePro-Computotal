@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http'; // 用于动态加载 JSON 文件
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-project-review-dialog',
