@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http'; 
+import { HttpClient } from '@angular/common/http'; // 用于动态加载 JSON 文件
 
 @Component({
   selector: 'app-project-review-dialog',
@@ -13,22 +13,26 @@ import { HttpClient } from '@angular/common/http';
 export class ProjectReviewDialogComponent implements OnInit {
   private readonly API_URL: string;
   reviewForm: FormGroup;
-  hoverState = 0;
+  hoverState = 0; 
   clickedState = 0;
   projectID: string; 
   successMessage: string = ''; 
   errorMessage: string = '';
+  private messages: any = {};
 
   constructor(
     public dialogRef: MatDialogRef<ProjectReviewDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { projectID: string },
-    private http: HttpClient 
+    private http: HttpClient
   ) {
     this.API_URL = `${environment.apiEndpoint}/projects`;
   }
 
   ngOnInit(): void {
     this.projectID = this.data.projectID;
+    this.http.get('/assets/i18n/en-us.json').subscribe((data) => {
+      this.messages = data;
+    });
 
     this.reviewForm = new FormGroup({
       review: new FormControl('', Validators.required),
@@ -55,7 +59,9 @@ export class ProjectReviewDialogComponent implements OnInit {
 
   onSubmit(): void {
     if (this.reviewForm.invalid) {
-      this.errorMessage = 'Please provide a rating and a comment.';
+      if (this.messages?.Message?.ReviewRequired) {
+        this.errorMessage = this.messages.Message.ReviewRequired;
+      }
       this.successMessage = '';
       return;
     }
@@ -77,7 +83,9 @@ export class ProjectReviewDialogComponent implements OnInit {
         return response.json();
       })
       .then(() => {
-        this.successMessage = 'Your review has been submitted successfully!';
+        if (this.messages?.Message?.ReviewSubmitSuccess) {
+          this.successMessage = this.messages.Message.ReviewSubmitSuccess;
+        }
         this.errorMessage = '';
         this.reviewForm.reset();
 
@@ -86,7 +94,9 @@ export class ProjectReviewDialogComponent implements OnInit {
         }, 2000);
       })
       .catch(() => {
-        this.errorMessage = 'Failed to submit your review. Please try again.';
+        if (this.messages?.Message?.ReviewSubmitFailure) {
+          this.errorMessage = this.messages.Message.ReviewSubmitFailure;
+        }
         this.successMessage = ''; 
       });
   }
