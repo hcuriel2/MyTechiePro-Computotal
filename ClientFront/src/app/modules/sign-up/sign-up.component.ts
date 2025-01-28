@@ -235,19 +235,53 @@ export class SignUpComponent implements OnInit, OnDestroy {
             });
           }*/
         },
+        // *old error message
+        // (error) => {
+        //   console.error("User signup failed", error);
+
+        //   this.translateService
+        //     .get("Message.SignUpFailure")
+        //     .pipe(first())
+        //     .subscribe((translation) => {
+        //       const config = new MatSnackBarConfig();
+        //       config.duration = Constants.ShortDuration;
+
+        //       this.snackBar.open(translation, "", config);
+        //     });
+        // }
+        // *C-06: fix for error message
         (error) => {
           console.error("User signup failed", error);
+          
 
+          let messageKey = "Message.SignUpFailure"; 
+          
+          if (error.error && typeof error.error === 'string' && error.error.includes('</html>')) {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(error.error, 'text/html');
+            const preElement = htmlDoc.querySelector('pre');
+            if (preElement && preElement.textContent) {
+              const errorText = preElement.textContent.toLowerCase();
+              if (errorText.includes('email') && errorText.includes('exists')) {
+                messageKey = "Message.EmailExists";
+              } else if (errorText.includes('invalid email')) {
+                messageKey = "Message.InvalidEmail";
+              } else if (errorText.includes('password')) {
+                messageKey = "Message.WeakPassword";
+              }
+            }
+          }
+        
           this.translateService
-            .get("Message.SignUpFailure")
+            .get(messageKey)
             .pipe(first())
             .subscribe((translation) => {
               const config = new MatSnackBarConfig();
               config.duration = Constants.ShortDuration;
-
               this.snackBar.open(translation, "", config);
             });
         }
+
       );
   }
 
