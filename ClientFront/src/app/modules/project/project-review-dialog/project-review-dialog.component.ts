@@ -1,9 +1,9 @@
-
 import { Component, OnInit } from '@angular/core'; 
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http'; 
 
 @Component({
   selector: 'app-project-review-dialog',
@@ -13,15 +13,16 @@ import { environment } from 'src/environments/environment';
 export class ProjectReviewDialogComponent implements OnInit {
   private readonly API_URL: string;
   reviewForm: FormGroup;
-  hoverState = 0; // Set the initial star rating to 0
+  hoverState = 0;
   clickedState = 0;
-  projectID: string; // Project ID
+  projectID: string; 
   successMessage: string = ''; 
   errorMessage: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<ProjectReviewDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { projectID: string }
+    @Inject(MAT_DIALOG_DATA) public data: { projectID: string },
+    private http: HttpClient 
   ) {
     this.API_URL = `${environment.apiEndpoint}/projects`;
   }
@@ -70,24 +71,21 @@ export class ProjectReviewDialogComponent implements OnInit {
       credentials: 'include',
     })
       .then((response) => {
-        console.log('Response status:', response.status);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         return response.json();
       })
-      .then((result) => {
-        console.log('Submission result:', result);
+      .then(() => {
         this.successMessage = 'Your review has been submitted successfully!';
         this.errorMessage = '';
-        this.reviewForm.reset(); 
+        this.reviewForm.reset();
 
         setTimeout(() => {
           this.dialogRef.close(data);
         }, 2000);
       })
-      .catch((error) => {
-        console.error('API Error:', error);
+      .catch(() => {
         this.errorMessage = 'Failed to submit your review. Please try again.';
         this.successMessage = ''; 
       });
