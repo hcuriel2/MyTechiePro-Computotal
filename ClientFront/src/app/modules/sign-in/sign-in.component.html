@@ -1,5 +1,5 @@
 <!-- <div class="container-fluid"> -->
-<h2 mat-dialog-title>{{ "Dictionary.SignIn" | translate }}</h2>
+<h2 mat-dialog-title>{{ isResetPw ? ("Dictionary.ForgotPassword" | translate) : ("Dictionary.SignIn" | translate) }}</h2>
 
 <mat-dialog-content [formGroup]="formGroup" class="row">
   <mat-form-field class="w-100">
