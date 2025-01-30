@@ -49,15 +49,18 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="d-flex flex-column justify-content-end">
-  <button mat-button color="accent" (click)="toggleSignInForgotPw()">
+  <!-- <button mat-button color="accent" (click)="toggleSignInForgotPw()"> -->
+  <!-- Fix From Niko: isResetPw === false, “Create a new account” button will show up. By default, after clicking the "Forgot password" button, isResetPw === ture -->
+  <button mat-button color="accent" (click)="toggleSignInForgotPw()" *ngIf="!isResetPw">
     {{
       isResetPw
         ? ("Dictionary.SignIn" | translate)
         : ("Dictionary.ForgotPassword" | translate)
     }}
   </button>
-
-  <button mat-button color="accent" (click)="createAccount()">
+  <!-- <button mat-button color="accent" (click)="createAccount()"> -->
+  <!-- Fix from Niko: isResetPw === false, “Create a new account” button will show up. By default, after clicking the "Forgot password" button, isResetPw === ture -->
+  <button mat-button color="accent" (click)="createAccount()" *ngIf="!isResetPw">
     {{ "Dictionary.CreateAccount" | translate }}
   </button>
 
