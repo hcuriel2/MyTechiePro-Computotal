@@ -7,6 +7,7 @@ import CategoryController from "./controllers/category/category.controller";
 import ContactController from "./controllers/contactus/contactus.controller";
 import SurveyController from "./controllers/survey/survey.controller";
 import validateEnv from "./utils/validateEnv";
+import TransactionController from "./controllers/transaction/transaction.controller";
 
 validateEnv();
 
@@ -17,6 +18,7 @@ const app = new App([
     new UserController(),
     new CategoryController(),
     new SurveyController(),
+    new TransactionController(),
 ]);
 
 app.listen();
