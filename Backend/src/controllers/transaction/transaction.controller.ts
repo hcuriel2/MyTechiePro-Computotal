@@ -50,7 +50,7 @@ class TransactionController implements Controller {
     ) => {
         try {
             const transaction = await this.transaction
-                .findOne({ project: req.params.projectId });
+                .findOne({ project: new Types.ObjectId(req.params.projectId) });
             if (!transaction) {
                 next(new HttpException(404, 'Transaction not found'));
             }
