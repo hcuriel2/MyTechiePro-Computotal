@@ -87,4 +87,12 @@ export class UserService {
             map((password: ResetPassword) => plainToClass(ResetPassword, password))
         );
     }
+
+    public setStripeAccountId(userId: string, stripeAccountId: string): Observable<User> {
+        return this.httpClient.patch<User>(`${this.API_URL}/stripe-account/${userId}`,{stripeAccountId: stripeAccountId}
+        ).pipe(
+            first(),
+            map((user: User) => plainToClass(User, user))
+        );
+    }
 }

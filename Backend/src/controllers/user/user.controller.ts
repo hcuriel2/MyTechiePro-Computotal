@@ -29,6 +29,7 @@ class UserController implements Controller {
         this.router.get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill);
         this.router.get(`${this.path}/professionals`, this.getAllProfessionals)
         this.router.delete(`${this.path}/:id`, this.deleteUser)
+        this.router.patch(`${this.path}/stripe-account/:id`, this.setStripeAccountId)
 
         //Admin routes - Admin authentication needed (only admins can access these)
         this.router.get(`${this.path}`, this.getAllUsers)
@@ -230,6 +231,23 @@ class UserController implements Controller {
         } else {
             response.send("The password is not matched.");
         }
+    };
+
+    private setStripeAccountId = async (request: Request, response: Response) => {
+        const id = request.params.id;
+        const { stripeAccountId } = request.body;
+        await this.user.findByIdAndUpdate(
+            id, 
+            {stripeAccountId}, 
+            {new: true},
+            function (err, result) {
+                if (err) {
+                    response.send(err);
+                } else {
+                    response.send(result);
+                }
+            }
+        );
     };
 
     private changeStatus = async (request: Request, response: Response) => {
