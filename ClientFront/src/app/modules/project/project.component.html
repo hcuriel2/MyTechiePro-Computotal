@@ -16,9 +16,13 @@
                         {{ 'Label.UpdatedDate' | translate }}:
                         {{ project.updatedAt | date }}
                     </h3>
-                    <h3 class="h3Details">
+                    <!-- <h3 class="h3Details">
                         {{ 'Label.BillingCost' | translate }}:
                          {{ projectPrice }}
+                    </h3> -->
+                    <h3 class="h3Details" *ngIf="project.state === 'Completed'">
+                        {{ 'Label.BillingCost' | translate }}:
+                        {{ projectPrice }}
                     </h3>
 
                     <br> 
