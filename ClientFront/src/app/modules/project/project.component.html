@@ -20,6 +20,10 @@
                         {{ 'Label.BillingCost' | translate }}:
                          {{ projectPrice }}
                     </h3> -->
+                    <h3 class="h3Details" *ngIf="project.state === 'OnGoing'">
+                        {{ 'Estimated Price' | translate }}:
+                        {{ projectPrice }}
+                    </h3>
                     <h3 class="h3Details" *ngIf="project.state === 'Completed'">
                         {{ 'Label.BillingCost' | translate }}:
                         {{ projectPrice }}
