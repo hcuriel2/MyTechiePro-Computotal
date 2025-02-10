@@ -14,6 +14,7 @@ interface Project {
     rating: number;
     feedback: string;
     isPaid: boolean;
+    transaction?: object;
 }
 
 export default Project;

@@ -1,3 +1,4 @@
+import { Transaction } from './transaction';
 import { User } from './user';
 
 export class Project {
@@ -15,6 +16,7 @@ export class Project {
     client: User | undefined;
 
     comments: Message[] = [];
+    transaction: Transaction | undefined;
 }
 
 export class Message {

@@ -29,5 +29,6 @@ export class User {
     ratingCount: number;
     rating: string;
     website: string;
+    stripeAccountId: string;
 }
 

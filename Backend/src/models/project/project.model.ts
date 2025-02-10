@@ -66,6 +66,10 @@ const ProjectSchema = new Schema(
         },
         rating: { type: Number, min: 0, max: 5 },
         feedback: String,
+        transaction: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Transaction',
+        }
     },
     { timestamps: true },
 );

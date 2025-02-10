@@ -117,7 +117,8 @@ const userSchema = new mongoose.Schema({
     secret: String,
     tempSecret: String,
     approved: Boolean,
-    verified: Boolean
+    verified: Boolean,
+    stripeAccountId: String,
 });
 
 Object.assign(userSchema.statics, { userTypes })

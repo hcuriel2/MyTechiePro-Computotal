@@ -16,6 +16,8 @@ class CreateProjectDto {
     public comments: Array<{text: string, authorId:string, authorName:string}>;
     public totalCost: number;
     public clientId: string;
+    public transactionId?: string;
+    public transaction?: object;
 }
 
 export default CreateProjectDto;
