@@ -137,31 +137,31 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
    * Displays dialog box for tech to change Project cost.
    */
   public onStartProject(): void {
-    
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.autoFocus = true;
-
-    this.dialog
-      .open(ProjectStartDialogComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((data: any) => {
-        
-        this.projectService
-          .startProject(
-            this.project._id,
-            data.totalCost,
-            data.projectDetail,
-            this.project.professional._id
-          )
-          .pipe(first())
-          .subscribe((project) => {
-            
-            this.router.navigateByUrl(`/project/${project._id}`).then(() => {
-              window.location.reload();
-            });
-          });
-      });
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.autoFocus = true;
+  
+      this.dialog
+        .open(ProjectStartDialogComponent, dialogConfig)
+        .afterClosed()
+        .subscribe((data: any) => {
+          if (data) {
+            this.projectService
+              .startProject(
+                this.project._id,
+                data.totalCost,
+                data.projectDetail,
+                this.project.professional._id
+              )
+              .pipe(first())
+              .subscribe((project) => {
+                this.project = project;
+                this.projectPrice = `$${data.totalCost}`;
+                this.router.navigateByUrl(`/project/${project._id}`).then(() => {
+                  window.location.reload();
+                });
+              });
+          }
+        });
   }
 
   public onProjectOnGoing(): void {
@@ -169,38 +169,33 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public onCompleteProject(): void {
-    
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.autoFocus = true;
-
-    /**
-     * Opens the Complete Project dialog and calls the completeProject function with the
-     * projectId and professionalId. After the data is sent, it will redirect to the current project
-     * page and refresh the page so that the button will no longer be there.
-     */
-    this.dialog
-      .open(ProjectCompleteDialogComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((data: any) => {
-        
-        this.projectService
-          .completeProject(
-            this.project._id,
-            data.email,
-            this.project.professional._id,
-            data.startDate,
-            data.endDate,
-            data.totalCost
-          )
-          .pipe(first())
-          .subscribe((project) => {
-            
-            this.router.navigateByUrl(`/project/${project._id}`).then(() => {
-              window.location.reload();
-            });
-          });
-      });
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.autoFocus = true;
+  
+      this.dialog
+        .open(ProjectCompleteDialogComponent, dialogConfig)
+        .afterClosed()
+        .subscribe((data: any) => {
+          if (data) {
+            this.projectService
+              .completeProject(
+                this.project._id,
+                data.email,
+                this.project.professional._id,
+                data.startDate,
+                data.endDate,
+                data.totalCost
+              )
+              .pipe(first())
+              .subscribe((project) => {
+                this.project = project;
+                this.projectPrice = `$${data.totalCost}`;
+                this.router.navigateByUrl(`/project/${project._id}`).then(() => {
+                  window.location.reload();
+                });
+              });
+          }
+        });
   }
 
   // Changes the status of the project to 'paid'
