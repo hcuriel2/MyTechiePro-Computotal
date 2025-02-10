@@ -77,8 +77,23 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.authService.user.subscribe(user => {
             this.user = user;
             this.updateUIBasedOnUser(user);
-        })
-       
+        });
+    
+        if (this.projectId) {
+            this.projectService
+                .get(this.projectId)
+                .pipe(takeUntil(this.destroyed))
+                .subscribe((project: Project) => {
+                    this.project = project;
+                    this.proSkills = project.professional.skills.join(', ');
+                    if (this.project.totalCost) {
+                        this.projectPrice = `$${this.project.totalCost}`;
+                    } else {
+                        this.projectPrice = "$0";
+                    }
+                    this.changeDetectorRef.markForCheck();
+                });
+        }
     }
 
 
