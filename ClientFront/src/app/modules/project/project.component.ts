@@ -18,7 +18,6 @@ import { User } from "src/app/shared/models/user";
 import { AuthService } from "src/app/shared/services/auth.service";
 import { ProjectService } from "src/app/shared/services/project.service";
 import { ProjectCompleteDialogComponent } from "./project-complete-dialog/project-complete-dialog.component";
-import { ProjectPayDialogComponent } from "./project-pay-dialog/project-pay-dialog.component";
 import { ProjectReviewDialogComponent } from "./project-review-dialog/project-review-dialog.component";
 import { ProjectStartDialogComponent } from "./project-start-dialog/project-start-dialog.component";
 
@@ -173,8 +172,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
   }
 
-  public onProjectOnGoing(): void {}
-
   public onCompleteProject(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
@@ -197,29 +194,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
             .subscribe((project) => {
               this.project = project;
               this.projectPrice = `$${data.totalCost}`;
-              this.router.navigateByUrl(`/project/${project._id}`).then(() => {
-                window.location.reload();
-              });
-            });
-        }
-      });
-  }
-
-  // Changes the status of the project to 'paid'
-  public onPayProject(): void {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.autoFocus = true;
-
-    this.dialog
-      .open(ProjectPayDialogComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((isPaid: boolean) => {
-        if (isPaid) {
-          this.projectService
-            .payProject(this.project._id, this.project.client._id)
-            .pipe(first())
-            .subscribe((project) => {
               this.router.navigateByUrl(`/project/${project._id}`).then(() => {
                 window.location.reload();
               });
