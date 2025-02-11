@@ -20,6 +20,8 @@ import { ProjectService } from "src/app/shared/services/project.service";
 import { ProjectCompleteDialogComponent } from "./project-complete-dialog/project-complete-dialog.component";
 import { ProjectReviewDialogComponent } from "./project-review-dialog/project-review-dialog.component";
 import { ProjectStartDialogComponent } from "./project-start-dialog/project-start-dialog.component";
+import { TransactionService } from 'src/app/shared/services/transaction.service';
+import { Transaction } from 'src/app/shared/models/transaction';
 
 @Component({
   selector: "app-project",
@@ -39,6 +41,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
   public messageInput: FormControl;
   public formGroup: FormGroup;
   public projectPrice?: string;
+  public transaction: Transaction | null = null;
 
   private destroyed: Subject<void>;
 
@@ -50,6 +53,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     private dialog: MatDialog,
     private authService: AuthService,
     private projectService: ProjectService,
+    private transactionService: TransactionService,
     private changeDetectorRef: ChangeDetectorRef
   ) {
     this.destroyed = new Subject<void>();
@@ -89,10 +93,48 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
           } else {
             this.projectPrice = "Not Set";
           }
+          this.fetchTransaction();
           this.changeDetectorRef.markForCheck();
         });
     }
   }
+  
+  private fetchTransaction(): void {
+    this.transactionService
+      .getTransactionByProjectId(this.projectId!)
+      .pipe(first())
+      .subscribe(
+        (transaction: Transaction) => {
+          this.transaction = transaction;
+          this.changeDetectorRef.markForCheck();
+        },
+        () => {
+          this.transaction = null; // If no transaction found, set to null
+          this.changeDetectorRef.markForCheck();
+        }
+      );
+  }
+
+  public getPaymentStatusDisplay(): string {
+    return this.transaction?.status || 'Pending';
+  }
+  
+  public getPaymentStatusClass(status: string | undefined): string {
+    if (!status) {
+      return 'status-pending';
+    }
+    switch (status) {
+      case 'Pending':
+        return 'status-pending';
+      case 'Paid':
+        return 'status-paid';
+      case 'Failed':
+        return 'status-failed';
+      default:
+        return 'status-pending';
+    }
+  }
+
 
   private updateUIBasedOnUser(user: User | null): void {
     this.isCustomer = user?.userType === UserType.Client;
