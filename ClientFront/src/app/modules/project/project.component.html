@@ -124,15 +124,6 @@
           >
             <strong>{{ "Message.MarkComplete" | translate }}</strong>
           </button>
-          <button
-            class="paidButton"
-            mat-raised-button
-            aria-label="Mark Project Paid"
-            *ngIf="isCustomer && project.state == 'Completed'"
-            (click)="onPayProject()"
-          >
-            <strong> {{ "Message.MarkProjectPaid" | translate }} </strong>
-          </button>
         </div>
       </mat-tab>
 
