@@ -98,7 +98,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
     }
   }
-  // 添加 fetchTransaction 方法
+  
   private fetchTransaction(): void {
     this.transactionService
       .getTransactionByProjectId(this.projectId!)
