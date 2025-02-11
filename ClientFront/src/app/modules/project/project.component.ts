@@ -173,8 +173,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
   }
 
-  public onProjectOnGoing(): void {}
-
   public onCompleteProject(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
