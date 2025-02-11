@@ -1,14 +1,11 @@
 <div class="form-container">
-  <h1 class="form-title text-center">
-    <strong>{{ editing ? 'Edit Your Profile' : 'Your Profile' }}</strong>
-  </h1>
-
   <div *ngIf="successMessage" class="success-message text-center">
     {{ successMessage }}
   </div>
 
-  <br><br>
-  <form [formGroup]="settingsForm" (ngSubmit)="submitForm()">
+  <!-- Personal Infomation Card -->
+  <form [formGroup]="settingsForm" (ngSubmit)="submitForm()" class="settings-card">
+    <h2 class="section-title"><strong>Personal Information</strong></h2>
     <div class="row">
       <div class="column">
         <label for="firstName"><strong>First Name</strong></label>
@@ -52,5 +49,33 @@
       <button type="submit" [disabled]="formDisabled" *ngIf="editing"><strong>Save</strong></button>
     </div>
   </form>
+
+  <div class="section-divider"></div>
+
+  <!-- Stripe Connection Section -->
+  <div *ngIf="isProfessional" class="stripe-section">
+    <h2 class="section-title"><strong>Payment Setup</strong></h2>
+
+    <div class="stripe-content">
+      <div *ngIf="!stripeConnected" class="stripe-connect">
+        <p class="stripe-description">Connect your Stripe account to receive payments from clients.</p>
+        <button class="stripe-button" (click)="connectStripe()">
+          <strong>Connect with Stripe</strong>
+        </button>
+      </div>
+  
+      <div *ngIf="stripeConnected" class="stripe-status">
+        <div>
+          <span class="success-icon">✓</span>
+          <p class="status-text">Stripe Account Connected</p>
+          <p class="account-id">Account ID: {{stripeAccountId}}</p>
+        </div>
+        <button class="stripe-button">
+          <strong>Manage Stripe Connection</strong>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <br><br><br><br>
 </div>

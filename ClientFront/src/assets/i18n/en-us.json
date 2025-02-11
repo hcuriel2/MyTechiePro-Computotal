@@ -177,7 +177,7 @@
     "ReviewRequired": "Please provide a rating and comment.",
     "ReviewSubmitSuccess": "Your review has been submitted successfully!",
     "ReviewSubmitFailure": "Failed to submit your review. Please try again.",
-    "ProfileSaveSuccess": "Your profile has been updated successfully!",
+    "ProfileSaveSuccess": "Your peronal infomation has been updated successfully!",
     "ProfileSaveError": "Failed to save profile info. Please try again.",
     "FormInvalid": "Please fill out all required fields.",
     "additionalComments": "Additional Comments",
