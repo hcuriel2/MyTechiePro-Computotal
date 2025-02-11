@@ -43,8 +43,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   private destroyed: Subject<void>;
 
-
-  message = '';
+  message = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -73,66 +72,61 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-    public ngOnInit(): void {
-        this.authService.user.subscribe(user => {
-            this.user = user;
-            this.updateUIBasedOnUser(user);
+  public ngOnInit(): void {
+    this.authService.user.subscribe((user) => {
+      this.user = user;
+      this.updateUIBasedOnUser(user);
+    });
+
+    if (this.projectId) {
+      this.projectService
+        .get(this.projectId)
+        .pipe(takeUntil(this.destroyed))
+        .subscribe((project: Project) => {
+          this.project = project;
+          this.proSkills = project.professional.skills.join(", ");
+          if (this.project.totalCost) {
+            this.projectPrice = `$${this.project.totalCost.toLocaleString()}`;
+          } else {
+            this.projectPrice = "Not Set";
+          }
+          this.changeDetectorRef.markForCheck();
         });
-    
-        if (this.projectId) {
-            this.projectService
-                .get(this.projectId)
-                .pipe(takeUntil(this.destroyed))
-                .subscribe((project: Project) => {
-                    this.project = project;
-                    this.proSkills = project.professional.skills.join(', ');
-                    if (this.project.totalCost) {
-                        this.projectPrice = `$${this.project.totalCost}`;
-                    } else {
-                        this.projectPrice = "$0";
-                    }
-                    this.changeDetectorRef.markForCheck();
-                });
-        }
+    }
+  }
+
+  private updateUIBasedOnUser(user: User | null): void {
+    this.isCustomer = user?.userType === UserType.Client;
+
+    if (this.projectId) {
+      // Get project details from db.
+      this.projectService
+        .get(this.projectId)
+        .pipe(takeUntil(this.destroyed))
+        .subscribe((project: Project) => {
+          this.project = project;
+          this.proSkills = project.professional.skills.join(", ");
+          if (this.project.totalCost) {
+            this.projectPrice = "$" + this.project.totalCost.toLocaleString();
+          } else {
+            this.projectPrice = "Not Set";
+          }
+          //
+
+          // if (this.project.rating != 0) {
+          //     document.getElementById("project-component-review-button")!. = "true";
+          // }
+          this.changeDetectorRef.markForCheck();
+        });
     }
 
+    this.scrollToBottom();
+  }
 
-
-    private updateUIBasedOnUser(user: User | null): void {
-        this.isCustomer = user?.userType === UserType.Client;
-        
-        if (this.projectId) {
-            // Get project details from db.
-            this.projectService
-                .get(this.projectId)
-                .pipe(takeUntil(this.destroyed))
-                .subscribe((project: Project) => {
-                    this.project = project;
-                    this.proSkills = project.professional.skills.join(', ');
-                    if (this.project.totalCost) {
-                        this.projectPrice = "$" + this.project.totalCost;
-                    } else {
-                        this.projectPrice = "$0"
-                    }
-                    //
-
-                    // if (this.project.rating != 0) {
-                    //     document.getElementById("project-component-review-button")!. = "true";
-                    // }
-                    this.changeDetectorRef.markForCheck();
-                    
-                });
-        }
-
-        this.scrollToBottom();
-    }
-
-
-
-    public ngOnDestroy(): void {
-        this.destroyed.next();
-        this.destroyed.complete();
-    }
+  public ngOnDestroy(): void {
+    this.destroyed.next();
+    this.destroyed.complete();
+  }
 
   public ngAfterViewChecked(): void {
     this.scrollToBottom();
@@ -152,65 +146,63 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
    * Displays dialog box for tech to change Project cost.
    */
   public onStartProject(): void {
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.autoFocus = true;
-  
-      this.dialog
-        .open(ProjectStartDialogComponent, dialogConfig)
-        .afterClosed()
-        .subscribe((data: any) => {
-          if (data) {
-            this.projectService
-              .startProject(
-                this.project._id,
-                data.totalCost,
-                data.projectDetail,
-                this.project.professional._id
-              )
-              .pipe(first())
-              .subscribe((project) => {
-                this.project = project;
-                this.projectPrice = `$${data.totalCost}`;
-                this.router.navigateByUrl(`/project/${project._id}`).then(() => {
-                  window.location.reload();
-                });
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+
+    this.dialog
+      .open(ProjectStartDialogComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((data: any) => {
+        if (data) {
+          this.projectService
+            .startProject(
+              this.project._id,
+              data.totalCost,
+              data.projectDetail,
+              this.project.professional._id
+            )
+            .pipe(first())
+            .subscribe((project) => {
+              this.project = project;
+              this.projectPrice = `$${data.totalCost}`;
+              this.router.navigateByUrl(`/project/${project._id}`).then(() => {
+                window.location.reload();
               });
-          }
-        });
+            });
+        }
+      });
   }
 
-  public onProjectOnGoing(): void {
-    
-  }
+  public onProjectOnGoing(): void {}
 
   public onCompleteProject(): void {
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.autoFocus = true;
-  
-      this.dialog
-        .open(ProjectCompleteDialogComponent, dialogConfig)
-        .afterClosed()
-        .subscribe((data: any) => {
-          if (data) {
-            this.projectService
-              .completeProject(
-                this.project._id,
-                data.email,
-                this.project.professional._id,
-                data.startDate,
-                data.endDate,
-                data.totalCost
-              )
-              .pipe(first())
-              .subscribe((project) => {
-                this.project = project;
-                this.projectPrice = `$${data.totalCost}`;
-                this.router.navigateByUrl(`/project/${project._id}`).then(() => {
-                  window.location.reload();
-                });
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+
+    this.dialog
+      .open(ProjectCompleteDialogComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((data: any) => {
+        if (data) {
+          this.projectService
+            .completeProject(
+              this.project._id,
+              data.email,
+              this.project.professional._id,
+              data.startDate,
+              data.endDate,
+              data.totalCost
+            )
+            .pipe(first())
+            .subscribe((project) => {
+              this.project = project;
+              this.projectPrice = `$${data.totalCost}`;
+              this.router.navigateByUrl(`/project/${project._id}`).then(() => {
+                window.location.reload();
               });
-          }
-        });
+            });
+        }
+      });
   }
 
   // Changes the status of the project to 'paid'
@@ -245,7 +237,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       .open(ProjectReviewDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe((feedback: string) => {
-        
         let feedobj = JSON.parse(feedback);
         this.projectService
           .rateProject(
@@ -256,7 +247,6 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
           )
           .pipe(first())
           .subscribe((project) => {
-            
             this.router.navigateByUrl(`/project/${project._id}`).then(() => {
               window.location.reload();
             });
@@ -268,32 +258,31 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isCustomer = !this.isCustomer;
   }
 
-    public onSubmit(): void {
-        const userId = this.user?._id;
-        
-        if (userId && this.messageInput.value) {
-            this.projectService
-                .commentProject(this.project._id, this.messageInput.value, userId)
-                .pipe(first())
-                .subscribe({
-                    next: (project) => {
-                        this.messageInput.reset(); // Reset the input field after sending a message
-                        this.project = project; // Update the project with the new comment
-                        this.changeDetectorRef.markForCheck();
-                    },
-                    error: (error) => {
-                        console.error("Failed to send message", error);
-                    }
-                });
-        }
-    }
-    
-    // Review Dialog Modal
-    openReviewDialog(): void {
-        this.dialog.open(ProjectReviewDialogComponent, {
-            width: '75%',
-            data: { projectID: this.projectId }
-        })
-    }
-}
+  public onSubmit(): void {
+    const userId = this.user?._id;
 
+    if (userId && this.messageInput.value) {
+      this.projectService
+        .commentProject(this.project._id, this.messageInput.value, userId)
+        .pipe(first())
+        .subscribe({
+          next: (project) => {
+            this.messageInput.reset(); // Reset the input field after sending a message
+            this.project = project; // Update the project with the new comment
+            this.changeDetectorRef.markForCheck();
+          },
+          error: (error) => {
+            console.error("Failed to send message", error);
+          },
+        });
+    }
+  }
+
+  // Review Dialog Modal
+  openReviewDialog(): void {
+    this.dialog.open(ProjectReviewDialogComponent, {
+      width: "75%",
+      data: { projectID: this.projectId },
+    });
+  }
+}
