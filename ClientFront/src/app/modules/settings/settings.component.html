@@ -65,9 +65,14 @@
       </div>
   
       <div *ngIf="stripeConnected" class="stripe-status">
-        <span class="success-icon">✓</span>
-        <p class="status-text">Stripe Account Connected</p>
-        <p class="account-id">Account ID: {{stripeAccountId}}</p>
+        <div class="status-info">
+          <span class="success-icon">✓</span>
+          <p class="status-text">Stripe Account Connected</p>
+          <p class="account-id">Account ID: {{stripeAccountId}}</p>
+        </div>
+        <button class="stripe-button">
+          <strong>Manage Stripe Connection</strong>
+        </button>
       </div>
     </div>
   </div>
