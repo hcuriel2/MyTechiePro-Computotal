@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { User } from 'src/app/shared/models/user';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { UserService } from 'src/app/shared/services/user.service'; 
 
 @Component({
   selector: 'app-settings',
@@ -28,7 +30,10 @@ export class SettingsComponent implements OnInit {
     private fb: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +51,26 @@ export class SettingsComponent implements OnInit {
       postalCode: [{ value: '', disabled: true }],
     });
 
+    /**
+     * Listen for URL query parameters after Stripe onboarding redirect
+     * Checks for userId and accountId from Stripe callback
+     */
+    this.route.queryParams.subscribe(params => {
+      const userId = params['userId'];
+      const accountId = params['accountId'];
+
+      if (userId && accountId) {
+        this.updateStripeAccount(userId, accountId);
+      } else {
+        this.loadUserData();
+      }
+    });
+  }
+  /**
+   * Loads user data and sets up Stripe-related flags
+   * Called on component initialization and after profile updates
+   */
+  private loadUserData(): void {
     this.authService.user.subscribe((user) => {
       if (user) {
         this.originalUserData = user;
@@ -56,6 +81,29 @@ export class SettingsComponent implements OnInit {
         this.populateForm(user);
       }
     });
+  }
+
+  /**
+   * Updates user's Stripe account ID in database
+   * Called after successful Stripe onboarding
+   * @param userId - User's ID in our system
+   * @param accountId - Stripe Connect account ID
+   */
+  private updateStripeAccount(userId: string, accountId: string): void {
+    this.userService.setStripeAccountId(userId, accountId)
+        .subscribe({
+            next: (user) => {
+                console.log("Stripe account linked successfully");
+                this.successMessage = "Stripe account linked successfully!";
+                this.stripeAccountId = user.stripeAccountId || '';
+                this.stripeConnected = true;
+                this.router.navigate(['/settings']);
+            },
+            error: (err) => {
+                console.error("Error updating Stripe account:", err);
+                this.errorMessage = "Failed to update Stripe account. Please try again.";
+            }
+        });
   }
 
   private populateForm(user: User): void {
@@ -96,12 +144,32 @@ export class SettingsComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  /**
+   * Initiates Stripe Connect onboarding process
+   * Creates Stripe account and redirects to Stripe onboarding
+   */
   connectStripe(): void {
-    if(!this.originalUserData) {
+    if (!this.originalUserData) {
       this.errorMessage = 'Please sign in first';
       return;
     }
-    window.location.href = `${environment.apiEndpoint}/stripe/connect`
+    const userId = this.originalUserData._id;
+    const email = this.originalUserData.email;
+    // Call backend to create Stripe Connect account
+    this.http.post<{ accountLink: string }>(
+      `${environment.apiEndpoint}/stripe/connect-account`,
+      { email, userId }
+    ).subscribe({
+      next: (response) => {
+        console.log("Redirecting to Stripe Onboarding:", response.accountLink);
+        window.location.href = response.accountLink; 
+      },
+      error: (err) => {
+        console.error("Error creating Stripe account:", err);
+        this.errorMessage = "Failed to connect to Stripe. Please try again.";
+        setTimeout(() => { this.errorMessage = ''; }, 3000);
+      }
+    });
   }
 
   submitForm(): void {
