@@ -69,7 +69,7 @@ export class SettingsComponent implements OnInit {
    * Called on component initialization and after profile updates
    */
   private loadUserData(): void {
-    this.authService.checkSession().subscribe(user => {
+    this.authService.user.subscribe((user) => {
       if (user) {
         this.originalUserData = user;
         this.userId = user._id;
