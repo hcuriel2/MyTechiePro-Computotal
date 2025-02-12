@@ -5,7 +5,6 @@ import { User } from 'src/app/shared/models/user';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { UserService } from 'src/app/shared/services/user.service'; 
 
 @Component({
   selector: 'app-settings',
@@ -32,8 +31,7 @@ export class SettingsComponent implements OnInit {
     private authService: AuthService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -90,20 +88,23 @@ export class SettingsComponent implements OnInit {
    * @param accountId - Stripe Connect account ID
    */
   private updateStripeAccount(userId: string, accountId: string): void {
-    this.userService.setStripeAccountId(userId, accountId)
-        .subscribe({
-            next: (user) => {
-                console.log("Stripe account linked successfully");
-                this.successMessage = "Stripe account linked successfully!";
-                this.stripeAccountId = user.stripeAccountId || '';
-                this.stripeConnected = true;
-                this.router.navigate(['/settings']);
-            },
-            error: (err) => {
-                console.error("Error updating Stripe account:", err);
-                this.errorMessage = "Failed to update Stripe account. Please try again.";
-            }
-        });
+    this.http.patch(`${environment.apiEndpoint}/stripe-account/${userId}`, {
+      stripeAccountId: accountId
+    }).subscribe({
+      next: () => {
+        console.log("Stripe account linked successfully");
+        this.successMessage = "Stripe account linked successfully!";
+        this.stripeAccountId = accountId;
+        this.stripeConnected = true;
+
+        // clear query params from URL and navigate to settings
+        this.router.navigate(['/settings']);
+      },
+      error: (err) => {
+        console.error("Error updating Stripe account:", err);
+        this.errorMessage = "Failed to update Stripe account. Please try again.";
+      }
+    });
   }
 
   private populateForm(user: User): void {
@@ -155,7 +156,7 @@ export class SettingsComponent implements OnInit {
     }
     const userId = this.originalUserData._id;
     const email = this.originalUserData.email;
-    // Call backend to create Stripe Connect account
+
     this.http.post<{ accountLink: string }>(
       `${environment.apiEndpoint}/stripe/connect-account`,
       { email, userId }
