@@ -23,7 +23,7 @@ export class StripeSuccessComponent implements OnInit {
         this.userService.setStripeAccountId(userId, accountId).subscribe({
           next: () => {
             console.log('Stripe account linked successfully');
-            this.router.navigate(['/settings']); 
+            window.location.href = '/settings';
           },
           error: (error) => {
             console.error('Error updating Stripe account:', error);

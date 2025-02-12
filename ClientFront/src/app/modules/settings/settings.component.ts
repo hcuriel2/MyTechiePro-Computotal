@@ -69,7 +69,7 @@ export class SettingsComponent implements OnInit {
    * Called on component initialization and after profile updates
    */
   private loadUserData(): void {
-    this.authService.user.subscribe((user) => {
+    this.authService.checkSession().subscribe(user => {
       if (user) {
         this.originalUserData = user;
         this.userId = user._id;
@@ -77,6 +77,7 @@ export class SettingsComponent implements OnInit {
         this.stripeConnected = !!user.stripeAccountId;
         this.stripeAccountId = user.stripeAccountId || '';
         this.populateForm(user);
+        this.changeDetectorRef.detectChanges();  
       }
     });
   }
