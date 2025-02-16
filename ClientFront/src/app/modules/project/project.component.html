@@ -35,7 +35,7 @@
               ({{ project.clientResponse | titlecase | translate }})
             </span>
           </h3>
-        <h3 class="h3Details">
+        <h3 class="h3Details" *ngIf="project?.state === 'Completed'|| project?.state === 'Paid'">
           {{ "Payment Status" | translate }}:
           <span [ngClass]="getPaymentStatusClass(transaction?.status)">
             {{ getPaymentStatusDisplay() | translate }}
