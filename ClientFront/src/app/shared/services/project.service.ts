@@ -193,4 +193,15 @@ export class ProjectService {
       { withCredentials: true }
     );
   }
+
+  public updateClientResponse(
+    projectId: string,
+    clientResponse: string
+  ): Observable<Project> {
+    return this.httpClient.patch<Project>(
+      `${this.API_URL}/client-response/${projectId}`,
+      { clientResponse },
+      { withCredentials: true}
+    );
+  }
 }

@@ -15,6 +15,8 @@ interface Project {
     feedback: string;
     isPaid: boolean;
     transaction?: object;
+    priceConfirmed: boolean;
+    clientResponse: string | null;
 }
 
 export default Project;

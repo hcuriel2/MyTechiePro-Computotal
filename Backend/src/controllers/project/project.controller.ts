@@ -50,7 +50,7 @@ class ProjectController implements Controller {
                     .get(`${this.path}/client/:clientId`, authMiddleware, this.getProjectsByClientId)
                     .get(`${this.path}/professional/:professionalId`, authMiddleware, this.getProjectsProfessionalById)
                     .post(`${this.path}/projectReview`, authMiddleware,this.projectReview)
-
+                    .patch(`${this.path}/client-response/:id`, authMiddleware, this.updateClientResponse)
     }
 
 
@@ -643,6 +643,31 @@ class ProjectController implements Controller {
             next(new NotFoundprojectException(id));
         }
     };
+
+    private updateClientResponse = async (
+        request: RequestWithUser,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const id = request.params.id;
+        const { clientResponse } = request.body;
+
+        await this.project.findByIdAndUpdate(
+            id,
+            {
+                clientResponse,
+                priceConfirmed: clientResponse === 'confirmed' ? true : false
+            },
+            { new: true },
+            function(err, result) {
+                if(result) {
+                    response.send(result);
+                } else {
+                    next(new NotFoundprojectException(id));
+                }
+            }
+        )
+    }
 }
 
 export default ProjectController;
