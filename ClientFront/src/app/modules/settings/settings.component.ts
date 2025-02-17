@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { User } from 'src/app/shared/models/user';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-settings',
@@ -20,9 +20,9 @@ export class SettingsComponent implements OnInit {
   private messages: any = {};
   private originalUserData: User | null = null;
   private editSnapshot: any = null;
-  public stripeConnected: boolean = false;
-  public stripeAccountId: string = '';
-  public isProfessional: boolean = false;
+  // public stripeConnected: boolean = false;
+  // public stripeAccountId: string = '';
+  // public isProfessional: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -50,9 +50,9 @@ export class SettingsComponent implements OnInit {
       if (user) {
         this.originalUserData = user;
         this.userId = user._id;
-        this.isProfessional = user.userType === 'Professional';
-        this.stripeConnected = !!user.stripeAccountId;
-        this.stripeAccountId = user.stripeAccountId || '';
+        // this.isProfessional = user.userType === 'Professional';
+        // this.stripeConnected = !!user.stripeAccountId;
+        // this.stripeAccountId = user.stripeAccountId || '';
         this.populateForm(user);
       }
     });
@@ -96,13 +96,13 @@ export class SettingsComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  connectStripe(): void {
-    if(!this.originalUserData) {
-      this.errorMessage = 'Please sign in first';
-      return;
-    }
-    window.location.href = `${environment.apiEndpoint}/stripe/connect`
-  }
+  // connectStripe(): void {
+  //   if(!this.originalUserData) {
+  //     this.errorMessage = 'Please sign in first';
+  //     return;
+  //   }
+  //   window.location.href = `${environment.apiEndpoint}/stripe/connect`
+  // }
 
   submitForm(): void {
     if (this.settingsForm.valid) {

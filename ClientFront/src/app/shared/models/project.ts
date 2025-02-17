@@ -14,6 +14,8 @@ export class Project {
     eTransferEmail: string;
     rating: number;
     feedback: string;
+    priceConfirmed: boolean;
+    clientResponse: string | null;
 
     projectStartDate: Date;
     projectEndDate: Date;

@@ -95,10 +95,6 @@ import { Type } from 'class-transformer';
         @IsOptional()
         @IsString()
         public tempsecret?: string;
-
-        @IsOptional()
-        @IsString()
-        public stripeAccountId?: string;
     }
     
     export default CreateUserDto;

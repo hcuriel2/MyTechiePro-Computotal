@@ -69,6 +69,15 @@ const ProjectSchema = new Schema(
         transaction: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Transaction',
+        },
+        priceConfirmed: {
+            type: Boolean,
+            default: false
+        },
+        clientResponse: {
+            type: String,
+            enum: [null, 'confirmed', 'rejected'],
+            default: null
         }
     },
     { timestamps: true },

@@ -18,6 +18,8 @@ class CreateProjectDto {
     public clientId: string;
     public transactionId?: string;
     public transaction?: object;
+    public priceConfirmed: boolean;
+    public clientResponse: string | null;
 }
 
 export default CreateProjectDto;

@@ -65,7 +65,6 @@ interface User {
     tempSecret?: string;
     approved: boolean;
     verified: boolean;
-    stripeAccountId?: string;
 }
 
 export default User;
