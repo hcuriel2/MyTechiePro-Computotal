@@ -23,24 +23,33 @@
           <h3 class="h3Details" *ngIf="project.state === 'Completed'">
             {{ "Label.BillingCost" | translate }}:
             {{ projectPrice }}
-            <span *ngIf="isCustomer && !project.priceConfirmed && project.clientResponse === null">
+            <div *ngIf="isCustomer && !project.priceConfirmed && project.clientResponse === null" class = "price-confirm">
               <button mat-raised-button color="primary" class="confirm-btn" (click)="confirmPrice()">
                 {{ "Confirm" | translate }}
               </button>
               <button mat-raised-button color="warn" class="reject-btn" (click)="rejectPrice()">
                 {{ "Reject" | translate }}
               </button>
-            </span>
+            </div>
             <span *ngIf="project.clientResponse" [ngClass]="{ 'text-success': project.clientResponse === 'confirmed', 'text-danger': project.clientResponse === 'rejected' }">
               ({{ project.clientResponse | titlecase | translate }})
             </span>
           </h3>
-        <h3 class="h3Details">
+        <h3 class="h3Details" *ngIf="project.priceConfirmed">
           {{ "Payment Status" | translate }}:
           <span [ngClass]="getPaymentStatusClass(transaction?.status)">
             {{ getPaymentStatusDisplay() | translate }}
           </span>
         </h3>
+        <button
+          class="completeJob"
+          mat-raised-button
+          *ngIf="isCustomer && project.state === 'Completed' && project.priceConfirmed"
+          (click)="onPayProject()"
+        >
+          <strong>{{ 'Make Payment' | translate }}</strong>
+        </button>
+      
           <br />
 
           <h2 class="h3Details">
