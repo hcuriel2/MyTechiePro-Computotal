@@ -41,6 +41,15 @@
             {{ getPaymentStatusDisplay() | translate }}
           </span>
         </h3>
+        <button
+          class="completeJob"
+          mat-raised-button
+          *ngIf="isCustomer && project.state === 'Completed' && project.priceConfirmed"
+          (click)="onPayProject()"
+        >
+          <strong>{{ 'Make Payment' | translate }}</strong>
+        </button>
+      
           <br />
 
           <h2 class="h3Details">

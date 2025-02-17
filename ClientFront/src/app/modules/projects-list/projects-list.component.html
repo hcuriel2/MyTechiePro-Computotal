@@ -30,7 +30,7 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="viewProject">
+                            <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
@@ -99,7 +99,7 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="viewProject">
+                            <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
@@ -163,14 +163,20 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="viewProject">
+                            <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
                                         mat-raised-button class="btnProfiles" (click)="goToProject(element._id)">
                                         {{ 'Dictionary.ViewProject' | translate }}
                                     </button>
-
+                                    <button 
+                                    *ngIf="isCustomer && element.state === 'Completed' && element.priceConfirmed"
+                                    mat-raised-button 
+                                    class="btnPayment"
+                                    (click)="onPayProject(element._id, user?._id)">
+                                    {{ 'Make Payment' | translate }}
+                                  </button>
                                 </td>
                             </ng-container>
 
@@ -219,7 +225,7 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="viewProject">
+                            <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
@@ -286,7 +292,7 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="viewProject">
+                            <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
@@ -350,7 +356,7 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="viewProject">
+                            <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
