@@ -317,7 +317,8 @@ class ProjectController implements Controller {
                     serviceId: projectData.serviceId,
                     client: user,
                     professional: professional,
-                    rating: 0
+                    rating: 0,
+                    priceConfirmed: false,
                 });
                 const savedProject = await createdproject.save();
                 await savedProject.populate('professional', '-password').execPopulate();

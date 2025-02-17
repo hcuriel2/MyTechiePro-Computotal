@@ -404,3 +404,23 @@ h3.skills {
 .status-failed {
   color: #f44336; 
 }
+
+.confirm-btn, .reject-btn {
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  border-radius: 45px !important;
+  color: white !important;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  size: 3vh;
+}
+
+.confirm-btn {
+  background-color:#4caf50;
+}
+
+.reject-btn {
+  background-color:#f44336;
+}
+
+

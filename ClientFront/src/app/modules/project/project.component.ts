@@ -301,4 +301,23 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
       data: { projectID: this.projectId },
     });
   }
+
+
+  public confirmPrice(): void {
+    if (this.project) {
+      this.projectService.updateClientResponse(this.project._id, 'confirmed').pipe(first()).subscribe((updatedProject) => {
+        this.project = updatedProject;
+        this.changeDetectorRef.markForCheck();
+      });
+    }
+  }
+
+  public rejectPrice(): void {
+    if (this.project) {
+      this.projectService.updateClientResponse(this.project._id, 'rejected').pipe(first()).subscribe((updatedProject) => {
+        this.project = updatedProject;
+        this.changeDetectorRef.markForCheck();
+      });
+    }
+  }
 }

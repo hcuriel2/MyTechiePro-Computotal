@@ -16,10 +16,6 @@
             {{ "Label.UpdatedDate" | translate }}:
             {{ project.updatedAt | date }}
           </h3>
-          <!-- <h3 class="h3Details">
-                        {{ 'Label.BillingCost' | translate }}:
-                         {{ projectPrice }}
-                    </h3> -->
           <h3 class="h3Details" *ngIf="project.state === 'OnGoing'">
             {{ "Estimated Price" | translate }}:
             {{ projectPrice }}
@@ -27,6 +23,17 @@
           <h3 class="h3Details" *ngIf="project.state === 'Completed'">
             {{ "Label.BillingCost" | translate }}:
             {{ projectPrice }}
+            <span *ngIf="!project.priceConfirmed && project.clientResponse === null">
+              <button mat-raised-button color="primary" class="confirm-btn" (click)="confirmPrice()">
+                {{ "Confirm" | translate }}
+              </button>
+              <button mat-raised-button color="warn" class="reject-btn" (click)="rejectPrice()">
+                {{ "Reject" | translate }}
+              </button>
+            </span>
+            <span *ngIf="project.clientResponse" [ngClass]="{ 'text-success': project.clientResponse === 'confirmed', 'text-danger': project.clientResponse === 'rejected' }">
+              ({{ project.clientResponse | titlecase | translate }})
+            </span>
           </h3>
         <h3 class="h3Details">
           {{ "Payment Status" | translate }}:
