@@ -17,6 +17,9 @@ export class Project {
 
     comments: Message[] = [];
     transaction: Transaction | undefined;
+
+    priceConfirmed: boolean;
+    clientResponse: string | null;
 }
 
 export class Message {

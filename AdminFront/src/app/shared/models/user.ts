@@ -25,5 +25,4 @@ export class User {
   ratingSum: number;
   ratingCount: number;
   approved: boolean;
-  stripeAccountId: string;
 }
