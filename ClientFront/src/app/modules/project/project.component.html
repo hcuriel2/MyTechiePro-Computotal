@@ -23,7 +23,7 @@
           <h3 class="h3Details" *ngIf="project.state === 'Completed'">
             {{ "Label.BillingCost" | translate }}:
             {{ projectPrice }}
-            <span *ngIf="!project.priceConfirmed && project.clientResponse === null">
+            <span *ngIf="isCustomer && !project.priceConfirmed && project.clientResponse === null">
               <button mat-raised-button color="primary" class="confirm-btn" (click)="confirmPrice()">
                 {{ "Confirm" | translate }}
               </button>
