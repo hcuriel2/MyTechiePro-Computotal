@@ -336,7 +336,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
                       .subscribe({
                           next: (updatedProject) => {
                               this.project = updatedProject;
-                              this.projectPrice = `$${data.totalCost}`;
+                              this.projectPrice = `$${data.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                               this.project.clientResponse = null;
                               this.changeDetectorRef.markForCheck();
                           },
