@@ -204,4 +204,13 @@ export class ProjectService {
       { withCredentials: true}
     );
   }
+  
+  public resetProjectPrice(projectId: string, totalCost: number): Observable<Project> {
+      return this.httpClient.patch<Project>(
+          `${this.API_URL}/${projectId}/reset-price`,
+          { totalCost },
+          { withCredentials: true }
+      );
+  }  
+ 
 }

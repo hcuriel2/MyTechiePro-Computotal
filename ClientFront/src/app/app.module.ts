@@ -29,6 +29,7 @@ import { ProjectReviewDialogComponent } from "./modules/project/project-review-d
 import { ResetPasswordComponent } from "./modules/reset-password/reset-password.component";
 import { ContactUsDialogComponent } from "./modules/contact-us/contact-us-dialog/contact-us-dialog/contact-us-dialog.component";
 import { ProProfileComponent } from "./modules/pro-profile/pro-profile.component";
+import { ProjectResetPriceDialogComponent } from './modules/project/project-reset-price-dialog/project-reset-price-dialog.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { ProProfileComponent } from "./modules/pro-profile/pro-profile.component
     ResetPasswordComponent,
     ContactUsDialogComponent,
     ProProfileComponent,
+    ProjectResetPriceDialogComponent,
   ],
   imports: [
     BrowserModule,
