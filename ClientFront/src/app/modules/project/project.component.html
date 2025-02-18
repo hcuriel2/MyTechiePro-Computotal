@@ -38,10 +38,12 @@
             *ngIf="!isCustomer && project.clientResponse === 'rejected'"
             mat-raised-button 
             color="primary" 
+            class="reset-price-btn"
             (click)="onResetPrice()"
           >
             Reset Price
-          </button>            
+        </button>
+                 
           </h3>
         <h3 class="h3Details">
           {{ "Payment Status" | translate }}:
