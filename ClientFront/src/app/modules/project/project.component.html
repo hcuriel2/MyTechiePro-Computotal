@@ -34,6 +34,14 @@
             <span *ngIf="project.clientResponse" [ngClass]="{ 'text-success': project.clientResponse === 'confirmed', 'text-danger': project.clientResponse === 'rejected' }">
               ({{ project.clientResponse | titlecase | translate }})
             </span>
+            <button 
+            *ngIf="!isCustomer && project.clientResponse === 'rejected'"
+            mat-raised-button 
+            color="primary" 
+            (click)="onResetPrice()"
+          >
+            Reset Price
+          </button>            
           </h3>
         <h3 class="h3Details">
           {{ "Payment Status" | translate }}:
