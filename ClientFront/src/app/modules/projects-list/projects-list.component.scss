@@ -207,6 +207,16 @@ input.mat-input-element {
 }
 
 
+.btnPayment{
+  @extend .btnProfiles;
+  background-color: white;
+  color:#225d9c;
+}
+
+.btnPayment:hover, .btnPayment:focus {
+  background-color: #c3ccd6;
+}
+
 
 @media (max-width: 768px) {
   .header {
@@ -227,4 +237,5 @@ input.mat-input-element {
   background-color: #f44336;
   color: white;
 }
+
 

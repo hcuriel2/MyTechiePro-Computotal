@@ -32,12 +32,12 @@ export class ProjectsListComponent implements OnInit {
         'status',
         'dateCreated',
         'dateCompleted',
-        'viewProject',
+        'actions'    
     ];
     displayedColumnsRequest: string[] = [
         'serviceName',
         'dateCreated',
-        'viewProject',
+        'actions'
     ];
 
     public dataSource: MatTableDataSource<Project>;
@@ -63,9 +63,7 @@ export class ProjectsListComponent implements OnInit {
         this.authService.checkSession().subscribe({
             next: (user) => {
                 
-
                 this.user = user;
-                
                 this.authService.setUserValue(user);
                 this.subscribeToUserChanges();
                 this.changeDetectorRef.detectChanges();
@@ -228,5 +226,20 @@ export class ProjectsListComponent implements OnInit {
 
     public toggleView(): void {
         this.isCustomer = !this.isCustomer;
+    }
+
+    public onPayProject(projectId:string, clientId:string|undefined): void {
+        if (!clientId) {
+            console.error('Client ID is missing');
+            return;
+        }
+        this.projectService.payProject(projectId, clientId).subscribe({
+            next: (project) => {
+                this.fetchProjects(this.user);
+            },
+            error: (error) => {
+                console.error('Error paying project', error);
+            }
+        });
     }
 }
