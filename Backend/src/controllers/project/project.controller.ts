@@ -11,6 +11,7 @@ import userModel from "../../models/user/user.model";
 import categoryModel from "../../models/category/category.model";
 import adminMiddleware from "../../middleware/admin.middleware";
 import emailtransporter from "../../middleware/emailtransporter.middleware";
+import HttpException from "../../exceptions/HttpException";
 
 
 class ProjectController implements Controller {
@@ -24,6 +25,32 @@ class ProjectController implements Controller {
         this.initializeRoutes();
     }
 
+    public resetProjectPrice = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const projectId = req.params.id;
+            const { totalCost } = req.body;
+            
+            const project = await this.project.findByIdAndUpdate(
+                projectId,
+                { 
+                    totalCost, 
+                    clientResponse: null,
+                    priceConfirmed: false
+                },
+                { new: true }
+            ).populate('professional').populate('client');
+    
+            if (!project) {
+                return next(new HttpException(404, 'Project not found'));
+            }
+    
+            res.status(200).json(project);
+        } catch (error) {
+            console.error('Reset price error:', error);
+            next(new HttpException(500, 'Internal server error'));
+        }
+    };
+    
     private initializeRoutes() {
         // // auth version do not delete it!
         // this.router.get(this.path, adminMiddleware, this.getAllProjects);
@@ -51,6 +78,7 @@ class ProjectController implements Controller {
                     .get(`${this.path}/professional/:professionalId`, authMiddleware, this.getProjectsProfessionalById)
                     .post(`${this.path}/projectReview`, authMiddleware,this.projectReview)
                     .patch(`${this.path}/client-response/:id`, authMiddleware, this.updateClientResponse)
+                    .patch(`${this.path}/:id/reset-price`, authMiddleware, this.resetProjectPrice);
     }
 
 
