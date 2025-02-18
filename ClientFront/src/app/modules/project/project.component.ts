@@ -22,6 +22,7 @@ import { ProjectReviewDialogComponent } from "./project-review-dialog/project-re
 import { ProjectStartDialogComponent } from "./project-start-dialog/project-start-dialog.component";
 import { TransactionService } from 'src/app/shared/services/transaction.service';
 import { Transaction } from 'src/app/shared/models/transaction';
+import { ProjectResetPriceDialogComponent } from './project-reset-price-dialog/project-reset-price-dialog.component';
 
 @Component({
   selector: "app-project",
@@ -319,5 +320,31 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.changeDetectorRef.markForCheck();
       });
     }
+  }
+  public onResetPrice(): void {
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.autoFocus = true;
+  
+      this.dialog
+          .open(ProjectResetPriceDialogComponent, dialogConfig)
+          .afterClosed()
+          .subscribe((data: any) => {
+              if (data && data.totalCost) {
+                  this.projectService
+                      .resetProjectPrice(this.project._id, data.totalCost)
+                      .pipe(first())
+                      .subscribe({
+                          next: (updatedProject) => {
+                              this.project = updatedProject;
+                              this.projectPrice = `$${data.totalCost}`;
+                              this.project.clientResponse = null;
+                              this.changeDetectorRef.markForCheck();
+                          },
+                          error: (error) => {
+                              console.error('Error resetting price:', error);
+                          }
+                      });
+              }
+          });
   }
 }
