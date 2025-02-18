@@ -354,10 +354,12 @@
                                 <th mat-header-cell *matHeaderCellDef></th>
                                 <td mat-cell *matCellDef="let element">
                                     <button *ngIf="element.state && element.serviceName !== 'No project to show'"
-                                        mat-raised-button class="btnProfiles" (click)="goToProject(element._id)">
-                                        {{ 'Dictionary.ViewProject' | translate }}
+                                        mat-raised-button 
+                                        class="btnProfiles" 
+                                        [ngClass]="{'warn-button': !isCustomer && element.clientResponse === 'rejected'}"
+                                        (click)="goToProject(element._id)">
+                                        {{ (!isCustomer && element.clientResponse === 'rejected') ? 'Action Required' : ('Dictionary.ViewProject' | translate) }}
                                     </button>
-
                                 </td>
                             </ng-container>
 
