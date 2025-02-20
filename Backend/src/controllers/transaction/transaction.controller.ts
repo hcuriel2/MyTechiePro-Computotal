@@ -64,8 +64,12 @@ class TransactionController implements Controller {
     };
     
     private checkPaymentStatus = async (req: Request, res: Response, next: NextFunction) => {
-        const sessionId = Array.isArray(req.query.session_id) ? req.query.session_id[0] : req.query.session_id;
-        const rawTxnId = Array.isArray(req.query.transactionId) ? req.query.transactionId[0] : req.query.transactionId;
+        const sessionId = Array.isArray(req.query.session_id)
+            ? req.query.session_id[0]
+            : req.query.session_id;
+        const rawTxnId = Array.isArray(req.query.transactionId)
+            ? req.query.transactionId[0]
+            : req.query.transactionId;
         const txnId = rawTxnId ? decodeURIComponent(rawTxnId.toString()).trim() : '';
 
         if (!sessionId || !txnId) {
@@ -91,6 +95,20 @@ class TransactionController implements Controller {
                     return res.status(404).json({ error: "Transaction not found" });
                 }
                 return res.json({ status: "completed", transaction: updatedTransaction });
+            } else if (session.payment_status === 'unpaid') {
+                // Payment failed logic
+                const updatedTransaction = await this.transaction.findByIdAndUpdate(
+                    txnId,
+                    {
+                        status: 'failed',
+                        paymentIntentId: session.payment_intent ? session.payment_intent.toString() : ''
+                    },
+                    { new: true }
+                );
+                if (!updatedTransaction) {
+                    return res.status(404).json({ error: "Transaction not found" });
+                }
+                return res.json({ status: "failed", transaction: updatedTransaction });
             } else {
                 return res.json({ status: session.payment_status });
             }
