@@ -14,6 +14,8 @@ import { ResetPasswordComponent } from './modules/reset-password/reset-password.
 import { ProDetailsComponent } from './modules/pro-details/pro-details.component';
 import { ProProfileComponent } from './modules/pro-profile/pro-profile.component';
 import { AuthGuard } from './shared/guards/auth.guard';
+import { PaymentSuccessComponent } from './modules/payment-success/payment-success.component';
+import { PaymentFailedComponent } from './modules/payment-failed/payment-failed.component';
 
 
 const routes: Routes = [
@@ -39,6 +41,8 @@ const routes: Routes = [
     { path: 'settings', component: SettingsComponent,   },
     { path: 'resetPassword/:id', component: ResetPasswordComponent },
     { path: 'proDetails', component: ProDetailsComponent },
+    { path: 'payment-success', component: PaymentSuccessComponent},
+    { path: 'payment-failed', component: PaymentFailedComponent},
 ];
 
 @NgModule({

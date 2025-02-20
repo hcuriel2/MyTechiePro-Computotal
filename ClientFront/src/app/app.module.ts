@@ -30,6 +30,8 @@ import { ResetPasswordComponent } from "./modules/reset-password/reset-password.
 import { ContactUsDialogComponent } from "./modules/contact-us/contact-us-dialog/contact-us-dialog/contact-us-dialog.component";
 import { ProProfileComponent } from "./modules/pro-profile/pro-profile.component";
 import { ProjectResetPriceDialogComponent } from './modules/project/project-reset-price-dialog/project-reset-price-dialog.component';
+import { PaymentSuccessComponent } from './modules/payment-success/payment-success.component';
+import { PaymentFailedComponent } from './modules/payment-failed/payment-failed.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,8 @@ import { ProjectResetPriceDialogComponent } from './modules/project/project-rese
     ContactUsDialogComponent,
     ProProfileComponent,
     ProjectResetPriceDialogComponent,
+    PaymentSuccessComponent,
+    PaymentFailedComponent,
   ],
   imports: [
     BrowserModule,
