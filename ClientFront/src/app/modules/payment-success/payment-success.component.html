@@ -1,1 +1,10 @@
-<p>payment-success works!</p>
+<div class="redirect-container">
+    <div class="redirect-content">
+      <h2>{{ statusMessage }}</h2>
+      <p>{{ detailMessage }}</p>
+      <div class="loader" *ngIf="loading"></div>
+      <button *ngIf="error" (click)="retryPaymentCheck()" class="retry-btn">
+        Retry
+      </button>
+    </div>
+  </div>

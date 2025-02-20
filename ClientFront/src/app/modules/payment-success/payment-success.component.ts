@@ -4,57 +4,8 @@ import { TransactionService } from 'src/app/shared/services/transaction.service'
 
 @Component({
   selector: 'app-payment-success',
-  template: `
-    <div class="redirect-container">
-      <div class="redirect-content">
-        <h2>{{ statusMessage }}</h2>
-        <p>{{ detailMessage }}</p>
-        <div class="loader" *ngIf="loading"></div>
-        <button *ngIf="error" (click)="retryPaymentCheck()" class="retry-btn">
-          Retry
-        </button>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .redirect-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .redirect-content {
-      text-align: center;
-      padding: 20px;
-    }
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 3px solid #3498db;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .retry-btn {
-      padding: 10px 20px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    
-    .retry-btn:hover {
-      background-color: #2980b9;
-    }
-  `]
+  templateUrl: './payment-success.component.html',
+  styleUrls: ['./payment-success.component.scss']
 })
 export class PaymentSuccessComponent implements OnInit {
   loading = true;

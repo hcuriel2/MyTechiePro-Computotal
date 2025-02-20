@@ -667,7 +667,7 @@ class ProjectController implements Controller {
               totalAmount: totalAmount.toString(),
             },
             success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&transactionId=${savedTransaction._id}`,
-            cancel_url: `${process.env.CLIENT_URL}/payment-failed`,
+            cancel_url: `${process.env.CLIENT_URL}/payment-failed?session_id={CHECKOUT_SESSION_ID}&transactionId=${savedTransaction._id}`,
           });
           
           res.json({ url: session.url });

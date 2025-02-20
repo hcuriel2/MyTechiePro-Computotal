@@ -1,50 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { TransactionService } from 'src/app/shared/services/transaction.service';
 
 @Component({
   selector: 'app-payment-failed',
-  template: `
-    <div class="redirect-container">
-      <div class="redirect-content">
-        <h2>Payment Failed</h2>
-        <p>Redirecting back to projects...</p>
-        <div class="loader"></div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .redirect-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .redirect-content {
-      text-align: center;
-      padding: 20px;
-    }
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 3px solid #ff4444;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  `]
+  templateUrl: './payment-failed.component.html',
+  styleUrls: ['./payment-failed.component.scss']
 })
 export class PaymentFailedComponent implements OnInit {
-  constructor(private router: Router) {}
+  message: string = 'Your payment failed. Please try again or contact support.';
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private transactionService: TransactionService
+  ) {}
 
   ngOnInit(): void {
-    // 立即重定向到 projects 页面
-    this.router.navigate(['/projects']).then(() => {
-      console.log('Payment failed, redirected to projects page');
-    });
+    const { session_id, transactionId } = this.route.snapshot.queryParams;
+    if (session_id && transactionId) {
+      this.transactionService.checkPaymentStatus(session_id, transactionId)
+        .subscribe(
+          response => {
+            console.log('Updated transaction on payment-failed:', response);
+          },
+          error => {
+            console.error('Error updating transaction:', error);
+          }
+        );
+    }
+
+    setTimeout(() => {
+      this.router.navigate(['/projects']).then(() => {
+        console.log('Payment failed, redirected to projects page');
+      });
+    }, 3000);
   }
 }
