@@ -399,10 +399,13 @@ h3.skills {
 
 .status-paid {
   color: #4caf50;
+  text-transform: capitalize;
 }
 
 .status-failed {
   color: #f44336; 
+  text-transform: capitalize;
+
 }
 
 .confirm-btn, .reject-btn {

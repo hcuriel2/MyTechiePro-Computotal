@@ -621,7 +621,13 @@ class ProjectController implements Controller {
     private async payProject(req: Request, res: Response) {
         try {
           const { projectId } = req.body; 
-          const proj = await this.project.findById(projectId).populate('client').populate('professional');
+          if (!projectId) {
+            return res.status(400).json({ error: "Missing projectId" });
+          }
+      
+          const proj = await this.project.findById(projectId)
+            .populate('client')
+            .populate('professional');
           if (!proj) {
             return res.status(404).json({ error: "Project not found" });
           }
@@ -629,23 +635,34 @@ class ProjectController implements Controller {
             return res.status(400).json({ error: "Invalid project price" });
           }
       
-          // Retrieve client and professional IDs from the project object
           const clientId = (proj.client as any)._id;
           const professionalId = (proj.professional as any)._id;
           const totalAmount = proj.totalCost;
           const platformFee = 8.5;
       
-          const transaction = new TransactionModel({
-            project: projectId,
-            client: clientId,
-            professional: professionalId,
-            totalAmount: totalAmount,
-            platformFee: platformFee,
-            paymentIntentId: "pending_" + Date.now(),
-            status: "pending"
-          });
-          const savedTransaction = await transaction.save();
-          console.log('Transaction created:', savedTransaction._id);
+          let transaction = await TransactionModel
+            .findOne({ project: projectId })
+            .sort({ createdAt: -1 });
+          
+          if (transaction) {
+            transaction.totalAmount = totalAmount;
+            transaction.platformFee = platformFee;
+            transaction.paymentIntentId = "pending_" + Date.now();
+            transaction.status = "pending";
+            transaction = await transaction.save();
+          } else {
+            transaction = new TransactionModel({
+              project: projectId,
+              client: clientId,
+              professional: professionalId,
+              totalAmount: totalAmount,
+              platformFee: platformFee,
+              paymentIntentId: "pending_" + Date.now(),
+              status: "pending"
+            });
+            transaction = await transaction.save();
+          }
+          console.log('Transaction created/updated:', transaction._id);
       
           const session = await this.stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -665,11 +682,11 @@ class ProjectController implements Controller {
               projectId,
               clientId: clientId.toString(),
               professionalId: professionalId.toString(),
-              transactionId: savedTransaction._id.toString(),
+              transactionId: transaction._id.toString(),
               totalAmount: totalAmount.toString(),
             },
-            success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&transactionId=${savedTransaction._id}`,
-            cancel_url: `${process.env.CLIENT_URL}/payment-failed?session_id={CHECKOUT_SESSION_ID}&transactionId=${savedTransaction._id}`,
+            success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}`,
+            cancel_url: `${process.env.CLIENT_URL}/payment-failed?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}`,
           });
           
           res.json({ url: session.url });

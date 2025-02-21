@@ -127,9 +127,9 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     switch (status) {
       case 'Pending':
         return 'status-pending';
-      case 'Paid':
+      case 'completed':
         return 'status-paid';
-      case 'Failed':
+      case 'failed':
         return 'status-failed';
       default:
         return 'status-pending';
