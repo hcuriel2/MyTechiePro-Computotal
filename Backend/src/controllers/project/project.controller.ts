@@ -28,9 +28,7 @@ class ProjectController implements Controller {
         this.initializeRoutes();
         this.payProject = this.payProject.bind(this);
         this.project = projectModel; // Ensure project model is initialized
-
         // Initialize Stripe
-        console.log('Stripe Key:', process.env.STRIPE_SECRET_KEY?.substring(0, 8) + '...');
         this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
             apiVersion: '2025-01-27.acacia'
         });
