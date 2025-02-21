@@ -174,7 +174,7 @@
                                     *ngIf="isCustomer && element.state === 'Completed' && element.priceConfirmed"
                                     mat-raised-button 
                                     class="btnPayment"
-                                    (click)="onPayProject(element._id, user?._id)">
+                                    (click)="onPayProject(element._id)">
                                     {{ 'Make Payment' | translate }}
                                   </button>
                                 </td>

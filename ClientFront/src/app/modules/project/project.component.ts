@@ -347,27 +347,26 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
               }
           });
         }
-  public onPayProject(): void {
-    if (!this.project) {
-      console.error('Project not found');
-      return;
-    }
-    
-    if (!this.user?._id) {
-      console.error('User not authenticated');
-      return;
-    }
-  
-    this.projectService.payProject(this.project._id, this.user._id)
-      .pipe(first())
-      .subscribe({
-        next: (updatedProject) => {
-          this.project = updatedProject;
-          this.changeDetectorRef.markForCheck();
-        },
-        error: (error) => {
-          console.error('Payment failed:', error);
+        public onPayProject(): void {
+          if (!this.project) {
+            console.error('Project not found');
+            return;
+          }
+          
+          this.projectService.payProject(this.project._id)
+            .pipe(first())
+            .subscribe({
+              next: (response) => {
+                console.log('Stripe checkout URL:', response.url);
+                if (response.url) {
+                  window.location.href = response.url;
+                } else {
+                  console.error('No Stripe URL returned from server');
+                }
+              },
+              error: (error) => {
+                console.error('Payment failed:', error);
+              }
+            });
         }
-      });
-  }
 }

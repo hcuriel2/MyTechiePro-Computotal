@@ -63,7 +63,6 @@ class ProjectController implements Controller {
     };
     
     private initializeRoutes() {
-        // Move this before router.all() chain
         this.router.post(`${this.path}/pay`, async (req, res, next) => {
             try {
                 await this.payProject(req, res);
@@ -621,17 +620,20 @@ class ProjectController implements Controller {
 
     private async payProject(req: Request, res: Response) {
         try {
-          const { projectId, clientId, professionalId } = req.body;
-          
-          const project = await this.project.findById(projectId);
-          if (!project) {
+          const { projectId } = req.body; 
+          const proj = await this.project.findById(projectId).populate('client').populate('professional');
+          if (!proj) {
             return res.status(404).json({ error: "Project not found" });
           }
-          if (!project.totalCost || project.totalCost <= 0) {
+          if (!proj.totalCost || proj.totalCost <= 0) {
             return res.status(400).json({ error: "Invalid project price" });
           }
-          const totalAmount = project.totalCost;
-          const platformFee = 8.5; 
+      
+          // Retrieve client and professional IDs from the project object
+          const clientId = (proj.client as any)._id;
+          const professionalId = (proj.professional as any)._id;
+          const totalAmount = proj.totalCost;
+          const platformFee = 8.5;
       
           const transaction = new TransactionModel({
             project: projectId,
@@ -652,7 +654,7 @@ class ProjectController implements Controller {
                 currency: "cad",
                 product_data: { 
                   name: `Payment for Project ${projectId}`,
-                  description: `Project payment for ${project.serviceName || 'service'}`
+                  description: `Project payment for ${proj.serviceName || 'service'}`
                 },
                 unit_amount: Math.round(totalAmount * 100),
               },
@@ -661,8 +663,8 @@ class ProjectController implements Controller {
             mode: "payment",
             metadata: {
               projectId,
-              clientId,
-              professionalId,
+              clientId: clientId.toString(),
+              professionalId: professionalId.toString(),
               transactionId: savedTransaction._id.toString(),
               totalAmount: totalAmount.toString(),
             },

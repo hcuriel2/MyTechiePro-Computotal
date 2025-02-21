@@ -26,6 +26,7 @@ export class ProjectsListComponent implements OnInit {
     public isActive: boolean = false;
     public user: User | null;
     public projects: Project[] = [];
+    public project: Project | null = null;
 
     displayedColumns: string[] = [
         'serviceName',
@@ -228,18 +229,26 @@ export class ProjectsListComponent implements OnInit {
         this.isCustomer = !this.isCustomer;
     }
 
-    public onPayProject(projectId:string, clientId:string|undefined): void {
-        if (!clientId) {
-            console.error('Client ID is missing');
-            return;
-        }
-        this.projectService.payProject(projectId, clientId).subscribe({
-            next: (project) => {
-                this.fetchProjects(this.user);
-            },
-            error: (error) => {
-                console.error('Error paying project', error);
+    public onPayProject(projectId: string): void {
+      if (!projectId) {
+        console.error('Project ID is missing');
+        return;
+      }
+      
+      this.projectService.payProject(projectId)
+        .pipe(first())
+        .subscribe({
+          next: (response) => {
+            console.log('Stripe checkout URL:', response.url);
+            if (response.url) {
+              window.location.href = response.url;
+            } else {
+              console.error('No Stripe URL returned from server');
             }
+          },
+          error: (error) => {
+            console.error('Error paying project', error);
+          }
         });
     }
 }
