@@ -17,9 +17,9 @@ export class PaymentFailedComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const { session_id, transactionId } = this.route.snapshot.queryParams;
-    if (session_id && transactionId) {
-      this.transactionService.checkPaymentStatus(session_id, transactionId)
+    const { session_id, transactionId, projectId } = this.route.snapshot.queryParams;
+    if (session_id && transactionId && projectId) {
+      this.transactionService.checkPaymentStatus(session_id, transactionId, projectId)
         .subscribe(
           response => {
             console.log('Updated transaction on payment-failed:', response);

@@ -615,9 +615,11 @@ class ProjectController implements Controller {
         //         }
         //     });
     };
-    
 
 
+    // Niko: Initiates a Stripe Checkout session for a given project. It checks the project and pricing, 
+    // then either updates an existing Transaction or creates a new one (with status "pending").
+    // Finally, it creates a Stripe session and returns the session URL, with projectId added to success and cancel URLs.
     private async payProject(req: Request, res: Response) {
         try {
           const { projectId } = req.body; 
@@ -685,8 +687,8 @@ class ProjectController implements Controller {
               transactionId: transaction._id.toString(),
               totalAmount: totalAmount.toString(),
             },
-            success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}`,
-            cancel_url: `${process.env.CLIENT_URL}/payment-failed?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}`,
+            success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}&projectId=${projectId}`,
+            cancel_url: `${process.env.CLIENT_URL}/payment-failed?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}&projectId=${projectId}`,
           });
           
           res.json({ url: session.url });

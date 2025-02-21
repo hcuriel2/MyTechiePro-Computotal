@@ -347,12 +347,13 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
               }
           });
         }
+
+        //Niko: Initiate payment by calling the payProject service and redirecting to Stripe checkout.
         public onPayProject(): void {
           if (!this.project) {
             console.error('Project not found');
             return;
           }
-          
           this.projectService.payProject(this.project._id)
             .pipe(first())
             .subscribe({

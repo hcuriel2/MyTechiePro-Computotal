@@ -229,12 +229,13 @@ export class ProjectsListComponent implements OnInit {
         this.isCustomer = !this.isCustomer;
     }
 
+
+    //Niko: Initiate payment by calling the payProject service and redirecting to Stripe checkout.
     public onPayProject(projectId: string): void {
       if (!projectId) {
         console.error('Project ID is missing');
         return;
       }
-      
       this.projectService.payProject(projectId)
         .pipe(first())
         .subscribe({

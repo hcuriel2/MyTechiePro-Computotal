@@ -30,11 +30,12 @@ export class TransactionService {
     );
   }
 
-  public checkPaymentStatus(sessionId: string, transactionId: string): Observable<any> {
+  public checkPaymentStatus(sessionId: string, transactionId: string, projectId: string): Observable<any> {
     return this.httpClient.get(`${this.API_URL}/status`, {
       params: {
         session_id: sessionId,
-        transactionId: transactionId
+        transactionId: transactionId,
+        projectId: projectId
       }
     });
   }

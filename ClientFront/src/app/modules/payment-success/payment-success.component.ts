@@ -20,23 +20,23 @@ export class PaymentSuccessComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const { session_id, transactionId } = this.route.snapshot.queryParams;
+    const { session_id, transactionId, projectId } = this.route.snapshot.queryParams;
     
-    if (!session_id || !transactionId) {
+    if (!session_id || !transactionId || !projectId) {
       this.handleError('Invalid payment session');
       return;
     }
 
-    this.checkPaymentStatus(session_id, transactionId);
+    this.checkPaymentStatus(session_id, transactionId, projectId);
   }
 
-  private checkPaymentStatus(sessionId: string, transactionId: string): void {
+  private checkPaymentStatus(sessionId: string, transactionId: string, projectId: string): void {
     this.loading = true;
     this.error = false;
     
-    console.log('Checking payment status with:', { sessionId, transactionId });
+    console.log('Checking payment status with:', { sessionId, transactionId, projectId });
 
-    this.transactionService.checkPaymentStatus(sessionId, transactionId)
+    this.transactionService.checkPaymentStatus(sessionId, transactionId, projectId)
       .subscribe(
         (response: any) => {
           console.log('Payment status response:', response);
@@ -51,7 +51,7 @@ export class PaymentSuccessComponent implements OnInit {
             this.detailMessage = 'Your payment is still being processed...';
             // Retry after 5 seconds
             setTimeout(() => {
-              this.checkPaymentStatus(sessionId, transactionId);
+              this.checkPaymentStatus(sessionId, transactionId, projectId);
             }, 5000);
           } else {
             this.handleError('Payment verification failed');
@@ -77,7 +77,7 @@ export class PaymentSuccessComponent implements OnInit {
   }
 
   retryPaymentCheck(): void {
-    const { session_id, transactionId } = this.route.snapshot.queryParams;
-    this.checkPaymentStatus(session_id, transactionId);
+    const { session_id, transactionId, projectId } = this.route.snapshot.queryParams;
+    this.checkPaymentStatus(session_id, transactionId, projectId);
   }
 }
