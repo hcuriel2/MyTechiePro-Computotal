@@ -25,6 +25,7 @@ import { passwordValidator } from "./password.directive";
 import { Category } from "src/app/shared/models/category";
 import { CategoryService } from "src/app/shared/services/category.service";
 import { Options } from "ngx-google-places-autocomplete/objects/options/options";
+import { GoogleMapsService } from "src/app/shared/services/google-maps.service";
 
 @Component({
   selector: "app-sign-up",
@@ -33,6 +34,7 @@ import { Options } from "ngx-google-places-autocomplete/objects/options/options"
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent implements OnInit, OnDestroy {
+  showForm = false;
   public formGroup: FormGroup;
   public firstName: FormControl;
   public lastName: FormControl;
@@ -89,13 +91,21 @@ export class SignUpComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private googleMapsService: GoogleMapsService
   ) {
     this.destroyed = new Subject<void>();
     this.forPro = this.route.snapshot.queryParams.forPro === "true";
   }
 
   public ngOnInit(): void {
+    if (!this.googleMapsService.isLoaded()) {
+      this.googleMapsService.loadGoogleMapsScript().then(() => {
+        this.showForm = true;
+      });
+    } else {
+      this.showForm = true;
+    }
     this.createForm();
     if (this.forPro) {
       this.categoryService
@@ -188,11 +198,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe(
         (user: User) => {
-          
-
           this.authService.setUserValue(user);
           this.changeDetectorRef.detectChanges();
-
 
           this.translateService
             .get("Message.SignUpSuccess")
@@ -204,23 +211,22 @@ export class SignUpComponent implements OnInit, OnDestroy {
               this.snackBar.open(translation, "", config);
             });
 
-
-            if (user.userType === 'Professional'){
-              this.router.navigateByUrl('/projects').then(() => {
-                window.location.reload();
-              })
-            } else {
-              this.router.navigateByUrl('/').then(() => {
-                window.location.reload();
-              })
-            }
+          if (user.userType === "Professional") {
+            this.router.navigateByUrl("/projects").then(() => {
+              window.location.reload();
+            });
+          } else {
+            this.router.navigateByUrl("/").then(() => {
+              window.location.reload();
+            });
+          }
           //add cookie to browser for user.
-         // let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-        //  let cookieName =
-         //   "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-         // document.cookie = cookieName;
-         // 
-         // 
+          // let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
+          //  let cookieName =
+          //   "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
+          // document.cookie = cookieName;
+          //
+          //
 
           //Send signed up user to correct page (projects if "techie" user, "home" if client)
           /*if (
@@ -252,26 +258,29 @@ export class SignUpComponent implements OnInit, OnDestroy {
         // *C-06: fix for error message
         (error) => {
           console.error("User signup failed", error);
-          
 
-          let messageKey = "Message.SignUpFailure"; 
-          
-          if (error.error && typeof error.error === 'string' && error.error.includes('</html>')) {
+          let messageKey = "Message.SignUpFailure";
+
+          if (
+            error.error &&
+            typeof error.error === "string" &&
+            error.error.includes("</html>")
+          ) {
             const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(error.error, 'text/html');
-            const preElement = htmlDoc.querySelector('pre');
+            const htmlDoc = parser.parseFromString(error.error, "text/html");
+            const preElement = htmlDoc.querySelector("pre");
             if (preElement && preElement.textContent) {
               const errorText = preElement.textContent.toLowerCase();
-              if (errorText.includes('email') && errorText.includes('exists')) {
+              if (errorText.includes("email") && errorText.includes("exists")) {
                 messageKey = "Message.EmailExists";
-              } else if (errorText.includes('invalid email')) {
+              } else if (errorText.includes("invalid email")) {
                 messageKey = "Message.InvalidEmail";
-              } else if (errorText.includes('password')) {
+              } else if (errorText.includes("password")) {
                 messageKey = "Message.WeakPassword";
               }
             }
           }
-        
+
           this.translateService
             .get(messageKey)
             .pipe(first())
@@ -281,7 +290,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
               this.snackBar.open(translation, "", config);
             });
         }
-
       );
   }
 
@@ -322,7 +330,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       confirmPassword: this.confirmPassword,
       phoneNumber: this.phoneNumber,
       companyName: this.companyName,
-      location: this.location, 
+      location: this.location,
       city: this.city,
       country: this.country,
       street: this.street,
@@ -367,7 +375,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
    */
   handleAddressChange(address: any) {
     let addressComponents = address.address_components;
-    
 
     this.userAddress = address.formatted_address;
     this.userLatitude = address.geometry.location.lat();
@@ -403,14 +410,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.city.patchValue(this.userCity);
     this.street.patchValue(this.userStreetAddress);
     this.postalCode.patchValue(this.userPostal);
-    
-    
-    
-    
-    
-    
-    
-    
+
     // this.userCountry = address.geometry.location.country()
   }
 

@@ -8,6 +8,7 @@ import ContactController from "./controllers/contactus/contactus.controller";
 import SurveyController from "./controllers/survey/survey.controller";
 import validateEnv from "./utils/validateEnv";
 import TransactionController from "./controllers/transaction/transaction.controller";
+import ConfigController from "./controllers/config/config.controller";
 
 validateEnv();
 
@@ -19,6 +20,7 @@ const app = new App([
     new CategoryController(),
     new SurveyController(),
     new TransactionController(),
+    new ConfigController(),
 ]);
 
 app.listen();

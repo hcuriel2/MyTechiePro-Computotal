@@ -18,6 +18,7 @@ import { User } from "src/app/shared/models/user";
 import { AuthService } from "src/app/shared/services/auth.service";
 import { CategoryService } from "src/app/shared/services/category.service";
 import { UserService } from "src/app/shared/services/user.service";
+import { GoogleMapsService } from "src/app/shared/services/google-maps.service";
 import { HttpClient } from "@angular/common/http";
 
 @Component({
@@ -78,7 +79,7 @@ export class ProDetailsComponent implements OnInit {
   // );
   public googleMapApiUrl: string =
     "https://maps.googleapis.com/maps/api/geocode/json";
-  private googleMapApiKey: string = "AIzaSyDS_bEoW2tmdRW-WyWaZIS_gnsbWQ1stUU";
+  private googleMapApiKey: string;
 
   //Options for selecting range for techie location.
   options = [
@@ -116,7 +117,8 @@ export class ProDetailsComponent implements OnInit {
     private authService: AuthService,
     private categoryService: CategoryService,
     private changeDetectorRef: ChangeDetectorRef,
-    private http: HttpClient
+    private http: HttpClient,
+    private googleMapsService: GoogleMapsService
   ) {
     this.route.queryParams.subscribe((params) => {
       this.categorySelection = params.category;
@@ -127,10 +129,12 @@ export class ProDetailsComponent implements OnInit {
   ngOnInit() {
     this.view_account_info();
     // this.view_projects();
+    this.googleMapsService.getApiKey().subscribe((response) => {
+      this.googleMapApiKey = response.apiKey;
+    });
   }
 
   public view_account_info() {
-    
     this.id = history.state.pro._id;
     this.alias = history.state.pro.alias;
     this.name = history.state.pro.firstName + " " + history.state.pro.lastName;
@@ -172,7 +176,7 @@ export class ProDetailsComponent implements OnInit {
     this.selectedTechID = id;
     this.createProject();
     // const serviceName = history.state.serviceName;
-    //  
+    //
   }
 
   // Create a project listing with selected techie and redirect user to project page.
@@ -186,62 +190,57 @@ export class ProDetailsComponent implements OnInit {
         const serviceId = history.state.serviceId;
 
         if (!clientId) {
-            console.warn(
-              "You're not logged in, please log in and try it again"
-            );
+          console.warn("You're not logged in, please log in and try it again");
 
-            this.translateService
-              .get('Message.SignInFirst')
-              .pipe(first())
-              .subscribe((translation) => {
-                const config = new MatSnackBarConfig();
-                config.duration = Constants.ShortDuration;
+          this.translateService
+            .get("Message.SignInFirst")
+            .pipe(first())
+            .subscribe((translation) => {
+              const config = new MatSnackBarConfig();
+              config.duration = Constants.ShortDuration;
 
-                this.snackBar.open(translation, 'OK', config);
-                });
+              this.snackBar.open(translation, "OK", config);
+            });
         } else if (
-            clientId &&
-            professionalId &&
-            serviceName &&
-            categoryId &&
-            serviceId
-          ) {
-            this.projectService
-              .create(
-                categoryId,
-                serviceId,
-                serviceName,
-                professionalId,
-                clientId
-              )
-                .subscribe((project: Project) => {
-                  this.router.navigateByUrl(`/project/${project._id}`);
-                  });
+          clientId &&
+          professionalId &&
+          serviceName &&
+          categoryId &&
+          serviceId
+        ) {
+          this.projectService
+            .create(
+              categoryId,
+              serviceId,
+              serviceName,
+              professionalId,
+              clientId
+            )
+            .subscribe((project: Project) => {
+              this.router.navigateByUrl(`/project/${project._id}`);
+            });
         } else {
-                console.warn(
-                    'ServiceTechnicianSelectComponent: createProject: some data is missing'
-                );
-            }
-        },
-        error: (err) => {
-            console.error('Error fetching user info:', err);
-            // Handle the error appropriately
+          console.warn(
+            "ServiceTechnicianSelectComponent: createProject: some data is missing"
+          );
         }
+      },
+      error: (err) => {
+        console.error("Error fetching user info:", err);
+        // Handle the error appropriately
+      },
     });
-}
-
-
+  }
 
   public view_projects() {
     this.projectService
       .getProjectsByProId(history.state._id)
       .pipe(first())
       .subscribe((projects: Project[]) => {
-        // 
+        //
         this.dataSourceProjects = projects;
         // this.dataSource = new MatTableDataSource(this.dataSourceProjects);
         // this.dataSource.sort = this.sort;
-        
       });
   }
 }
