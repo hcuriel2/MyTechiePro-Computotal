@@ -142,22 +142,15 @@ export class ProjectService {
       );
   }
 
-  public payProject(projectId: string, clientId: string): Observable<Project> {
-    return this.httpClient
-      .patch<Project>(
-        `${this.API_URL}/pay/${projectId}`,
-        {
-          clientId,
-        },
+  public payProject(projectId: string): Observable<{ url: string }> {
+    return this.httpClient.post<{ url: string }>(`${this.API_URL}/pay/`,  
+        { projectId },
         { withCredentials: true }
       )
       .pipe(
         catchError((err) => {
           console.error(err);
-
-          //Handle the error here
-          window.location.reload();
-          return throwError(err); //Rethrow it back to component
+          return throwError(() => err);
         })
       );
   }

@@ -20,7 +20,7 @@
             {{ "Estimated Price" | translate }}:
             {{ projectPrice }}
           </h3>
-          <h3 class="h3Details" *ngIf="project.state === 'Completed'">
+          <h3 class="h3Details" *ngIf="project.state === 'Completed' || project.state === 'Paid'">
             {{ "Label.BillingCost" | translate }}:
             {{ projectPrice }}
             <div *ngIf="isCustomer && !project.priceConfirmed && project.clientResponse === null" class = "price-confirm">

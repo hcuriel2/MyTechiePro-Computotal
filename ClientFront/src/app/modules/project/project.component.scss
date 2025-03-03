@@ -395,14 +395,18 @@ h3.skills {
 
 .status-pending {
   color: #ffd700;
+  text-transform: capitalize;
 }
 
 .status-paid {
   color: #4caf50;
+  text-transform: capitalize;
 }
 
 .status-failed {
   color: #f44336; 
+  text-transform: capitalize;
+
 }
 
 .confirm-btn, .reject-btn {

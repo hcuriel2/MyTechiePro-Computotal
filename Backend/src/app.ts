@@ -6,6 +6,7 @@ import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
 import cors from "cors";
 import 'reflect-metadata';
+import ProjectController from './controllers/project/project.controller';
 
 class App {
     public app: express.Application;

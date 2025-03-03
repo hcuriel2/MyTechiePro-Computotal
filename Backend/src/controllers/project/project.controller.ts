@@ -12,7 +12,8 @@ import categoryModel from "../../models/category/category.model";
 import adminMiddleware from "../../middleware/admin.middleware";
 import emailtransporter from "../../middleware/emailtransporter.middleware";
 import HttpException from "../../exceptions/HttpException";
-
+import TransactionModel from "../../models/transaction/transaction.model";
+import Stripe from 'stripe';
 
 class ProjectController implements Controller {
     public path = "/projects";
@@ -20,9 +21,17 @@ class ProjectController implements Controller {
     private project = projectModel;
     private user = userModel;
     private category = categoryModel;
+    private stripe: Stripe; 
 
     constructor() {
+        // Bind all methods that need 'this' context
         this.initializeRoutes();
+        this.payProject = this.payProject.bind(this);
+        this.project = projectModel; // Ensure project model is initialized
+        // Initialize Stripe
+        this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+            apiVersion: '2025-01-27.acacia'
+        });
     }
 
     public resetProjectPrice = async (req: Request, res: Response, next: NextFunction) => {
@@ -52,6 +61,15 @@ class ProjectController implements Controller {
     };
     
     private initializeRoutes() {
+        this.router.post(`${this.path}/pay`, async (req, res, next) => {
+            try {
+                await this.payProject(req, res);
+            } catch (error) {
+                console.error('Payment route error:', error);
+                next(new HttpException(500, 'Payment processing failed'));
+            }
+        });
+
         // // auth version do not delete it!
         // this.router.get(this.path, adminMiddleware, this.getAllProjects);
         // this.router.get(`${this.path}/:id`, adminMiddleware,this.getprojectById);
@@ -73,7 +91,7 @@ class ProjectController implements Controller {
                     .patch(`${this.path}/start/:id`, authMiddleware, this.startProject)
                     .patch(`${this.path}/feedback/:id`, authMiddleware,this.reviewProject)
                     .patch(`${this.path}/complete/:id`,authMiddleware, this.completeProject)
-                    .patch(`${this.path}/pay/:id`, authMiddleware,this.payProject)
+                    // .patch(`${this.path}/pay/:id`, authMiddleware,this.payProject)
                     .get(`${this.path}/client/:clientId`, authMiddleware, this.getProjectsByClientId)
                     .get(`${this.path}/professional/:professionalId`, authMiddleware, this.getProjectsProfessionalById)
                     .post(`${this.path}/projectReview`, authMiddleware,this.projectReview)
@@ -595,43 +613,91 @@ class ProjectController implements Controller {
         //         }
         //     });
     };
-    
 
 
-    private payProject = async (
-        request: RequestWithUser,
-        response: Response,
-        next: NextFunction
-    ) => {
-        const id = request.params.id;
-        const {clientId, professionalId} = request.body;
-        var authorName;
-        const user = await this.user.findById(clientId);
-        const project = await this.project.findById(id);
-        if (user.company) {
-            authorName = user.company;
-        } else {
-            authorName = (user.firstName + " " + user.lastName);
-        }
+    // Niko: Initiates a Stripe Checkout session for a given project. It checks the project and pricing, 
+    // then either updates an existing Transaction or creates a new one (with status "pending").
+    // Finally, it creates a Stripe session and returns the session URL, with projectId added to success and cancel URLs.
+    private async payProject(req: Request, res: Response) {
         try {
-            const pro = await this.user.findByIdAndUpdate(
-                professionalId, 
-                { $push:{ performance: {clientName:authorName, service:project.serviceName}}},
-                { new: true});
-        } catch (e) {
-            response.send(e);
-        }
-        await this.project.findOneAndUpdate(
-            {_id:id, state: "Completed", client:clientId},
-            {state:"Paid"},
-            {returnOriginal:false}, async function(err, result) {
-                if(result) {
-                    response.send(result);
-                } else {
-                    next(new NotFoundprojectException(id));
-                }
+          const { projectId } = req.body; 
+          if (!projectId) {
+            return res.status(400).json({ error: "Missing projectId" });
+          }
+      
+          const proj = await this.project.findById(projectId)
+            .populate('client')
+            .populate('professional');
+          if (!proj) {
+            return res.status(404).json({ error: "Project not found" });
+          }
+          if (!proj.totalCost || proj.totalCost <= 0) {
+            return res.status(400).json({ error: "Invalid project price" });
+          }
+      
+          const clientId = (proj.client as any)._id;
+          const professionalId = (proj.professional as any)._id;
+          const totalAmount = proj.totalCost;
+          const platformFee = 8.5;
+      
+          let transaction = await TransactionModel
+            .findOne({ project: projectId })
+            .sort({ createdAt: -1 });
+          
+          if (transaction) {
+            transaction.totalAmount = totalAmount;
+            transaction.platformFee = platformFee;
+            transaction.paymentIntentId = "pending_" + Date.now();
+            transaction.status = "pending";
+            transaction = await transaction.save();
+          } else {
+            transaction = new TransactionModel({
+              project: projectId,
+              client: clientId,
+              professional: professionalId,
+              totalAmount: totalAmount,
+              platformFee: platformFee,
+              paymentIntentId: "pending_" + Date.now(),
+              status: "pending"
             });
-    };
+            transaction = await transaction.save();
+          }
+          console.log('Transaction created/updated:', transaction._id);
+      
+          const session = await this.stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [{
+              price_data: {
+                currency: "cad",
+                product_data: { 
+                  name: `Payment for Project ${projectId}`,
+                  description: `Project payment for ${proj.serviceName || 'service'}`
+                },
+                unit_amount: Math.round(totalAmount * 100),
+              },
+              quantity: 1,
+            }],
+            mode: "payment",
+            metadata: {
+              projectId,
+              clientId: clientId.toString(),
+              professionalId: professionalId.toString(),
+              transactionId: transaction._id.toString(),
+              totalAmount: totalAmount.toString(),
+            },
+            success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}&projectId=${projectId}`,
+            cancel_url: `${process.env.CLIENT_URL}/payment-failed?session_id={CHECKOUT_SESSION_ID}&transactionId=${transaction._id}&projectId=${projectId}`,
+          });
+          
+          res.json({ url: session.url });
+        } catch (error) {
+          console.error("Detailed error:", error);
+          res.status(500).json({ 
+            error: "Failed to create payment session",
+            details: error.message 
+          });
+        }
+      }
 
     private commentProject = async (
         request: RequestWithUser,
