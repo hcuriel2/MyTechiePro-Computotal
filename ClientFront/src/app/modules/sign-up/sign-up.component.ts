@@ -99,14 +99,19 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.createForm();
+
     if (!this.googleMapsService.isLoaded()) {
       this.googleMapsService.loadGoogleMapsScript().then(() => {
         this.showForm = true;
+        this.changeDetectorRef.markForCheck(); 
+
       });
     } else {
       this.showForm = true;
+      this.changeDetectorRef.markForCheck(); 
+
     }
-    this.createForm();
     if (this.forPro) {
       this.categoryService
         .getAll()
