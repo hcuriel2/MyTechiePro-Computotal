@@ -1,6 +1,6 @@
 <div class="container m-0 p-5 mw-100">
   <mat-card>
-    <mat-card-content [formGroup]="formGroup">
+    <mat-card-content *ngIf="showForm" [formGroup]="formGroup">
       <div class="row">
         <div class="col-md-12">
           <mat-card-title class="mb-3" *ngIf="!forPro">
@@ -237,7 +237,6 @@
               [options]="options"
               placeholder="Enter a location"
               autocomplete="off"
-              ngx-google-places-autocomplete
               (onAddressChange)="handleAddressChange($event)"
               formControlName="location"
               required
@@ -255,7 +254,13 @@
         <div class="col-md-12 col-lg-6">
           <mat-form-field appearance="outline">
             <mat-label>{{ "Label.City" | translate }}</mat-label>
-            <input matInput formControlName="city" type="text" id="cityField" required />
+            <input
+              matInput
+              formControlName="city"
+              type="text"
+              id="cityField"
+              required
+            />
           </mat-form-field>
         </div>
       </div>

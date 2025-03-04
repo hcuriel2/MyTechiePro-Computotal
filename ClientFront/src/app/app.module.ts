@@ -29,8 +29,8 @@ import { ProjectReviewDialogComponent } from "./modules/project/project-review-d
 import { ResetPasswordComponent } from "./modules/reset-password/reset-password.component";
 import { ContactUsDialogComponent } from "./modules/contact-us/contact-us-dialog/contact-us-dialog/contact-us-dialog.component";
 import { ProProfileComponent } from "./modules/pro-profile/pro-profile.component";
-import { ProjectResetPriceDialogComponent } from './modules/project/project-reset-price-dialog/project-reset-price-dialog.component';
-import { PaymentSuccessComponent } from './modules/payment-success/payment-success.component';
+import { ProjectResetPriceDialogComponent } from "./modules/project/project-reset-price-dialog/project-reset-price-dialog.component";
+import { GoogleMapsService } from "./shared/services/google-maps.service";import { PaymentSuccessComponent } from './modules/payment-success/payment-success.component';
 import { PaymentFailedComponent } from './modules/payment-failed/payment-failed.component';
 
 @NgModule({
@@ -74,7 +74,7 @@ import { PaymentFailedComponent } from './modules/payment-failed/payment-failed.
     NgbModule,
     GooglePlaceModule,
   ],
-  providers: [],
+  providers: [GoogleMapsService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

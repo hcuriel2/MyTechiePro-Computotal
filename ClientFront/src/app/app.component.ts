@@ -16,6 +16,7 @@ import { AuthService } from "./shared/services/auth.service";
 import { SignInComponent } from "./modules/sign-in/sign-in.component";
 import { Options } from "ngx-google-places-autocomplete/objects/options/options";
 import { Message } from "./shared/models/message";
+import { GoogleMapsService } from "./shared/services/google-maps.service";
 
 @Component({
   selector: "app-root",
@@ -37,7 +38,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private snackbar: MatSnackBar,
     private authService: AuthService,
     private changeDetectorRef: ChangeDetectorRef,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private googleMapsService: GoogleMapsService
   ) {
     translateService.setDefaultLang("en-us");
     translateService.use("en-us");
@@ -52,6 +54,9 @@ export class AppComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {}
 
   public ngOnInit(): void {
+    this.googleMapsService
+      .loadGoogleMapsScript()
+      .catch((error) => console.error("Error loading Google Maps:", error));
     if (!this.authService.isSessionChecked) {
       this.authService.checkSession().subscribe({
         next: (user) => {
@@ -173,12 +178,12 @@ export class AppComponent implements OnInit, OnDestroy {
   // Redirect to sign up page
   public signUp(): void {
     const currentUrl = this.router.url;
-    const isOnSignUpPage = currentUrl.includes('sign-up');
+    const isOnSignUpPage = currentUrl.includes("sign-up");
     const urlParams = new URLSearchParams(window.location.search);
-    const isProSignup = urlParams.get('forPro') === 'true';
-    
+    const isProSignup = urlParams.get("forPro") === "true";
+
     if (!isOnSignUpPage || isProSignup) {
-      window.location.href = '/sign-up?forPro=false';
+      window.location.href = "/sign-up?forPro=false";
     } else {
       window.location.reload();
     }
@@ -187,10 +192,10 @@ export class AppComponent implements OnInit, OnDestroy {
   // Redirect to sign up page for professional
   public joinPro(): void {
     const urlParams = new URLSearchParams(window.location.search);
-    const isProSignup = urlParams.get('forPro') === 'true';
-    
+    const isProSignup = urlParams.get("forPro") === "true";
+
     if (!isProSignup) {
-      window.location.href = '/sign-up?forPro=true';
+      window.location.href = "/sign-up?forPro=true";
     } else {
       window.location.reload();
     }
