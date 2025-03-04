@@ -99,19 +99,23 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.createForm();
-
+    // ensure the Google Maps script is loaded before showing the form
     if (!this.googleMapsService.isLoaded()) {
       this.googleMapsService.loadGoogleMapsScript().then(() => {
         this.showForm = true;
-        this.changeDetectorRef.markForCheck(); 
-
+        this.changeDetectorRef.markForCheck();
+      })
+      .catch(error => {
+        console.error("Error loading Google Maps script:", error);
+        // Still show form even if Maps fails to load
+        this.showForm = true;
+        this.changeDetectorRef.markForCheck();
       });
     } else {
-      this.showForm = true;
-      this.changeDetectorRef.markForCheck(); 
-
+        this.showForm = true;
+        this.changeDetectorRef.markForCheck();
     }
+    this.createForm();
     if (this.forPro) {
       this.categoryService
         .getAll()
