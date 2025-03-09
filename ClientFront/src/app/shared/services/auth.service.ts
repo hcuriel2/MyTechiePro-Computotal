@@ -139,7 +139,9 @@ export class AuthService {
   }
 
   public verifyEmail(token: string): Observable<any> {
-    return this.httpClient.get(`${this.API_URL}/verify/${token}`);
+    return this.httpClient.get(`${this.API_URL}/verify/${token}`, {
+      withCredentials: true,
+    });
   }
 
   public resendVerificationEmail(email: string): Observable<any> {

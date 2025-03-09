@@ -9,14 +9,31 @@
             <p>{{ "Message.ClickVerificationLink" | translate }}</p>
             <p>{{ "Message.CheckSpamFolder" | translate }}</p>
           </div>
-          <button
-            mat-raised-button
-            color="primary"
-            [routerLink]="['/']"
-            class="mt-3"
-          >
-            {{ "Dictionary.BackToHome" | translate }}
-          </button>
+          <div class="button-container mt-3">
+            <button
+              mat-raised-button
+              color="primary"
+              [routerLink]="['/']"
+              class="mr-3"
+            >
+              {{ "Dictionary.BackToHome" | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="resendVerificationEmail()"
+              [disabled]="isResending"
+            >
+              <mat-spinner
+                *ngIf="isResending"
+                diameter="20"
+                class="button-spinner"
+              ></mat-spinner>
+              <span *ngIf="!isResending">{{
+                "Dictionary.ResendVerificationEmail" | translate
+              }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </mat-card-content>

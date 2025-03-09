@@ -109,13 +109,7 @@ class AuthenticationService {
                 });
             }
         }
-        const tokenData = this.createToken(user);
-        const cookie = this.createCookie(tokenData);
-
-        return {
-            cookie,
-            user,
-        };
+        return { user };
     }
 }
 

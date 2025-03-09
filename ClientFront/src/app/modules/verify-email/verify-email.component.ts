@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/shared/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { HttpResponseBase } from "@angular/common/http";
 
 @Component({
   selector: "app-verify-email",
@@ -30,19 +31,23 @@ export class VerifyEmailComponent implements OnInit {
     }
 
     this.authService.verifyEmail(token).subscribe(
-      () => {
+      (response) => {
         this.verifying = false;
         this.verificationSuccess = true;
 
         // Auto-redirect after 3 seconds
-        setTimeout(() => {
-          this.router.navigateByUrl("/");
-        }, 3000);
+        if (response && response.success) {
+          this.authService.setUserValue(response.user);
+
+          setTimeout(() => {
+            this.router.navigateByUrl("/");
+          }, 3000);
+        }
       },
       (error) => {
         this.verifying = false;
         this.errorMessage =
-          "Email verification failed. The link may be invalid.";
+          "Email verification failed. The link may be invalid or expired.";
         console.error("Verification error:", error);
       }
     );

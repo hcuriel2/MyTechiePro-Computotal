@@ -238,12 +238,10 @@ class AuthenticationController implements Controller {
         const userData: CreateUserDto = request.body;
 
         try {
-            const { cookie, user } = await this.authenticationService.register(
+            const { user } = await this.authenticationService.register(
                 userData
             );
-            response.setHeader("Set-Cookie", [cookie]);
-            //response.send({ message: 'Registration successful', userType: user.userType });
-            response.send(user);
+            response.status(201).send(user);
         } catch (error) {
             next(error);
         }
@@ -259,19 +257,23 @@ class AuthenticationController implements Controller {
         try {
             const user = await this.user.findOne({ verificationToken: token });
             if (!user) {
-                console.log("Invalid verification token");
-                return response.status(400).send("Invalid verification token");
+                return response
+                    .status(400)
+                    .send("Invalid or expired verification token");
             }
-
             // Update user as verified
             user.verified = true;
             user.verificationToken = undefined; // clear the token
             await user.save();
-
-            // Redirect to login page with success message
+            // Create authentication token and cookie
+            const tokenData = this.createToken(user);
+            const cookie = this.createCookie(tokenData);
+            // Set the cookie and redirect to home or dashboard
+            response.setHeader("Set-Cookie", [cookie]);
             return response.status(200).json({
                 success: true,
-                message: "Email verified. You can now login.",
+                message: "Email verified successfully",
+                user,
             });
         } catch (error) {
             console.error("Verification error:", error);
