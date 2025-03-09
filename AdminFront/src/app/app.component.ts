@@ -60,11 +60,16 @@ export class AppComponent {
     }).subscribe({
       next: (response) => {
         console.log('Logout successful');
-        window.location.href = environment.clientUrl;
+        window.location.href = environment.clientUrl
+        setTimeout(() => {
+          window.location.href = environment.clientUrl;
+        }, 500); // adding short delay to ensure the logout request completes
       },
       error: (error) => {
         console.error('Logout failed:', error);
-        window.location.href = environment.clientUrl;
+        setTimeout(() => {
+          window.location.href = environment.clientUrl;
+        }, 500); 
       }
     });
   }
