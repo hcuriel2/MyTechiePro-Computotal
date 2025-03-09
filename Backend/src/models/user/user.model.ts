@@ -8,10 +8,8 @@ const addressSchema = new mongoose.Schema({
     postalCode: String,
     lat: Number,
     lng: Number,
-    placeid: String
-
+    placeid: String,
 });
-
 
 const performaceSchema = new mongoose.Schema({
     rating: Number,
@@ -20,36 +18,33 @@ const performaceSchema = new mongoose.Schema({
     service: String,
 });
 
-
 const userTypes = Object.freeze({
-    Admin: 'Admin',
-    Client: 'Client',
-    Professional: 'Professional'
+    Admin: "Admin",
+    Client: "Client",
+    Professional: "Professional",
 });
 
 //User signup rate types here, value tag in html must match the variable string
 const uniTypes = Object.freeze({
-    Hour: 'Hour',
-    Solution: 'Solution',
-    FlatFee: 'Flat fee',
+    Hour: "Hour",
+    Solution: "Solution",
+    FlatFee: "Flat fee",
 });
-
 
 const proStatus = Object.freeze({
-    Busy: 'Busy',
-    Active: 'Active',
+    Busy: "Busy",
+    Active: "Active",
 });
 
-var validateEmail = function(email) {
+var validateEmail = function (email) {
     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
+    return re.test(email);
 };
 
-
-var validatePassword = function(password) {
+var validatePassword = function (password) {
     // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number
     var re = /(\.\w{2,3})+$/;
-    return re.test(password)
+    return re.test(password);
 };
 
 const userSchema = new mongoose.Schema({
@@ -67,9 +62,12 @@ const userSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
         unique: true,
-        required: 'Email address is required',
-        validate: [validateEmail, 'Please fill a valid email address'],
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+        required: "Email address is required",
+        validate: [validateEmail, "Please fill a valid email address"],
+        match: [
+            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+            "Please fill a valid email address",
+        ],
     },
     alias: {
         type: String,
@@ -84,7 +82,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         trim: true,
-        required: 'Password is required',
+        required: "Password is required",
         // select: false
         // validate: [validatePassword, 'Please fill a valid valid password'],
         // match: [/(\.\w{2,3})+$/, 'Please fill a valid password']
@@ -97,30 +95,39 @@ const userSchema = new mongoose.Schema({
     proStatus: {
         type: String,
         enum: Object.values(proStatus),
-        default: "Active"
+        default: "Active",
     },
-    skills: [{
-        type: String,
-    }],
+    skills: [
+        {
+            type: String,
+        },
+    ],
     unitPrice: Number,
     ratingSum: Number,
     ratingCount: Number,
     rating: Number,
-    unitType:  {
+    unitType: {
         type: String,
-        enum: Object.values(uniTypes)
+        enum: Object.values(uniTypes),
     },
     bio: String,
     inquiry: String,
-    performance:  { type: [performaceSchema], default: [] },
+    performance: { type: [performaceSchema], default: [] },
     website: String,
     secret: String,
     tempSecret: String,
     approved: Boolean,
-    verified: Boolean,
+    verified: {
+        type: Boolean,
+        default: false,
+    },
+    verificationToken: {
+        type: String,
+        required: false,
+    },
 });
 
-Object.assign(userSchema.statics, { userTypes })
+Object.assign(userSchema.statics, { userTypes });
 
 const userModel = mongoose.model<User & mongoose.Document>("User", userSchema);
 

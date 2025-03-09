@@ -12,7 +12,7 @@ import CreateAddressDto from "../user/address.dto";
 import User from "../../models/user/user.interface";
 import userModel from "../../models/user/user.model";
 import AuthenticationService from "./authentication.service";
-import AuthMiddleware from "../../middleware/auth.middleware"
+import AuthMiddleware from "../../middleware/auth.middleware";
 import LogInDto from "./logIn.dto";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
@@ -21,10 +21,10 @@ import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInv
 import emailtransporter from "../../middleware/emailtransporter.middleware";
 import UserNotVerify from "../../exceptions/UserNotVerify";
 import authMiddleware from "../../middleware/error.middleware";
+import * as crypto from "crypto";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import AuthenticationTokenMissingException from "../../exceptions/AuthenticationTokenMissingException";
 import { validate, ValidationError } from "class-validator";
-
 
 class AuthenticationController implements Controller {
     public path = "/auth";
@@ -34,7 +34,6 @@ class AuthenticationController implements Controller {
     public URL = process.env.SERVER_URL;
     public CLIENT_URL = process.env.CLIENT_URL;
 
-
     constructor() {
         this.initializeRoutes();
     }
@@ -43,35 +42,79 @@ class AuthenticationController implements Controller {
     // Middleware is applied to ensure valid users/DTO objects (data transfer objects)
     // Last parameter is a function (listed below alphabetically)
     private initializeRoutes() {
-        this.router.post(`${this.path}/admin/register`, validationMiddleware(CreateUserDto), this.registration);
-        this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
-        this.router.post(`${this.path}/login`, validationMiddleware(LogInDto), this.loggingIn);
+        this.router.post(
+            `${this.path}/admin/register`,
+            validationMiddleware(CreateUserDto),
+            this.registration
+        );
+        this.router.get(
+            `${this.path}/checkSession`,
+            authMiddleware,
+            this.checkSession
+        );
+        this.router.post(
+            `${this.path}/login`,
+            validationMiddleware(LogInDto),
+            this.loggingIn
+        );
         this.router.post(`${this.path}/logout`, this.loggingOut);
-        this.router.post(`${this.path}/professional/register`, validationMiddleware(CreateUserDto), this.registration);
-        this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto), this.registration);
+        this.router.post(
+            `${this.path}/professional/register`,
+            validationMiddleware(CreateUserDto),
+            this.registration
+        );
+        this.router.post(
+            `${this.path}/register`,
+            validationMiddleware(CreateUserDto),
+            this.registration
+        );
         this.router.post(`${this.path}/resetPassword`, this.sendResetPwEmail);
-        this.router.patch(`${this.path}/settings/:id`, authMiddleware, this.updateUserSettings);
-        this.router.get(`${this.path}/checkSession`, authMiddleware, this.checkSession);
-        this.router.get(`${this.path}/getUserInfo`, authMiddleware, this.getUserInfo);
-
+        this.router.patch(
+            `${this.path}/settings/:id`,
+            authMiddleware,
+            this.updateUserSettings
+        );
+        this.router.get(
+            `${this.path}/checkSession`,
+            authMiddleware,
+            this.checkSession
+        );
+        this.router.get(
+            `${this.path}/getUserInfo`,
+            authMiddleware,
+            this.getUserInfo
+        );
+        this.router.get(`${this.path}/verify/:token`, this.verifyEmail);
+        this.router.post(
+            `${this.path}/resend-verification`,
+            this.resendVerificationEmail
+        );
     }
 
-    public getUserInfo = async (request: RequestWithUser, response: Response, next: NextFunction) => {
+    public getUserInfo = async (
+        request: RequestWithUser,
+        response: Response,
+        next: NextFunction
+    ) => {
         const user = request.user;
         if (!user) {
             // If there's no user, send a 401 Unauthorized response.
-            return response.status(401).json({ message: 'Unauthorized: No user information available.' });
+            return response.status(401).json({
+                message: "Unauthorized: No user information available.",
+            });
         }
 
         try {
             // Directly return the user object. Be cautious with sensitive information.
             response.json(user);
         } catch (error) {
-            console.error('Failed to fetch user information:', error);
-            response.status(500).json({ message: 'Internal server error while fetching user information.' });
+            console.error("Failed to fetch user information:", error);
+            response.status(500).json({
+                message:
+                    "Internal server error while fetching user information.",
+            });
         }
-    }
-
+    };
 
     // Creates an HttpOnly cookie
     // Used to enable secure sessions
@@ -88,8 +131,7 @@ class AuthenticationController implements Controller {
         const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
-            userType: user.userType
-
+            userType: user.userType,
         };
         return {
             expiresIn,
@@ -106,17 +148,17 @@ class AuthenticationController implements Controller {
     ) => {
         const user = request.user;
         if (!user) {
-            return next(new Error('User information is missing from the request'));
+            return next(
+                new Error("User information is missing from the request")
+            );
         }
 
         try {
             response.json(user);
-
         } catch (error) {
-            next(new Error('Check session response failed'));
-
+            next(new Error("Check session response failed"));
         }
-    }
+    };
 
     // Logs the User in
     // Searches the database for the User
@@ -129,16 +171,16 @@ class AuthenticationController implements Controller {
         const logInData: LogInDto = request.body;
         const user = await this.user.findOne({ email: logInData.email });
 
-
         if (user) {
+            if (!user.verified) {
+                next(new UserNotVerify());
+                return;
+            }
             const sec = user.get("secret");
             const isPasswordMatching = await bcrypt.compare(
                 logInData.password,
                 user.get("password", null, { getters: false })
             );
-            if (!user.verified) {
-                next(new UserNotVerify());
-            }
             if (isPasswordMatching) {
                 if (sec) {
                     if (!logInData.secret) {
@@ -147,18 +189,19 @@ class AuthenticationController implements Controller {
                     const isMfaVerified = speakeasy.totp.verify({
                         secret: sec,
                         encoding: "base32",
-                        token: logInData.secret
+                        token: logInData.secret,
                     });
                     if (!isMfaVerified) {
                         next(new MfaVerificationInvalidException());
                         return;
                     }
-                };
+                }
                 const tokenData = this.createToken(user);
-                response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
+                response.setHeader("Set-Cookie", [
+                    this.createCookie(tokenData),
+                ]);
                 //response.send({ message: 'Login successful' });
                 response.send(user);
-
             } else {
                 next(new WrongCredentialsException());
             }
@@ -172,14 +215,14 @@ class AuthenticationController implements Controller {
     private loggingOut = (request: Request, response: Response) => {
         try {
             // Clear the Authorization cookie
-            response.setHeader('Set-Cookie', [
-                'Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None',
-                'user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None'
+            response.setHeader("Set-Cookie", [
+                "Authorization=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None",
+                "user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None",
             ]);
 
             response.sendStatus(200);
         } catch (error) {
-            console.error('Logout error:', error);
+            console.error("Logout error:", error);
             response.sendStatus(500);
         }
     };
@@ -195,11 +238,45 @@ class AuthenticationController implements Controller {
         const userData: CreateUserDto = request.body;
 
         try {
-            const { cookie, user } = await this.authenticationService.register(userData);
+            const { cookie, user } = await this.authenticationService.register(
+                userData
+            );
             response.setHeader("Set-Cookie", [cookie]);
             //response.send({ message: 'Registration successful', userType: user.userType });
             response.send(user);
         } catch (error) {
+            next(error);
+        }
+    };
+
+    private verifyEmail = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { token } = request.params;
+
+        try {
+            const user = await this.user.findOne({ verificationToken: token });
+            if (!user) {
+                console.log("Invalid or expired verification token");
+                return response
+                    .status(400)
+                    .send("Invalid or expired verification token");
+            }
+
+            // Update user as verified
+            user.verified = true;
+            user.verificationToken = undefined; // clear the token
+            await user.save();
+
+            // Redirect to login page with success message
+            return response.status(200).json({
+                success: true,
+                message: "Email verified. You can now login.",
+            });
+        } catch (error) {
+            console.error("Verification error:", error);
             next(error);
         }
     };
@@ -212,32 +289,28 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-
-
         const { emailAddress } = request.body;
 
         const user = await this.user.findOne({ email: emailAddress });
 
         if (!user) {
-
             response.status(200);
             return;
         }
 
         let setPwEmailOptions = {
-            from: 'noreply.mytechie.pro@gmail.com',
+            from: "noreply.mytechie.pro@gmail.com",
             to: emailAddress,
             subject: "Reset Password",
-            html: "<b>Reset Password</b><br/><br/>" +
-                `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`
-        }
+            html:
+                "<b>Reset Password</b><br/><br/>" +
+                `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`,
+        };
 
         emailtransporter.sendMail(setPwEmailOptions, function (error, info) {
             if (error) {
-
                 response.status(500);
             } else {
-
                 response.status(200);
             }
         });
@@ -247,17 +320,25 @@ class AuthenticationController implements Controller {
     // Modifies existing information in the database
     private updateUserSettings = async (
         request: RequestWithUser,
-        response: Response,
+        response: Response
     ) => {
         const userId = request.user._id;
 
-        const { firstName, lastName, email, street, city, country, postalCode } = request.body;
+        const {
+            firstName,
+            lastName,
+            email,
+            street,
+            city,
+            country,
+            postalCode,
+        } = request.body;
 
         try {
             let user = await this.user.findById(userId);
 
             if (!user) {
-                return response.status(404).json({ message: 'User not found' });
+                return response.status(404).json({ message: "User not found" });
             }
 
             user.firstName = firstName || user.firstName;
@@ -273,11 +354,67 @@ class AuthenticationController implements Controller {
 
             await user.save();
 
-            return response.status(200).json({ message: 'Update successful' });
-
+            return response.status(200).json({ message: "Update successful" });
         } catch (error) {
-            console.error('Error updating user:', error);
-            return response.status(500).json({ message: 'Failed to update user', error: error.message });
+            console.error("Error updating user:", error);
+            return response.status(500).json({
+                message: "Failed to update user",
+                error: error.message,
+            });
+        }
+    };
+
+    private resendVerificationEmail = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { email } = request.body;
+
+        try {
+            const user = await this.user.findOne({ email });
+
+            if (!user) {
+                // Don't reveal user existence for security
+                return response.status(200).send({
+                    message:
+                        "If your email exists, a verification link has been sent.",
+                });
+            }
+
+            if (user.verified) {
+                return response
+                    .status(200)
+                    .send({ message: "Email already verified. Please login." });
+            }
+
+            // Generate new verification token
+            const verificationToken = crypto.randomBytes(32).toString("hex");
+            user.verificationToken = verificationToken;
+            await user.save();
+
+            // Send verification email
+            const verificationUrl = `${this.CLIENT_URL}/verify-email/${verificationToken}`;
+            let verifyEmailOptions = {
+                from: "noreply.mytechie.pro@gmail.com",
+                to: user.email,
+                subject: "Verify Your Email Address",
+                html: `
+          <h2>Welcome to MyTechie!</h2>
+          <p>Please click the link below to verify your email address:</p>
+          <p><a href="${verificationUrl}">Verify Email</a></p>
+          <p>This link will expire in 24 hours.</p>
+        `,
+            };
+
+            await emailtransporter.sendMail(verifyEmailOptions);
+
+            return response.status(200).send({
+                message: "Verification email sent. Please check your inbox.",
+            });
+        } catch (error) {
+            console.error("Error resending verification email:", error);
+            next(error);
         }
     };
 }

@@ -31,7 +31,7 @@ export class SignInComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private dialogRef: MatDialogRef<SignInComponent>
-  ) { }
+  ) {}
 
   public ngOnInit(): void {
     this.emailAddress = new FormControl(null, Validators.required);
@@ -85,37 +85,62 @@ export class SignInComponent implements OnInit {
 
     /**
      * if signin success -> user data will be returned to app.component.ts
-     * 
+     *
      * Retrieves the 'user' item from localstorage and checks the usertype to correctly
      * navigate to the corresponding URL.
      */
     this.authService.signIn(user).subscribe(
       (user: User) => {
-
         if (!user) return;
 
-        if (user.userType == 'Professional') {
+        if (user.userType == "Professional") {
           this.dialogRef.close(user);
-          this.router.navigateByUrl('/projects').then(() => {
+          this.router.navigateByUrl("/projects").then(() => {
             //window.location.reload()
-          })
-        } else if (user.userType == 'Client') {
+          });
+        } else if (user.userType == "Client") {
           this.dialogRef.close(user);
-          this.router.navigateByUrl('/').then(() => {
-          })
+          this.router.navigateByUrl("/").then(() => {});
         } else {
           window.location.href = environment.adminUrl;
         }
       },
       (error) => {
-        if (error.status == 401 && !this.authCode.value) {
-          // failed due to bad auth
-          document.getElementById("authCode")!.style.display = "block";
+        if (error.status == 403) {
+          document.getElementById("notVerified")!.style.display = "block";
+          document.getElementById("failedLogin")!.style.display = "none";
+        } else if (error.status == 401 && !this.authCode.value) {
+          // Authentication code handling...
+          document.getElementById("notVerified")!.style.display = "none";
         } else {
           console.error(`Error in SignIn.signIn(): ${error}`, error);
           document.getElementById("failedLogin")!.style.display = "block";
+          document.getElementById("notVerified")!.style.display = "none";
         }
       }
     );
+  }
+
+  public resendVerificationEmail(): void {
+    if (this.emailAddress.valid) {
+      this.authService
+        .resendVerificationEmail(this.emailAddress.value)
+        .pipe()
+        .subscribe(
+          () => {
+            const message =
+              "Verification email has been resent. Please check your inbox.";
+            alert(message); // Or use a snackbar for better UX
+          },
+          (error) => {
+            console.error("Failed to resend verification email", error);
+            const message =
+              "Failed to resend verification email. Please try again later.";
+            alert(message);
+          }
+        );
+    } else {
+      alert("Please enter a valid email address.");
+    }
   }
 }

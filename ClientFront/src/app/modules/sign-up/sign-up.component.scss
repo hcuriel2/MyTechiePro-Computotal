@@ -2,6 +2,17 @@
   background-color: #eef2f6;
 }
 
+#notVerified {
+  width: 100%;
+  max-width: 100%;
+  word-wrap: break-word;
+  padding: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  white-space: normal; /* Prevent text from extending beyond container */
+  box-sizing: border-box;
+}
+
 mat-card {
   padding: 30px;
   margin: auto;

@@ -1,0 +1,32 @@
+<!-- ClientFront/src/app/modules/verify-email/verify-email.component.html -->
+<div class="container m-0 p-5 mw-100">
+  <mat-card>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 *ngIf="verifying">{{ "Dictionary.Verifying" | translate }}</h2>
+          <h2 *ngIf="verificationSuccess">
+            {{ "Dictionary.EmailVerified" | translate }}
+          </h2>
+          <h2 *ngIf="!verifying && !verificationSuccess">
+            {{ "Dictionary.VerificationFailed" | translate }}
+          </h2>
+
+          <mat-spinner *ngIf="verifying" class="mx-auto my-4"></mat-spinner>
+
+          <div *ngIf="verificationSuccess" class="success-message">
+            <p>{{ "Message.EmailVerificationSuccess" | translate }}</p>
+            <p>{{ "Message.RedirectingToLogin" | translate }}</p>
+          </div>
+
+          <div *ngIf="!verifying && !verificationSuccess" class="error-message">
+            <p>{{ errorMessage }}</p>
+            <button mat-raised-button color="primary" [routerLink]="['/']">
+              {{ "Dictionary.BackToHome" | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
