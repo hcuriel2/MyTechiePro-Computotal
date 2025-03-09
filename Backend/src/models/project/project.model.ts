@@ -98,7 +98,7 @@ ProjectSchema.virtual('isOverdue').get(function() {
     // Two cases for overdue:
     if (this.priceConfirmed) {
         // Case 1: Price is confirmed but project not paid for 15+ days
-        return diffDays >= 15 && this.clientResponse === 'confirmed';
+        return diffDays >= 15 && this.clientResponse === 'Confirmed';
     } else {
         // Case 2: Price is not confirmed for 15+ days
         return diffDays >= 15;
