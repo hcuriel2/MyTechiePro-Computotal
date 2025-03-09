@@ -259,10 +259,8 @@ class AuthenticationController implements Controller {
         try {
             const user = await this.user.findOne({ verificationToken: token });
             if (!user) {
-                console.log("Invalid or expired verification token");
-                return response
-                    .status(400)
-                    .send("Invalid or expired verification token");
+                console.log("Invalid verification token");
+                return response.status(400).send("Invalid verification token");
             }
 
             // Update user as verified
@@ -403,7 +401,6 @@ class AuthenticationController implements Controller {
           <h2>Welcome to MyTechie!</h2>
           <p>Please click the link below to verify your email address:</p>
           <p><a href="${verificationUrl}">Verify Email</a></p>
-          <p>This link will expire in 24 hours.</p>
         `,
             };
 

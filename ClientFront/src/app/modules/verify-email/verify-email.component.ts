@@ -42,7 +42,7 @@ export class VerifyEmailComponent implements OnInit {
       (error) => {
         this.verifying = false;
         this.errorMessage =
-          "Email verification failed. The link may be invalid or expired.";
+          "Email verification failed. The link may be invalid.";
         console.error("Verification error:", error);
       }
     );

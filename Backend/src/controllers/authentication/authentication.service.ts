@@ -70,7 +70,6 @@ class AuthenticationService {
                 <h2>Welcome to MyTechie!</h2>
                 <p>Please click the link below to verify your email address:</p>
                 <p><a href="${verificationUrl}">Verify Email</a></p>
-                <p>This link will expire in 24 hours.</p>
             `,
         };
 
