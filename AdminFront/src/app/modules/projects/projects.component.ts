@@ -68,11 +68,6 @@ export class ProjectsComponent implements OnInit {
           
           const dateACreated = a.createdAt ? new Date(a.createdAt).getTime() : 0;
           const dateBCreated = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-          
-          if (a.isOverdue && b.isOverdue) {
-            return dateBCreated - dateACreated; 
-          }
-
           return dateBCreated - dateACreated;
         });
       }))
