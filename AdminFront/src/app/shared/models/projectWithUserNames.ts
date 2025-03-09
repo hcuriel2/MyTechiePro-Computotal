@@ -3,6 +3,7 @@ import { User } from './user';
 export class ProjectWithUserNames {
     state: string | undefined; // Requested, Accepted, Completed, Declined
     _id: string
+    isOverdue: boolean;
 
     serviceName: string | undefined;
     serviceId: string | undefined;
