@@ -5,8 +5,11 @@
   <mat-tab label="All Projects">
 
     <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport tableStyle">
+      <div *ngIf="isLoading" class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
 
-      <table mat-table matSort matSortStart="desc" [dataSource]="dataSource" class="mat-elevation-z8">
+      <table mat-table matSort matSortStart="desc" [dataSource]="dataSource" class="mat-elevation-z8" [hidden]="isLoading">
         
         <!-- Project State -->
         <ng-container matColumnDef="state">
@@ -64,8 +67,12 @@
   </mat-tab>
   <mat-tab label="Projects Under Review">
     <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport tableStyle">
+      <div *ngIf="isLoading" class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
 
-      <table mat-table [dataSource]="dataSourceBad" class="mat-elevation-z8">
+      <table mat-table matSort matSortStart="desc" [dataSource]="dataSource" class="mat-elevation-z8" [hidden]="isLoading">
+
 
         <!-- Project State -->
         <ng-container matColumnDef="state">
