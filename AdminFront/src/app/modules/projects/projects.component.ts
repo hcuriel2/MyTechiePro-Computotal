@@ -55,20 +55,30 @@ export class ProjectsComponent implements OnInit {
     this.isLoading = true;
     this.projectService
       .getAll()
-      .pipe(
-        first(), 
-        map(projects => this.changeProjectsToProjectsWithUserNames(projects)),
-        switchMap(projects => forkJoin(
-          projects.map(project => this.appendClientUser(project))
-        )),
-        switchMap(projects => forkJoin(
-          projects.map(project => this.appendProUser(project))
-        )),
-        finalize(() => {
-          this.isLoading = false;
-          this.changeDetectorRef.markForCheck();
-        })
-     )
+      .pipe(first(), 
+      map(projects => this.changeProjectsToProjectsWithUserNames(projects)),
+      switchMap(projects => forkJoin(
+        projects.map(project => this.appendClientUser(project))
+      )),
+      switchMap(projects => forkJoin(
+        projects.map(project => this.appendProUser(project))
+      )),
+      map(projects => {
+        // Sort overdue projects first, then by date
+        return projects.sort((a, b) => {
+          if (a.isOverdue && !b.isOverdue) return -1;
+          if (!a.isOverdue && b.isOverdue) return 1;
+          
+          const dateACreated = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateBCreated = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateBCreated - dateACreated;
+        });
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.changeDetectorRef.markForCheck();
+      })
+    )
       .subscribe((projects: ProjectWithUserNames[]) => {
         this.dataSourceProjectsWithNames = projects;
         
@@ -107,6 +117,7 @@ export class ProjectsComponent implements OnInit {
       tempProjectUserName.professional = projects[i].professional!;
       tempProjectUserName.client = projects[i].client!;
       tempProjectUserName.comments = projects[i].comments;
+      tempProjectUserName.isOverdue = projects[i].isOverdue || false;
       tempProjectUserName.professionalName = "";
       tempProjectUserName.clientName = "";
       tempProjectsWithNames.push(tempProjectUserName)

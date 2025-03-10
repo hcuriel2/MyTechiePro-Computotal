@@ -83,6 +83,42 @@ const ProjectSchema = new Schema(
     { timestamps: true },
 );
 
+// Add virtual property to calculate if a project is overdue
+ProjectSchema.virtual('isOverdue').get(function() {
+    // Only check for overdue on Completed projects
+    if (this.state !== 'Completed') {
+        return false;
+    }
+    
+    const now = new Date();
+    const updatedAt = new Date(this.updatedAt);
+    const diffTime = Math.abs(now.getTime() - updatedAt.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    // Two cases for overdue:
+    if (this.priceConfirmed) {
+        // Case 1: Price is confirmed but project not paid for 15+ days
+        return diffDays >= 15 && this.clientResponse === 'Confirmed';
+    } else {
+        // Case 2: Price is not confirmed for 15+ days
+        return diffDays >= 15;
+    }
+});
+
+// Configure toJSON to include virtual properties
+ProjectSchema.set('toJSON', {
+    virtuals: true,
+    transform: function(doc, ret) {
+        ret.id = ret._id;
+        return ret;
+    }
+});
+
+// Configure toObject to include virtual properties
+ProjectSchema.set('toObject', {
+    virtuals: true
+});
+
 const projectModel = mongoose.model<Project & mongoose.Document>("Project", ProjectSchema);
 
 export default projectModel;

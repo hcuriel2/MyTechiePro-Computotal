@@ -17,6 +17,7 @@ interface Project {
     transaction?: object;
     priceConfirmed: boolean;
     clientResponse: string | null;
+    isOverdue?: boolean;
 }
 
 export default Project;

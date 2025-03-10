@@ -20,6 +20,7 @@ export class Project {
 
     priceConfirmed: boolean;
     clientResponse: string | null;
+    isOverdue?: boolean;
 }
 
 export class Message {
