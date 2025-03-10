@@ -59,8 +59,18 @@ export class ProjectsComponent implements OnInit {
       )),
       switchMap(projects => forkJoin(
         projects.map(project => this.appendProUser(project))
-      ))
-     )
+      )),
+      map(projects => {
+        // Sort overdue projects first, then by date
+        return projects.sort((a, b) => {
+          if (a.isOverdue && !b.isOverdue) return -1;
+          if (!a.isOverdue && b.isOverdue) return 1;
+          
+          const dateACreated = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateBCreated = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateBCreated - dateACreated;
+        });
+      }))
       .subscribe((projects: ProjectWithUserNames[]) => {
         this.dataSourceProjectsWithNames = projects;
         
@@ -99,6 +109,7 @@ export class ProjectsComponent implements OnInit {
       tempProjectUserName.professional = projects[i].professional!;
       tempProjectUserName.client = projects[i].client!;
       tempProjectUserName.comments = projects[i].comments;
+      tempProjectUserName.isOverdue = projects[i].isOverdue || false;
       tempProjectUserName.professionalName = "";
       tempProjectUserName.clientName = "";
       tempProjectsWithNames.push(tempProjectUserName)
