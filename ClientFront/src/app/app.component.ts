@@ -140,9 +140,11 @@ export class AppComponent implements OnInit, OnDestroy {
         this.authService.setUserValue(null);
       },
     });
-    this.router.navigateByUrl("/").then(() => {
-      window.location.reload();
-    });
+    setTimeout(()=>{
+      this.router.navigateByUrl("/").then(() => {
+        window.location.reload();
+      });
+    }, 500)
   }
 
   // Navigates to the Home page
