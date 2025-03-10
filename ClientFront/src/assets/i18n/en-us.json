@@ -74,7 +74,13 @@
     "Website": "Website",
     "SendEmail": "Send Email",
     "ResendEmail": "Resend Email",
-    "ResetPassword": "Reset Password"
+    "ResetPassword": "Reset Password",
+    "Verifying": "Verifying your email...",
+    "EmailVerified": "Email Verified!",
+    "VerificationFailed": "Verification Failed",
+    "BackToHome": "Back to Home",
+    "CheckYourEmail": "Check Your Email",
+    "ResendVerificationEmail": "Resend Verification Email"
   },
   "Label": {
     "Address": "Address",
@@ -195,7 +201,17 @@
     "EmailExists": "The email address you provided is already registered. Please use a different email.",
     "InvalidEmail": "Please enter a valid email address.",
     "WeakPassword": "Password is too weak, please use a stronger password.",
-    "ServerError": "Server error occurred. Please try again later."
+    "ServerError": "Server error occurred. Please try again later.",
+    "InvalidCredentials": "Invalid email or password, please try again.",
+    "EmailNotVerified": "Email not verified. Please verify your email address.",
+    "EmailVerificationSuccess": "Your email has been verified successfully.",
+    "LoggingYouIn": "Logging you in...",
+    "SignUpVerificationNeeded": "Sign up successful! Please check your email to verify your account.",
+    "VerificationEmailSent": "We've sent a verification email to your inbox.",
+    "ClickVerificationLink": "Please click the verification link in the email to activate your account.",
+    "CheckSpamFolder": "If you don't see the email in your inbox, please check your spam folder.",
+    "VerificationEmailResent": "Verification email has been resent. Please check your inbox.",
+    "ErrorResendingVerificationEmail": "There was a problem resending the verification email. Please try again later."
   },
   "Warning": {
     "PasswordRequired": "Please enter your new password",
@@ -205,5 +221,8 @@
     "PasswordComplexityLetter": "Password must have at least one uppercase letter",
     "PasswordComplexityNum": "Password must have at least one number",
     "PasswordComplexity": "Password must have at least one number, one uppercase letter, one lowercase letter, and one special character"
+  },
+  "Action": {
+    "ResendVerificationEmail": "Resend Verification Email"
   }
 }

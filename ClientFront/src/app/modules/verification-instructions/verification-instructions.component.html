@@ -1,0 +1,41 @@
+<div class="container m-0 p-5 mw-100">
+  <mat-card>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>{{ "Dictionary.CheckYourEmail" | translate }}</h2>
+          <div class="verification-instructions my-4">
+            <p>{{ "Message.VerificationEmailSent" | translate }}</p>
+            <p>{{ "Message.ClickVerificationLink" | translate }}</p>
+            <p>{{ "Message.CheckSpamFolder" | translate }}</p>
+          </div>
+          <div class="button-container mt-3">
+            <button
+              mat-raised-button
+              color="primary"
+              [routerLink]="['/']"
+              class="mr-3"
+            >
+              {{ "Dictionary.BackToHome" | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="resendVerificationEmail()"
+              [disabled]="isResending"
+            >
+              <mat-spinner
+                *ngIf="isResending"
+                diameter="20"
+                class="button-spinner"
+              ></mat-spinner>
+              <span *ngIf="!isResending">{{
+                "Dictionary.ResendVerificationEmail" | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

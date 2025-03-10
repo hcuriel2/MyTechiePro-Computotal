@@ -1,5 +1,11 @@
 <!-- <div class="container-fluid"> -->
-<h2 mat-dialog-title>{{ isResetPw ? ("Dictionary.ForgotPassword" | translate) : ("Dictionary.SignIn" | translate) }}</h2>
+<h2 mat-dialog-title>
+  {{
+    isResetPw
+      ? ("Dictionary.ForgotPassword" | translate)
+      : ("Dictionary.SignIn" | translate)
+  }}
+</h2>
 
 <mat-dialog-content [formGroup]="formGroup" class="row">
   <mat-form-field class="w-100">
@@ -38,9 +44,26 @@
     class="col-md-12"
     style="display: none; text-align: center; width: 100%"
   >
-    Incorrect Credentials or Email address is not verified!
+    {{ "Message.InvalidCredentials" | translate }}
   </mat-error>
 
+  <mat-error
+    id="notVerified"
+    class="col-md-12"
+    style="
+      display: none;
+      text-align: center;
+      width: 100%;
+      word-wrap: break-word;
+      max-width: 100%;
+    "
+  >
+    {{ "Message.EmailNotVerified" | translate }}
+    <br />
+    <button mat-button color="primary" (click)="resendVerificationEmail()">
+      {{ "Action.ResendVerificationEmail" | translate }}
+    </button>
+  </mat-error>
   <div class="col-md-12" *ngIf="isResetEmailSend">
     <p style="margin-top: 10px; font-size: 11px; text-align: center">
       {{ "Message.EmailSent" | translate }}
@@ -49,14 +72,24 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="d-flex flex-column justify-content-end">
-  <button mat-button color="accent" (click)="toggleSignInForgotPw()" *ngIf="!isResetPw">
+  <button
+    mat-button
+    color="accent"
+    (click)="toggleSignInForgotPw()"
+    *ngIf="!isResetPw"
+  >
     {{
       isResetPw
         ? ("Dictionary.SignIn" | translate)
         : ("Dictionary.ForgotPassword" | translate)
     }}
   </button>
-  <button mat-button color="accent" (click)="createAccount()" *ngIf="!isResetPw">
+  <button
+    mat-button
+    color="accent"
+    (click)="createAccount()"
+    *ngIf="!isResetPw"
+  >
     {{ "Dictionary.CreateAccount" | translate }}
   </button>
 

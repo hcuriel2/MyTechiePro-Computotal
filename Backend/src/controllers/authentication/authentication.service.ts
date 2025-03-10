@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import UserWithThatEmailAlreadyExistsException from "../../exceptions/UserWithThatEmailAlreadyExistsException";
+import * as crypto from "crypto";
 import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import TokenData from "../../interfaces/tokenData.interface";
 import CreateUserDto from "../user/user.dto";
@@ -12,7 +13,6 @@ class AuthenticationService {
     public user = userModel;
     public API_URL = process.env.SERVER_URL;
     public CLIENT_URL = process.env.CLIENT_URL;
-
 
     // Generates a HttpOnly cookie on successful User registration
     // JWT token is inserted into it
@@ -28,14 +28,13 @@ class AuthenticationService {
         const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
-            userType: user.userType
+            userType: user.userType,
         };
         return {
             expiresIn,
             token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
         };
     }
-
 
     // Registers a new User
     // Checks if the email already exists
@@ -45,6 +44,9 @@ class AuthenticationService {
         if (await this.user.findOne({ email: userData.email })) {
             throw new UserWithThatEmailAlreadyExistsException(userData.email);
         }
+
+        // Generate a verification token
+        const verificationToken = crypto.randomBytes(32).toString("hex");
         const hashedPassword = await bcrypt.hash(userData.password, 10);
 
         //create the user in database with given user object.
@@ -53,62 +55,62 @@ class AuthenticationService {
             password: hashedPassword,
             ratingSum: 0,
             ratingCount: 0,
-            rating: 0
+            rating: 0,
+            verified: false,
+            verificationToken: verificationToken,
         });
 
         // Send verification email
-        let verifyEmailOptions  = {
-                from: 'noreply.mytechie.pro@gmail.com', // sender address
-                to: user.email, // list of receivers
-                subject: "Verification of email address", // Subject line
-                html: "<b>Verify your email</b><br/><br/>" +
-                `<p>Please click <a href="${this.CLIENT_URL}/users/verify/${user._id}">here</a> to verify your email.</p> <br/>`
-              }
-        emailtransporter.sendMail(verifyEmailOptions , function(error, info){
-            if (error) {
-                
-            } else {
-                
-            }
-            });
-    
+        const verificationUrl = `${this.CLIENT_URL}/verify-email/${verificationToken}`;
+        let verifyEmailOptions = {
+            from: "noreply.mytechie.pro@gmail.com",
+            to: user.email,
+            subject: "Verify Your Email Address",
+            html: `
+                <h2>Welcome to MyTechie!</h2>
+                <p>Please click the link below to verify your email address:</p>
+                <p><a href="${verificationUrl}">Verify Email</a></p>
+            `,
+        };
+
+        await emailtransporter.sendMail(verifyEmailOptions);
+
         // If the User is a Professional, an email is sent to all Admin
         // Admin need to approve new Professional users
-        if(user.userType === "Professional") {
+        if (user.userType === "Professional") {
             const admins = await this.user.find({ userType: "Admin" });
-            if(admins) {
-                const adminEmails = admins.map((admin) => admin.email)
-                let mailOptions  = {
-                    from: 'noreply.mytechie.pro@gmail.com',
-                    to: adminEmails, 
+            if (admins) {
+                const adminEmails = admins.map((admin) => admin.email);
+                let mailOptions = {
+                    from: "noreply.mytechie.pro@gmail.com",
+                    to: adminEmails,
                     subject: "Verification for new a professional account",
-                    html: "<b>New professional registered account needs to be verified: </b><br/><br/>" +
-                    "<b>First Name:</b> " + user.firstName + "<br/>" +
-                    "<b>Last Name:</b> " + user.lastName + "<br/>"+
-                    "<b>Phone Number:</b> " + user.phoneNumber + "<br/>"+ 
-                    "<b>Email:</b> " + user.email + "<br/>"+ 
-                    "<b>Company:</b> " + user.company, // html body
-                  }
-                emailtransporter.sendMail(mailOptions , function(error, info){
+                    html:
+                        "<b>New professional registered account needs to be verified: </b><br/><br/>" +
+                        "<b>First Name:</b> " +
+                        user.firstName +
+                        "<br/>" +
+                        "<b>Last Name:</b> " +
+                        user.lastName +
+                        "<br/>" +
+                        "<b>Phone Number:</b> " +
+                        user.phoneNumber +
+                        "<br/>" +
+                        "<b>Email:</b> " +
+                        user.email +
+                        "<br/>" +
+                        "<b>Company:</b> " +
+                        user.company, // html body
+                };
+                emailtransporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
-                      
                     } else {
-                      
                     }
-                  });
-                }
+                });
             }
-        const tokenData = this.createToken(user);
-        const cookie = this.createCookie(tokenData);
-
-        return {
-            cookie,
-            user,
-        };
-        
+        }
+        return { user };
     }
-
-    
 }
 
 export default AuthenticationService;

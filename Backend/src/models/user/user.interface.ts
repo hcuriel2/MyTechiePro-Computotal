@@ -47,16 +47,16 @@ interface User {
     phoneNumber: string;
     email: string;
     password: string;
-    userType: 'Admin' | 'Client' | 'Professional';
+    userType: "Admin" | "Client" | "Professional";
     address?: Address;
     company?: string;
-    proStatus?: 'Busy' | 'Active';
+    proStatus?: "Busy" | "Active";
     skills?: string[];
     unitPrice?: number;
     ratingSum?: number;
     ratingCount?: number;
     rating?: number;
-    unitType?: 'Hour' | 'Solution' | 'Flat fee';
+    unitType?: "Hour" | "Solution" | "Flat fee";
     bio?: string;
     inquiry?: string;
     performance?: Performance[];
@@ -65,6 +65,7 @@ interface User {
     tempSecret?: string;
     approved: boolean;
     verified: boolean;
+    verificationToken?: string;
 }
 
 export default User;

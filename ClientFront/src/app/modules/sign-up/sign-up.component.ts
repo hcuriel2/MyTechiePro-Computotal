@@ -101,19 +101,21 @@ export class SignUpComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     // ensure the Google Maps script is loaded before showing the form
     if (!this.googleMapsService.isLoaded()) {
-      this.googleMapsService.loadGoogleMapsScript().then(() => {
-        this.showForm = true;
-        this.changeDetectorRef.markForCheck();
-      })
-      .catch(error => {
-        console.error("Error loading Google Maps script:", error);
-        // Still show form even if Maps fails to load
-        this.showForm = true;
-        this.changeDetectorRef.markForCheck();
-      });
+      this.googleMapsService
+        .loadGoogleMapsScript()
+        .then(() => {
+          this.showForm = true;
+          this.changeDetectorRef.markForCheck();
+        })
+        .catch((error) => {
+          console.error("Error loading Google Maps script:", error);
+          // Still show form even if Maps fails to load
+          this.showForm = true;
+          this.changeDetectorRef.markForCheck();
+        });
     } else {
-        this.showForm = true;
-        this.changeDetectorRef.markForCheck();
+      this.showForm = true;
+      this.changeDetectorRef.markForCheck();
     }
     this.createForm();
     if (this.forPro) {
@@ -207,63 +209,20 @@ export class SignUpComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe(
         (user: User) => {
-          this.authService.setUserValue(user);
           this.changeDetectorRef.detectChanges();
 
           this.translateService
-            .get("Message.SignUpSuccess")
+            .get("Message.SignUpVerificationNeeded")
             .pipe(first())
             .subscribe((translation) => {
               const config = new MatSnackBarConfig();
-              config.duration = Constants.ShortDuration;
-
+              config.duration = Constants.LongDuration; // Longer duration for important info
               this.snackBar.open(translation, "", config);
-            });
 
-          if (user.userType === "Professional") {
-            this.router.navigateByUrl("/projects").then(() => {
-              window.location.reload();
+              // Redirect to home page or specific verification instructions page
+              this.router.navigateByUrl("/verification-instructions");
             });
-          } else {
-            this.router.navigateByUrl("/").then(() => {
-              window.location.reload();
-            });
-          }
-          //add cookie to browser for user.
-          // let userLocalStorage = JSON.stringify(localStorage.getItem("user"));
-          //  let cookieName =
-          //   "user=" + userLocalStorage + ";" + "domain=mytechie.pro;";
-          // document.cookie = cookieName;
-          //
-          //
-
-          //Send signed up user to correct page (projects if "techie" user, "home" if client)
-          /*if (
-            JSON.parse(localStorage.getItem("user")!).userType == "Professional"
-          ) {
-            this.router.navigateByUrl("/projects").then(() => {
-              window.location.reload();
-            });
-          } else {
-            this.router.navigateByUrl("/").then(() => {
-              window.location.reload();
-            });
-          }*/
         },
-        // *old error message
-        // (error) => {
-        //   console.error("User signup failed", error);
-
-        //   this.translateService
-        //     .get("Message.SignUpFailure")
-        //     .pipe(first())
-        //     .subscribe((translation) => {
-        //       const config = new MatSnackBarConfig();
-        //       config.duration = Constants.ShortDuration;
-
-        //       this.snackBar.open(translation, "", config);
-        //     });
-        // }
         // *C-06: fix for error message
         (error) => {
           console.error("User signup failed", error);

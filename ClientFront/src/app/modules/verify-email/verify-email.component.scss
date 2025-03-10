@@ -1,0 +1,23 @@
+.verification-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+
+  .mat-spinner {
+    margin: 2rem auto;
+  }
+
+  .success-message {
+    color: #4caf50;
+    font-size: 1.2rem;
+    margin: 1.5rem 0;
+  }
+
+  .error-message {
+    color: #f44336;
+    font-size: 1.2rem;
+    margin: 1.5rem 0;
+  }
+}
