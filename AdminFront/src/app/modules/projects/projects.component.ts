@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { first, map, concatMap, take, tap, switchMap, catchError } from 'rxjs/operators';
+import { first, map, concatMap, take, tap, switchMap, catchError, finalize } from 'rxjs/operators';
 import { Project } from 'src/app/shared/models/project';
 import { User } from 'src/app/shared/models/user';
 import { ProjectService } from 'src/app/shared/services/project.service';
@@ -49,7 +49,10 @@ export class ProjectsComponent implements OnInit {
     private router: Router
   ) { }
 
+  public isLoading = false;
+
   public ngOnInit(): void {
+    this.isLoading = true;
     this.projectService
       .getAll()
       .pipe(first(), 
@@ -70,7 +73,12 @@ export class ProjectsComponent implements OnInit {
           const dateBCreated = b.createdAt ? new Date(b.createdAt).getTime() : 0;
           return dateBCreated - dateACreated;
         });
-      }))
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.changeDetectorRef.markForCheck();
+      })
+    )
       .subscribe((projects: ProjectWithUserNames[]) => {
         this.dataSourceProjectsWithNames = projects;
         
