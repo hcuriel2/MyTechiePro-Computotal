@@ -28,11 +28,20 @@ mat-sidenav {
   margin-left: 32px;
   display: flex;
   padding-left: 35px;
-  font-size: medium
+  font-size: medium;
+  overflow: auto; /* Add this to enable scrolling */
+  flex-direction: column; /* Add this to ensure proper content flow */
+  width: calc(100% - 48px); /* Add this to ensure proper width calculation */
 }
 
 mat-sidenav-container {
   height: calc(100vh - 65px);
+}
+
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 
