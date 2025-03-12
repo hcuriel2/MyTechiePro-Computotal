@@ -1,3 +1,16 @@
+::ng-deep .mat-tab-group .mat-tab-header {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+@mixin hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  -ms-overflow-style: none;  /* IE, Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .project-container {
   width: 100%;
   height: 90vh;
@@ -17,6 +30,8 @@
   border-radius: 40px !important;
   justify-content: center !important;
   align-items: center !important;
+  overflow: auto;
+  @include hide-scrollbar;
 }
 .button-container {
   padding-top: 1vh;
@@ -125,6 +140,7 @@
   // margin: 50px;
   overflow: auto;
   border-radius: 40px !important;
+  @include hide-scrollbar;
 }
 
 .blue {
@@ -362,12 +378,15 @@ h3.important {
 }
 
 h3.skills {
-  background-color: #f5f5f5;
-  padding: 8px 12px;
-  border-radius: 8px;
+  // background-color: #f5f5f5;
+  // padding: 8px 12px;
+  // border-radius: 8px;
   display: inline-block;
-  margin-top: 6%;
-  margin-bottom: 6%;
+  // margin-top: 6%;
+  // margin-bottom: 6%;
+  white-space: normal; 
+  word-wrap: break-word;
+  max-width: 100%; 
 }
 
 .important,
