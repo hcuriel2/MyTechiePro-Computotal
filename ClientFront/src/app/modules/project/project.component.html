@@ -1,6 +1,5 @@
-<br /><br />
 <div class="project-container">
-  <div class="content-container border rounded center">
+  <div class="content-container center">
     <mat-tab-group [(selectedIndex)]="activeTabIndex" mat-align-tabs="start">
       <!-- Overview Start -->
       <mat-tab label="{{ 'Dictionary.Overview' | translate }}">
@@ -20,49 +19,83 @@
             {{ "Estimated Price" | translate }}:
             {{ projectPrice }}
           </h3>
-          <h3 class="h3Details" *ngIf="project.state === 'Completed' || project.state === 'Paid'">
+          <h3
+            class="h3Details"
+            *ngIf="project.state === 'Completed' || project.state === 'Paid'"
+          >
             {{ "Label.BillingCost" | translate }}:
             {{ projectPrice }}
-            <div *ngIf="isCustomer && !project.priceConfirmed && project.clientResponse === null" class = "price-confirm">
-              <button mat-raised-button color="primary" class="confirm-btn" (click)="confirmPrice()">
+            <div
+              *ngIf="
+                isCustomer &&
+                !project.priceConfirmed &&
+                project.clientResponse === null
+              "
+              class="price-confirm action-buttons"
+            >
+              <button
+                mat-raised-button
+                color="primary"
+                class="confirm-btn"
+                (click)="confirmPrice()"
+              >
                 {{ "Confirm" | translate }}
               </button>
-              <button mat-raised-button color="warn" class="reject-btn" (click)="rejectPrice()">
+              <button
+                mat-raised-button
+                color="warn"
+                class="reject-btn"
+                (click)="rejectPrice()"
+              >
                 {{ "Reject" | translate }}
               </button>
             </div>
-            <span *ngIf="project.clientResponse" [ngClass]="{ 'text-success': project.clientResponse === 'confirmed', 'text-danger': project.clientResponse === 'rejected' }">
+            <span
+              *ngIf="project.clientResponse"
+              [ngClass]="{
+                'text-success': project.clientResponse === 'confirmed',
+                'text-danger': project.clientResponse === 'rejected'
+              }"
+            >
               ({{ project.clientResponse | titlecase | translate }})
             </span>
-            <button 
-            *ngIf="!isCustomer && project.clientResponse === 'rejected'"
-            mat-raised-button 
-            color="primary" 
-            class="reset-price-btn"
-            (click)="onResetPrice()"
-          >
-            Reset Price
-        </button>
-                 
+            <button
+              *ngIf="!isCustomer && project.clientResponse === 'rejected'"
+              mat-raised-button
+              color="primary"
+              class="btn-action reset-price-btn"
+              (click)="onResetPrice()"
+            >
+              Reset Price
+            </button>
           </h3>
-        <h3 class="h3Details" *ngIf="project.priceConfirmed">
-          {{ "Payment Status" | translate }}:
-          <span [ngClass]="getPaymentStatusClass(transaction?.status)">
-            {{ getPaymentStatusDisplay() | translate }}
-          </span>
-        </h3>
-        <button
-          class="completeJob"
-          mat-raised-button
-          *ngIf="isCustomer && project.state === 'Completed' && project.priceConfirmed"
-          (click)="onPayProject()"
-        >
-          <strong>{{ 'Make Payment' | translate }}</strong>
-        </button>
-      
-          <br />
+          <h3 class="h3Details" *ngIf="project.priceConfirmed">
+            {{ "Payment Status" | translate }}:
+            <span [ngClass]="getPaymentStatusClass(transaction?.status)">
+              {{ getPaymentStatusDisplay() | translate }}
+            </span>
+          </h3>
 
-          <h2 class="h3Details">
+          <div
+            class="action-buttons"
+            *ngIf="
+              isCustomer &&
+              project.state === 'Completed' &&
+              project.priceConfirmed
+            "
+          >
+            <button
+              class="btn-action"
+              mat-raised-button
+              (click)="onPayProject()"
+            >
+              <strong>{{ "Make Payment" | translate }}</strong>
+            </button>
+          </div>
+
+          <div class="section-divider"></div>
+
+          <h2 class="section-title">
             {{ "Project Details" | translate }}
           </h2>
           <h3 class="h3Details">
@@ -73,89 +106,80 @@
             {{ "Label.CreatedDate" | translate }}:
             {{ project.createdAt | date }}
           </h3>
-        
 
           <div *ngIf="isCustomer">
-            <hr />
+            <div class="section-divider"></div>
 
-            <h2 class="yourTechieLabel h3Details">
+            <h2 class="section-title">
               {{ "Label.YourTechie" | translate }}
             </h2>
-            <h3 class="techDetails">
+            <h3 class="detail-item">
               {{ "Dictionary.Name" | translate }}:
               {{ project.professional.firstName }}
               {{ project.professional.lastName }}
             </h3>
-            <h3 class="techDetails">
+            <h3 class="detail-item">
               {{ "Dictionary.Company" | translate }}:
               {{ project.professional.company }}
             </h3>
-            <h3 class="techDetails">
+            <h3 class="detail-item">
               {{ "Dictionary.Email" | translate }}:
               {{ project.professional.email }}
             </h3>
 
-            <!-- Adding Button to trigger modal -->
-            <!-- Inside project.component.html -->
-            <button
-              mat-raised-button
-              class="completeJob"
-              (click)="openReviewDialog()"
-            >
-              <strong>Rate your Techie</strong>
-            </button>
+            <div class="action-buttons">
+              <button
+                mat-raised-button
+                class="btn-action"
+                (click)="openReviewDialog()"
+              >
+                <strong>{{ "Rate your Techie" | translate }}</strong>
+              </button>
+            </div>
           </div>
 
           <div *ngIf="!isCustomer">
-            <hr />
+            <div class="section-divider"></div>
 
-            <h2 class="yourTechieLabel h3Details">
+            <h2 class="section-title">
               {{ "Label.YourCustomer" | translate }}
             </h2>
-            <h3 class="customerDetails">
+            <h3 class="detail-item">
               {{ "Dictionary.Name" | translate }}:
               {{ project.client.firstName }}
               {{ project.client.lastName }}
             </h3>
-            <h3 class="customerDetails">
+            <h3 class="detail-item">
               {{ "Dictionary.Company" | translate }}:
               {{ project.client.company }}
             </h3>
-            <h3 class="customerDetails">
+            <h3 class="detail-item">
               {{ "Dictionary.Email" | translate }}:
               {{ project.client.email }}
             </h3>
-          </div>
 
-          <button
-            class="reviewButton"
-            mat-raised-button
-            id="project-component-review-button"
-            aria-label="Search"
-            *ngIf="
-              isCustomer && project.state == 'Completed' && project.rating == 0
-            "
-            (click)="onReviewProject()"
-          >
-            <strong> {{ "Label.ReviewService" | translate }} </strong>
-          </button>
-          <button
-            class="startProject"
-            mat-raised-button
-            aria-label="Start Project"
-            *ngIf="!isCustomer && project.state == 'Requested'"
-            (click)="onStartProject()"
-          >
-            <strong> {{ "Message.StartProject" | translate }} </strong>
-          </button>
-          <button
-            class="markCompleted"
-            aria-label="Mark Project Completed"
-            *ngIf="!isCustomer && project.state == 'OnGoing'"
-            (click)="onCompleteProject()"
-          >
-            <strong>{{ "Message.MarkComplete" | translate }}</strong>
-          </button>
+            <div class="action-buttons">
+              <button
+                class="btn-action"
+                mat-raised-button
+                aria-label="Start Project"
+                *ngIf="project.state == 'Requested'"
+                (click)="onStartProject()"
+              >
+                <strong>{{ "Message.StartProject" | translate }}</strong>
+              </button>
+
+              <button
+                class="btn-action"
+                mat-raised-button
+                aria-label="Mark Project Completed"
+                *ngIf="project.state == 'OnGoing'"
+                (click)="onCompleteProject()"
+              >
+                <strong>{{ "Message.MarkComplete" | translate }}</strong>
+              </button>
+            </div>
+          </div>
         </div>
       </mat-tab>
 
@@ -171,29 +195,30 @@
             | {{ project.professional.company }}
           </h1>
           <h3 class="important">
-            <strong> {{ "Dictionary.Email" | translate }}: </strong>
+            <strong>{{ "Dictionary.Email" | translate }}:</strong>
             {{ project.professional.email }}
           </h3>
           <h3>
-            <strong> {{ "Dictionary.Address" | translate }}: </strong>
+            <strong>{{ "Dictionary.Address" | translate }}:</strong>
             {{ project.professional.address?.street }},
             {{ project.professional.address?.city }}
           </h3>
           <h3 class="important">
-            <strong> {{ "Dictionary.Phone" | translate }}: </strong>
+            <strong>{{ "Dictionary.Phone" | translate }}:</strong>
             {{ project.professional.phoneNumber }}
           </h3>
           <h3 class="important">
-            <strong> {{ "Dictionary.Rate" | translate }}: </strong>
+            <strong>{{ "Dictionary.Rate" | translate }}:</strong>
             {{ project.professional.unitPrice | currency }} per
             {{ project.professional.unitType }}
           </h3>
           <h3 class="skills">
-            <strong> {{ "Dictionary.Skills" | translate }}: </strong>
+            <strong>{{ "Dictionary.Skills" | translate }}:</strong>
             {{ proSkills }}
           </h3>
         </div>
       </mat-tab>
+
       <mat-tab *ngIf="!isCustomer" label="{{ 'Label.ClientInfo' | translate }}">
         <div class="tab-container">
           <h1>
@@ -214,54 +239,8 @@
             {{ "Dictionary.Phone" | translate }}:
             {{ project.client.phoneNumber }}
           </h3>
-          <!-- <h3>
-                        {{ 'Dictionary.Skills' | translate }}:
-                        {{ proSkills }}
-                    </h3> -->
         </div>
       </mat-tab>
-
-      <!-- Order Start -->
-      <!-- <mat-tab label="{{ 'Dictionary.Order' | translate }}">
-                <div>
-                    <h1>
-                        {{ 'Dictionary.BillingCost' | translate }}:
-                        {{ project.billingCost
-                        }}
-                    </h1>
-                    <h1>
-                        {{ 'Dictionary.State' | translate }}:
-                        {{ project.state }}
-                    </h1>
-                    <h1>
-                        Total Project Cost:
-                        ${{ project.projectCost }}
-                    </h1>
-                    <h1 *ngIf="project.state == 'Completed'">
-                        E-transfer Email: -
-                    </h1>
-
-                     <button
-                        mat-raised-button
-                        aria-label="Search"
-                        color="primary"
-                        *ngIf="project.state == 'Completed' && isCustomer"
-                    >
-                        {{ 'Dictionary.Pay' | translate }}
-                    </button> 
-
-                    <button
-                        mat-raised-button
-                        aria-label="Change Cost"
-                        color="primary"
-                        *ngIf="(project.state == 'Ongoing' || project.state == 'Completed' ||  project.state == 'Started') && !isCustomer"
-                        (click)="setProjectPayment()"
-                    >
-                        Change project cost
-                    </button>
-                </div>
-            </mat-tab>
-            -->
 
       <!-- Chatroom Start -->
       <mat-tab label="{{ 'Dictionary.Chatroom' | translate }}">
@@ -280,13 +259,13 @@
             </div>
           </div>
         </div>
-        <div class="d-flex flex-row justify-content-center">
-          <div [formGroup]="formGroup" class="searchbardiv ml-5 mr-2">
+        <div class="chat-input-container">
+          <div [formGroup]="formGroup" class="chat-input-field">
             <input
               type="text"
               formControlName="messageInput"
               placeholder="{{ 'Dictionary.send' | translate }}"
-              aria-label="Search"
+              aria-label="Message"
               class="chatbar"
               [(ngModel)]="message"
             />
@@ -294,8 +273,8 @@
 
           <button
             mat-raised-button
-            aria-label="Search"
-            class="search-btn"
+            aria-label="Send"
+            class="btn-action send-btn"
             (click)="onSubmit()"
           >
             {{ "Dictionary.send" | translate }}

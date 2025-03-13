@@ -20,9 +20,9 @@ import { ProjectService } from "src/app/shared/services/project.service";
 import { ProjectCompleteDialogComponent } from "./project-complete-dialog/project-complete-dialog.component";
 import { ProjectReviewDialogComponent } from "./project-review-dialog/project-review-dialog.component";
 import { ProjectStartDialogComponent } from "./project-start-dialog/project-start-dialog.component";
-import { TransactionService } from 'src/app/shared/services/transaction.service';
-import { Transaction } from 'src/app/shared/models/transaction';
-import { ProjectResetPriceDialogComponent } from './project-reset-price-dialog/project-reset-price-dialog.component';
+import { TransactionService } from "src/app/shared/services/transaction.service";
+import { Transaction } from "src/app/shared/models/transaction";
+import { ProjectResetPriceDialogComponent } from "./project-reset-price-dialog/project-reset-price-dialog.component";
 
 @Component({
   selector: "app-project",
@@ -99,7 +99,7 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
     }
   }
-  
+
   private fetchTransaction(): void {
     this.transactionService
       .getTransactionByProjectId(this.projectId!)
@@ -117,25 +117,24 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   public getPaymentStatusDisplay(): string {
-    return this.transaction?.status || 'Pending';
-  }
-  
-  public getPaymentStatusClass(status: string | undefined): string {
-    if (!status) {
-      return 'status-pending';
-    }
-    switch (status) {
-      case 'Pending':
-        return 'status-pending';
-      case 'completed':
-        return 'status-paid';
-      case 'failed':
-        return 'status-failed';
-      default:
-        return 'status-pending';
-    }
+    return this.transaction?.status || "Pending";
   }
 
+  public getPaymentStatusClass(status: string | undefined): string {
+    if (!status) {
+      return "status-pending";
+    }
+    switch (status) {
+      case "Pending":
+        return "status-pending";
+      case "completed":
+        return "status-paid";
+      case "failed":
+        return "status-failed";
+      default:
+        return "status-pending";
+    }
+  }
 
   private updateUIBasedOnUser(user: User | null): void {
     this.isCustomer = user?.userType === UserType.Client;
@@ -303,71 +302,80 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-
   public confirmPrice(): void {
     if (this.project) {
-      this.projectService.updateClientResponse(this.project._id, 'confirmed').pipe(first()).subscribe((updatedProject) => {
-        this.project = updatedProject;
-        this.changeDetectorRef.markForCheck();
-      });
+      this.projectService
+        .updateClientResponse(this.project._id, "confirmed")
+        .pipe(first())
+        .subscribe((updatedProject) => {
+          this.project = updatedProject;
+          this.changeDetectorRef.markForCheck();
+        });
     }
   }
 
   public rejectPrice(): void {
     if (this.project) {
-      this.projectService.updateClientResponse(this.project._id, 'rejected').pipe(first()).subscribe((updatedProject) => {
-        this.project = updatedProject;
-        this.changeDetectorRef.markForCheck();
-      });
+      this.projectService
+        .updateClientResponse(this.project._id, "rejected")
+        .pipe(first())
+        .subscribe((updatedProject) => {
+          this.project = updatedProject;
+          this.changeDetectorRef.markForCheck();
+        });
     }
   }
   public onResetPrice(): void {
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.autoFocus = true;
-  
-      this.dialog
-          .open(ProjectResetPriceDialogComponent, dialogConfig)
-          .afterClosed()
-          .subscribe((data: any) => {
-              if (data && data.totalCost) {
-                  this.projectService
-                      .resetProjectPrice(this.project._id, data.totalCost)
-                      .pipe(first())
-                      .subscribe({
-                          next: (updatedProject) => {
-                              this.project = updatedProject;
-                              this.projectPrice = `$${data.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                              this.project.clientResponse = null;
-                              this.changeDetectorRef.markForCheck();
-                          },
-                          error: (error) => {
-                              console.error('Error resetting price:', error);
-                          }
-                      });
-              }
-          });
-        }
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
 
-        //Niko: Initiate payment by calling the payProject service and redirecting to Stripe checkout.
-        public onPayProject(): void {
-          if (!this.project) {
-            console.error('Project not found');
-            return;
-          }
-          this.projectService.payProject(this.project._id)
+    this.dialog
+      .open(ProjectResetPriceDialogComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((data: any) => {
+        if (data && data.totalCost) {
+          this.projectService
+            .resetProjectPrice(this.project._id, data.totalCost)
             .pipe(first())
             .subscribe({
-              next: (response) => {
-                console.log('Stripe checkout URL:', response.url);
-                if (response.url) {
-                  window.location.href = response.url;
-                } else {
-                  console.error('No Stripe URL returned from server');
-                }
+              next: (updatedProject) => {
+                this.project = updatedProject;
+                this.projectPrice = `$${data.totalCost.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`;
+                this.project.clientResponse = null;
+                this.changeDetectorRef.markForCheck();
               },
               error: (error) => {
-                console.error('Payment failed:', error);
-              }
+                console.error("Error resetting price:", error);
+              },
             });
         }
+      });
+  }
+
+  //Niko: Initiate payment by calling the payProject service and redirecting to Stripe checkout.
+  public onPayProject(): void {
+    if (!this.project) {
+      console.error("Project not found");
+      return;
+    }
+    this.projectService
+      .payProject(this.project._id)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          console.log("Stripe checkout URL:", response.url);
+          if (response.url) {
+            window.location.href = response.url;
+          } else {
+            console.error("No Stripe URL returned from server");
+          }
+        },
+        error: (error) => {
+          console.error("Payment failed:", error);
+        },
+      });
+  }
 }
