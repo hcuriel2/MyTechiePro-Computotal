@@ -177,6 +177,13 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     const blankProject = new Project();
     blankProject.serviceName = "No project to show";
 
+    // 对所有项目按dateUpdated排序（已修改）
+    projects.sort((a, b) => {
+      const dateA = new Date(a.updatedAt || a.createdAt || 0);
+      const dateB = new Date(b.updatedAt || b.createdAt || 0);
+      return dateB.getTime() - dateA.getTime(); // 降序排列
+    });
+
     const newProjects = projects.filter((pro) => pro.state === "Requested");
     const onGoingProjects = projects.filter((pro) => pro.state === "OnGoing");
     const completedOrPaid = projects.filter(
