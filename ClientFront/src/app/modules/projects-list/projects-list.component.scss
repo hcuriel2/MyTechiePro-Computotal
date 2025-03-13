@@ -9,10 +9,11 @@
 }
 
 /* Typography */
-.header {
+.header,
+.header > h1 {
   font-size: 1.75rem;
   color: #193e83;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem !important;
   text-align: center;
 }
 
@@ -76,6 +77,12 @@
 .warn-button {
   background-color: #f44336;
   color: white;
+}
+
+.warn-button:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .action-buttons {
@@ -178,7 +185,9 @@ td {
 
 /* Status toggle */
 .status {
-  margin-bottom: 2vh;
+  margin-top: 1vh;
+  margin-bottom: 0;
+  font-size: 1rem;
 }
 
 /* Responsive styles */
@@ -189,8 +198,9 @@ td {
     border-radius: 12px;
   }
 
-  .header {
-    font-size: 1.5rem;
+  .header,
+  .header > h1 {
+    font-size: 1.5rem !important;
     margin-bottom: 1.5rem;
   }
 
@@ -243,9 +253,9 @@ td {
     border-radius: 8px;
   }
 
-  .header {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+  .header,
+  .header > h1 {
+    font-size: 1.2rem !important;
   }
 
   th,
@@ -279,5 +289,30 @@ td {
 
   .mat-column-status {
     display: none;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  width: 100%;
+
+  .loading-text {
+    margin-top: 16px;
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .loading-container {
+    min-height: 200px;
+
+    .loading-text {
+      font-size: 14px;
+    }
   }
 }

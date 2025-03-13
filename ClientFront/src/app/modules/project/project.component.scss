@@ -320,8 +320,8 @@ h3 {
   }
 
   .action-buttons {
-    flex-direction: column;
-    max-width: 100px;
+    // flex-direction: column;
+    // max-width: 100px;
     margin: 15px auto;
   }
 }
@@ -370,5 +370,48 @@ h3 {
 
   .chat-log {
     height: 40vh;
+  }
+}
+
+.back-nav {
+  padding: 8px 0;
+  margin-bottom: 16px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  color: #225d9c;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  mat-icon {
+    margin-right: 8px;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    line-height: 18px;
+  }
+
+  &:hover {
+    background-color: rgba(34, 93, 156, 0.08);
+  }
+}
+
+/* For mobile devices */
+@media (max-width: 768px) {
+  .back-nav {
+    padding: 4px 0;
+    margin-bottom: 12px;
+  }
+
+  .back-button {
+    padding: 2px 8px;
+
+    span {
+      font-size: 14px;
+    }
   }
 }

@@ -57,6 +57,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   public dataSourceRequest: MatTableDataSource<Project>;
   public dataSourceCompleted: MatTableDataSource<Project>;
   public dataSourceTechie: MatTableDataSource<Project>;
+  isLoading: boolean;
 
   constructor(
     private router: Router,
@@ -69,6 +70,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       this.user = u;
     });
     this.subscriptions.push(userSub);
+    this.isLoading = true;
   }
 
   // Listen for window resize events to adjust columns
@@ -160,6 +162,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       observable = this.projectService.getByProfessionalId(user._id);
       this.changeDetectorRef.detectChanges();
     } else {
+      this.isLoading = false;
       return;
     }
 
@@ -168,6 +171,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       .subscribe((projects: Project[]) => {
         this.projects = projects;
         this.setupDataSource(projects);
+        this.isLoading = false;
         this.changeDetectorRef.detectChanges();
       });
     this.subscriptions.push(projectsSub);

@@ -1,6 +1,10 @@
 <br /><br />
 <div class="content-container">
-  <div *ngIf="isCustomer">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="loading-text">{{ "Loading projects..." | translate }}</p>
+  </div>
+  <div *ngIf="isCustomer && !isLoading">
     <h1 class="mat-display-1 header">
       <strong> {{ user?.firstName }}'s Projects </strong>
     </h1>
@@ -240,7 +244,7 @@
 
   <!-- Start of tech view -->
 
-  <div *ngIf="!isCustomer">
+  <div *ngIf="!isCustomer && !isLoading">
     <div class="header">
       <h1 class="mat-display-1 head-title">
         <strong> {{ user?.firstName }}'s Projects </strong>
@@ -465,7 +469,7 @@
                     >
                       {{
                         !isCustomer && element.clientResponse === "rejected"
-                          ? "Action Required"
+                          ? "TO DO"
                           : "DETAILS"
                       }}
                     </button>

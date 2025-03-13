@@ -1,5 +1,11 @@
 <div class="project-container">
   <div class="content-container center">
+    <div class="back-nav">
+      <button mat-button class="back-button" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        <span>{{ "Back to Projects" | translate }}</span>
+      </button>
+    </div>
     <mat-tab-group [(selectedIndex)]="activeTabIndex" mat-align-tabs="start">
       <!-- Overview Start -->
       <mat-tab label="{{ 'Dictionary.Overview' | translate }}">
@@ -59,6 +65,8 @@
             >
               ({{ project.clientResponse | titlecase | translate }})
             </span>
+          </h3>
+          <div class="action-buttons">
             <button
               *ngIf="!isCustomer && project.clientResponse === 'rejected'"
               mat-raised-button
@@ -68,7 +76,7 @@
             >
               Reset Price
             </button>
-          </h3>
+          </div>
           <h3 class="h3Details" *ngIf="project.priceConfirmed">
             {{ "Payment Status" | translate }}:
             <span [ngClass]="getPaymentStatusClass(transaction?.status)">

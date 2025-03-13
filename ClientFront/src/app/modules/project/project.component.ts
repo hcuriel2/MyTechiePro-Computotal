@@ -11,6 +11,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
+import { Location } from "@angular/common";
 import { first, takeUntil } from "rxjs/operators";
 import { UserType } from "src/app/shared/enums/user-type.enum";
 import { Project } from "src/app/shared/models/project";
@@ -55,7 +56,8 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     private authService: AuthService,
     private projectService: ProjectService,
     private transactionService: TransactionService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private location: Location
   ) {
     this.destroyed = new Subject<void>();
     const blankUser: User = new User();
@@ -74,6 +76,10 @@ export class ProjectComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.formGroup = new FormGroup({
       messageInput: this.messageInput,
     });
+  }
+
+  public goBack(): void {
+    this.location.back();
   }
 
   public ngOnInit(): void {
