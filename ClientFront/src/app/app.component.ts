@@ -31,6 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
   userLongitude: string = "";
   isProfessional: boolean = false;
   isMenuOpen: boolean = false;
+  currentYear: number = new Date().getFullYear();
 
   constructor(
     private dialog: MatDialog,
