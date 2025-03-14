@@ -1,236 +1,77 @@
+/* Base container styling */
 .content-container {
-  max-width:950px;
-  margin: 20px auto; 
+  max-width: 1200px;
+  margin: 24px auto;
   padding: 2rem;
   background-color: #fff;
-  border-radius: 45px !important; 
-  border: 1px solid #c0c0c0 !important; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  overflow: hidden; 
+  border-radius: 16px;
+  border: none;
 }
 
-
-.header {
-  font-size: 2rem;
+/* Typography */
+.header,
+.header > h1 {
+  font-size: 1.75rem;
   color: #193e83;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem !important;
   text-align: center;
 }
 
-
-.mat-card {
-  box-shadow: none;
-
-  overflow: hidden; 
-
+/* Button styling */
+.btn,
+.btnProfiles,
+.btnPayment {
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  min-width: 90px;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
 }
 
-
-.mat-tab-group {
-
-  overflow: hidden; 
+.btn {
+  margin: 0 8px;
+  border: none;
+  font-size: 0.85rem;
 }
-
-
-.mat-elevation-z8 {
-  box-shadow: none;
-}
-
-.status {
-  margin-bottom: 2vh;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  padding: 12px 8px !important; 
-  flex: 1 !important; 
-  justify-content: center !important; 
-  text-align: center !important; 
-}
-
-th {
-  // background-color: #dcdcdc;
-  color: #000000;
-  font-weight: bold;
-}
-
-
-
-::ng-deep .mat-header-cell {
-  border-color: transparent !important;
-}
-
-::ng-deep .mat-header-cell {
-  border-bottom-color: transparent !important;
-}
-
-::ng-deep .mat-tab-group .mat-table th.mat-header-cell {
-  border-bottom: none !important; 
-}
-
-
-::ng-deep .mat-tab-group .mat-tab-label,
-::ng-deep .mat-tab-group .mat-tab-link {
-    border-bottom: 2px solid transparent;
-}
-::ng-deep .mat-tab-group .mat-ink-bar {
-  background-color: transparent; 
-}
-
-
-th, td {
-  // text-align: left;
-  // padding: 12px;
-  // border-bottom: 1px solid #ddd;
-  padding: 12px 8px !important; 
-  flex: 1 !important; 
-  justify-content: center !important; 
-  text-align: center !important; 
-  border-radius: 40px !important;
-}
-
 
 .btnProfiles {
   background-color: #225d9c;
   color: white;
-  padding: 4px 10px;
   border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
-  font-size: 0.8rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-block;
-  min-width: 80px;
 }
 
-.btnProfiles:hover, .btnProfiles:focus {
-  background-color: #07213b;
+.btnProfiles:hover,
+.btnProfiles:focus {
+  background-color: #17396f;
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .btnProfiles:active {
-  background-image: linear-gradient(145deg, #1e77a8 0%, #225d9c 100%);
   transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-
-::ng-deep .mat-ink-bar {
-  display: none !important;
-}
-
-
-.mat-form-field {
-  width: 100%;
-  margin-bottom: 1rem;
-
-}
-
-
-input.mat-input-element {
-  padding: 8px;
-  border: 1px solid #ccc;
-
-}
-
-::ng-deep .mat-tab-label {
-  flex: 1; 
-  justify-content: center; 
-  text-align: center; 
-  border-radius: 40px !important;
-}
-
-::ng-deep .mat-tab-label.mat-tab-label-active {
-  background-color:  rgb(23, 57, 111) !important; 
-  color: white !important;
-}
-
-
-::ng-deep .mat-tab-label {
-  padding: 12px 8px; 
-  font-size: 20px; 
-  // border-radius: 40px !important;
-}
-.mat-tab-label {
-  font-weight: 500;
-
-}
-
-
-// ::ng-deep .mat-tab-body-wrapper {
-//   padding-top: 40px; 
-// }
-
-
-
-.border.rounded.center {
-
-  overflow: hidden; 
-}
-
-::ng-deep #tabgroup .mat-tab-group {
-  width: 100%; 
-  box-sizing: border-box; 
-  overflow: hidden; 
-}
-
-::ng-deep #tabgroup .mat-elevation-z8.tableStyle {
-
-  overflow: hidden; 
-}
-
-.tableStyle {
-  width: 100%; 
-  max-width: 100%; 
-}
-
-
-
-::ng-deep .mat-header-cell {
-  font-size: 15px; 
-  padding: 8px; 
-}
-
-.border.rounded.center {
-  overflow: hidden; 
-}
-
-::ng-deep .mat-cell, ::ng-deep .mat-header-cell {
-  // overflow: hidden;
-  // text-overflow: ellipsis;
-  white-space: nowrap; 
-}
-
-
-.btnPayment{
-  @extend .btnProfiles;
+.btnPayment {
   background-color: white;
-  color:#225d9c;
+  color: #225d9c;
+  border: 1px solid #225d9c;
 }
 
-.btnPayment:hover, .btnPayment:focus {
-  background-color: #c3ccd6;
-}
-
-
-@media (max-width: 768px) {
-  .header {
-      font-size: 1.2rem; 
-  }
-
-  th, td {
-      padding: 8px;
-  }
-
-  .content-container {
-      padding: 1rem; 
-      margin: 10px auto; 
-  }
+.btnPayment:hover,
+.btnPayment:focus {
+  background-color: #f0f5fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .warn-button {
@@ -238,4 +79,240 @@ input.mat-input-element {
   color: white;
 }
 
+.warn-button:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
 
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  color: #444;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+th,
+td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+/* Tab styling */
+.mat-tab-group,
+.mat-tab-header,
+.mat-tab-label-container,
+.mat-tab-labels {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.mat-tab-header {
+  border-bottom: none !important;
+  background-color: transparent !important;
+  overflow: hidden !important;
+}
+
+.mat-tab-header-pagination {
+  display: none !important;
+}
+
+.mat-tab-label-container {
+  display: flex !important;
+}
+
+.mat-tab-labels {
+  display: flex !important;
+}
+
+.mat-tab-label {
+  flex: 1 !important;
+  padding: 0 !important;
+  height: 48px !important;
+  opacity: 1 !important;
+  transition: all 0.3s ease !important;
+  justify-content: center !important;
+  border-radius: 4px 4px 0 0 !important;
+  margin: 0 !important;
+}
+
+::ng-deep .mat-tab-header .mat-ripple {
+  display: none !important;
+}
+
+.mat-tab-label:focus {
+  outline: none !important;
+  background-color: transparent !important;
+}
+
+.mat-tab-body-wrapper {
+  background-color: transparent !important;
+}
+
+.mat-tab-body-content {
+  background-color: white !important;
+}
+
+/* Border container */
+.border.rounded.center {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Handling labels for responsive design */
+.full-label {
+  display: inline;
+}
+
+.short-label {
+  display: none;
+}
+
+/* Status toggle */
+.status {
+  margin-top: 1vh;
+  margin-bottom: 0;
+  font-size: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .content-container {
+    margin: 16px auto;
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .header,
+  .header > h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 1.5rem;
+  }
+
+  th,
+  td {
+    padding: 10px 12px;
+  }
+
+  .full-label {
+    display: none;
+  }
+
+  .short-label {
+    display: inline;
+  }
+
+  .mat-tab-label {
+    padding: 0 !important;
+    height: 40px !important;
+  }
+
+  /* Adjust actions column width */
+  .mat-column-actions {
+    width: 100px;
+  }
+
+  /* Hide less important columns */
+  .mat-column-dateCreated,
+  .mat-column-dateCompleted {
+    display: none;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+    align-items: stretch;
+  }
+
+  .btnProfiles,
+  .btnPayment {
+    width: 100%;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    margin: 8px auto;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .header,
+  .header > h1 {
+    font-size: 1.2rem !important;
+  }
+
+  th,
+  td {
+    padding: 8px;
+  }
+
+  .mat-tab-label {
+    height: 36px !important;
+  }
+
+  .btn,
+  .btnProfiles,
+  .btnPayment {
+    font-size: 0.75rem;
+    min-width: 70px;
+  }
+
+  /* Make buttons stack on small screens */
+  td .btnProfiles,
+  td .btnPayment {
+    display: block;
+    width: 100%;
+  }
+
+  .mat-tab-label-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mat-column-status {
+    display: none;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  width: 100%;
+
+  .loading-text {
+    margin-top: 16px;
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .loading-container {
+    min-height: 200px;
+
+    .loading-text {
+      font-size: 14px;
+    }
+  }
+}

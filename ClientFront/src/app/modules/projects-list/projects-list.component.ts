@@ -1,255 +1,256 @@
 import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    OnInit,
-} from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { UserType } from 'src/app/shared/enums/user-type.enum';
-import { Project } from 'src/app/shared/models/project';
-import { User } from 'src/app/shared/models/user';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { ProjectService } from 'src/app/shared/services/project.service';
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  OnDestroy,
+  HostListener,
+} from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { Router } from "@angular/router";
+import { Observable, Subscription } from "rxjs";
+import { first } from "rxjs/operators";
+import { MAT_RIPPLE_GLOBAL_OPTIONS } from "@angular/material/core";
+import { UserType } from "src/app/shared/enums/user-type.enum";
+import { Project } from "src/app/shared/models/project";
+import { User } from "src/app/shared/models/user";
+import { AuthService } from "src/app/shared/services/auth.service";
+import { ProjectService } from "src/app/shared/services/project.service";
 
 @Component({
-    selector: 'app-projects-list',
-    templateUrl: './projects-list.component.html',
-    styleUrls: ['./projects-list.component.scss'],
-    //changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "app-projects-list",
+  templateUrl: "./projects-list.component.html",
+  styleUrls: ["./projects-list.component.scss"],
+  encapsulation: ViewEncapsulation.None, // Use None to allow styles to affect deep components
+  providers: [
+    { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: { disabled: true } }, // Disable ripple effects globally
+  ],
 })
-export class ProjectsListComponent implements OnInit {
+export class ProjectsListComponent implements OnInit, OnDestroy {
+  public isCustomer: boolean = true;
+  public isActive: boolean = false;
+  public user: User | null;
+  public projects: Project[] = [];
+  public project: Project | null = null;
+  private subscriptions: Subscription[] = [];
 
-    public isCustomer: boolean = true;
-    public isActive: boolean = false;
-    public user: User | null;
-    public projects: Project[] = [];
-    public project: Project | null = null;
+  // Default columns for desktop view
+  displayedColumnsOngoing: string[] = [
+    "serviceName",
+    "dateCreated",
+    "dateUpdated",
+    "actions",
+  ];
 
-    displayedColumns: string[] = [
-        'serviceName',
-        'status',
-        'dateCreated',
-        'dateCompleted',
-        'actions'    
-    ];
-    displayedColumnsRequest: string[] = [
-        'serviceName',
-        'dateCreated',
-        'actions'
-    ];
+  displayedColumnsCompleted: string[] = [
+    "serviceName",
+    "status",
+    "dateCreated",
+    "dateUpdated",
+    "actions",
+  ];
 
-    public dataSource: MatTableDataSource<Project>;
-    public dataSourceRequest: MatTableDataSource<Project>;
-    public dataSourceCompleted: MatTableDataSource<Project>;
-    public dataSourceTechie: MatTableDataSource<Project>;
+  displayedColumnsRequest: string[] = ["serviceName", "dateCreated", "actions"];
 
-    constructor(
-        private router: Router,
-        private authService: AuthService,
-        private projectService: ProjectService,
-        private changeDetectorRef: ChangeDetectorRef
-    ) {
-        this.authService.user.subscribe((u: User | null) => {
-            this.isCustomer = u?.userType === UserType.Client;
-            this.user = u;
-        });
+  public dataSource: MatTableDataSource<Project>;
+  public dataSourceRequest: MatTableDataSource<Project>;
+  public dataSourceCompleted: MatTableDataSource<Project>;
+  public dataSourceTechie: MatTableDataSource<Project>;
+  isLoading: boolean;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private projectService: ProjectService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
+    const userSub = this.authService.user.subscribe((u: User | null) => {
+      this.isCustomer = u?.userType === UserType.Client;
+      this.user = u;
+    });
+    this.subscriptions.push(userSub);
+    this.isLoading = true;
+  }
+
+  // Listen for window resize events to adjust columns
+  @HostListener("window:resize", ["$event"])
+  onResize() {
+    this.adjustColumnsForScreenSize();
+  }
+
+  public ngOnInit(): void {
+    // Initial column adjustment
+    this.adjustColumnsForScreenSize();
+
+    const sessionSub = this.authService.checkSession().subscribe({
+      next: (user) => {
+        this.user = user;
+        this.authService.setUserValue(user);
+        this.subscribeToUserChanges();
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error) => {
+        console.error("Error fetching user", error);
+      },
+    });
+    this.subscriptions.push(sessionSub);
+  }
+
+  public ngOnDestroy(): void {
+    // Clean up all subscriptions to prevent memory leaks
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  // Adjust columns based on screen size for better mobile experience
+  private adjustColumnsForScreenSize(): void {
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      // Simplified columns for mobile view
+      this.displayedColumnsOngoing = ["serviceName", "actions"];
+      this.displayedColumnsCompleted = ["serviceName", "status", "actions"];
+      this.displayedColumnsRequest = ["serviceName", "actions"];
+    } else {
+      // Full columns for desktop view
+      this.displayedColumnsOngoing = [
+        "serviceName",
+        "dateCreated",
+        "dateUpdated",
+        "actions",
+      ];
+      this.displayedColumnsCompleted = [
+        "serviceName",
+        "status",
+        "dateCreated",
+        "dateUpdated",
+        "actions",
+      ];
+      this.displayedColumnsRequest = ["serviceName", "dateCreated", "actions"];
     }
+    // Force change detection to update the view
+    this.changeDetectorRef.detectChanges();
+  }
 
-
-    public ngOnInit(): void {
-        
-        this.authService.checkSession().subscribe({
-            next: (user) => {
-                
-                this.user = user;
-                this.authService.setUserValue(user);
-                this.subscribeToUserChanges();
-                this.changeDetectorRef.detectChanges();
-            },
-            error: (error) => {
-                console.error('Error fetching user', error);
-            }
-        })
-    }
-
-    private subscribeToUserChanges(): void {
-        this.authService.user.subscribe({
-          next: (user) => {
-            
-            this.user = user;
-            if (user?.userType === 'Professional') {
-              this.isCustomer = false;
-              this.fetchProjects(user);
-            } else if (user?.userType === 'Client') {
-              this.isCustomer = true;
-              this.fetchProjects(user);
-            }
-            this.changeDetectorRef.detectChanges();
-          },
-          error: (error) => {
-            console.error('Unexpected error in user subscription', error);
-          }
-        })
-    }
-      
-
-    private fetchProjects(user: User | null): void {
-        
-        let observable: Observable<Project[]>;
-      
-        if (user?.userType === UserType.Client) {
-          observable = this.projectService.getByClientId(user._id);
-          this.changeDetectorRef.detectChanges();
-        } else if (user?.userType === UserType.Professional){
-          observable = this.projectService.getByProfessionalId(user._id);
-          this.changeDetectorRef.detectChanges();
-        } else {
-          return;  
+  private subscribeToUserChanges(): void {
+    const userChangeSub = this.authService.user.subscribe({
+      next: (user) => {
+        this.user = user;
+        if (user?.userType === "Professional") {
+          this.isCustomer = false;
+          this.fetchProjects(user);
+        } else if (user?.userType === "Client") {
+          this.isCustomer = true;
+          this.fetchProjects(user);
         }
-        
-        observable.pipe(first()).subscribe((projects: Project[]) => {
-          this.projects = projects;
-          this.setupDataSource(projects);
-          this.changeDetectorRef.detectChanges(); 
-        });
-      }
-      
-      private setupDataSource(projects: Project[]): void {
-        const blankProject = new Project();
-        blankProject.serviceName = 'No project to show';
-      
-        const newProjects = projects.filter((pro) => pro.state === 'Requested');
-        const onGoingProjects = projects.filter((pro) => pro.state === 'OnGoing');
-        const completedOrPaid = projects.filter((pro) => pro.state === 'Completed' || pro.state === 'Paid');
-      
-        // this.dataSourceRequest = new MatTableDataSource(newProjects.length !== 0 ? newProjects : [blankProject]);
-        // this.dataSource = new MatTableDataSource(onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]);
-        // this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]);
-      
-        this.dataSourceRequest = new MatTableDataSource(newProjects.length > 0 ? newProjects : [blankProject]);
-        this.dataSource = new MatTableDataSource(onGoingProjects.length > 0 ? onGoingProjects : [blankProject]);
-        this.dataSourceCompleted = new MatTableDataSource(completedOrPaid.length > 0 ? completedOrPaid : [blankProject]);
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error) => {
+        console.error("Unexpected error in user subscription", error);
+      },
+    });
+    this.subscriptions.push(userChangeSub);
+  }
 
-        
+  private fetchProjects(user: User | null): void {
+    let observable: Observable<Project[]>;
 
-
-        this.changeDetectorRef.markForCheck();  // Tell Angular to re-check the state.
-      }
-      
-    
-    /*
-    public ngOnInit(): void {
-        
-        //this.authService.checkSession().subscribe((user: User | null) => {
-            this.authService.user.subscribe((user: User | null) => {
-
-            this.user = user;
-            this.changeDetectorRef.detectChanges();
-
-            if (user?.userType == 'Professional') {
-                const root = document.documentElement;
-                root.style.setProperty('--background-color', 'red');
-            } else {
-                const root = document.documentElement;
-                root.style.setProperty('--background-color', 'blue');
-            }
-        })
-
-
-        let observable: Observable<Project[]>;
-        if (this.isCustomer) {
-            observable = this.projectService.getByClientId(
-                this.user?._id || ''
-            );
-        } else {
-            observable = this.projectService.getByProfessionalId(
-                this.user?._id || ''
-            );      
-        }
-        observable.pipe(first()).subscribe((projects: Project[]) => {
-            this.projects = projects;
-            const blankProject = new Project();
-            blankProject.serviceName = 'No project to show';
-
-            const newProjects = this.projects.filter(
-                (pro) => pro.state === 'Requested'
-            );
-
-            const onGoingProjects = this.projects.filter(
-                (pro) => pro.state === 'OnGoing'
-            );
-
-            const completedOrPaid = this.projects.filter(
-                (pro) => (pro.state === 'Completed' || pro.state === 'Paid')
-            );
-
-
-            
-
-            this.dataSourceRequest = new MatTableDataSource(
-                newProjects.length !== 0 ? newProjects : [blankProject]
-            );
-            this.dataSource = new MatTableDataSource(
-                onGoingProjects.length !== 0 ? onGoingProjects : [blankProject]
-            );
-
-            this.dataSourceCompleted = new MatTableDataSource(
-                completedOrPaid.length !== 0 ? completedOrPaid : [blankProject]
-            );
-
-            this.changeDetectorRef.markForCheck();
-        });
-    }*/
-
-    public applyFilterCompletedClient(event: Event): void {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSourceCompleted.filter = filterValue.trim().toLowerCase();
+    if (user?.userType === UserType.Client) {
+      observable = this.projectService.getByClientId(user._id);
+      this.changeDetectorRef.detectChanges();
+    } else if (user?.userType === UserType.Professional) {
+      observable = this.projectService.getByProfessionalId(user._id);
+      this.changeDetectorRef.detectChanges();
+    } else {
+      this.isLoading = false;
+      return;
     }
 
-    public applyFilterOngoingClient(event: Event): void {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
+    const projectsSub = observable
+      .pipe(first())
+      .subscribe((projects: Project[]) => {
+        this.projects = projects;
+        this.setupDataSource(projects);
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      });
+    this.subscriptions.push(projectsSub);
+  }
+
+  private setupDataSource(projects: Project[]): void {
+    const blankProject = new Project();
+    blankProject.serviceName = "No project to show";
+
+    projects.sort((a, b) => {
+      const dateA = new Date(a.updatedAt || a.createdAt || 0);
+      const dateB = new Date(b.updatedAt || b.createdAt || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    const newProjects = projects.filter((pro) => pro.state === "Requested");
+    const onGoingProjects = projects.filter((pro) => pro.state === "OnGoing");
+    const completedOrPaid = projects.filter(
+      (pro) => pro.state === "Completed" || pro.state === "Paid"
+    );
+    this.dataSourceRequest = new MatTableDataSource(
+      newProjects.length > 0 ? newProjects : [blankProject]
+    );
+    this.dataSource = new MatTableDataSource(
+      onGoingProjects.length > 0 ? onGoingProjects : [blankProject]
+    );
+    this.dataSourceCompleted = new MatTableDataSource(
+      completedOrPaid.length > 0 ? completedOrPaid : [blankProject]
+    );
+
+    this.changeDetectorRef.markForCheck(); // Tell Angular to re-check the state
+  }
+
+  public applyFilterCompletedClient(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSourceCompleted.filter = filterValue.trim().toLowerCase();
+  }
+
+  public applyFilterOngoingClient(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  public applyFilterTechie(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  public goToProject(projectID: number): void {
+    var routeString = "/project/" + projectID;
+    this.router.navigate([routeString]);
+  }
+
+  public toggleView(): void {
+    this.isCustomer = !this.isCustomer;
+  }
+
+  // Initiate payment by calling the payProject service and redirecting to Stripe checkout
+  public onPayProject(projectId: string): void {
+    if (!projectId) {
+      console.error("Project ID is missing");
+      return;
     }
-
-    public applyFilterTechie(event: Event): void {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
-    }
-
-    public goToProject(projectID: number): void {
-        
-        var routeString = '/project/' + projectID;
-        this.router.navigate([routeString]);
-    }
-
-    public toggleView(): void {
-        this.isCustomer = !this.isCustomer;
-    }
-
-
-    //Niko: Initiate payment by calling the payProject service and redirecting to Stripe checkout.
-    public onPayProject(projectId: string): void {
-      if (!projectId) {
-        console.error('Project ID is missing');
-        return;
-      }
-      this.projectService.payProject(projectId)
-        .pipe(first())
-        .subscribe({
-          next: (response) => {
-            console.log('Stripe checkout URL:', response.url);
-            if (response.url) {
-              window.location.href = response.url;
-            } else {
-              console.error('No Stripe URL returned from server');
-            }
-          },
-          error: (error) => {
-            console.error('Error paying project', error);
+    const paymentSub = this.projectService
+      .payProject(projectId)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          console.log("Stripe checkout URL:", response.url);
+          if (response.url) {
+            window.location.href = response.url;
+          } else {
+            console.error("No Stripe URL returned from server");
           }
-        });
-    }
+        },
+        error: (error) => {
+          console.error("Error paying project", error);
+        },
+      });
+    this.subscriptions.push(paymentSub);
+  }
 }
