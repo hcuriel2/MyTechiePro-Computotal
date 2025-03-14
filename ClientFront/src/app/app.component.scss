@@ -1,11 +1,11 @@
-@import "../assets/scss/computotal-theme.scss";
-@import "../../../ClientFront/node_modules/bootstrap/scss/bootstrap";
+@import '../assets/scss/computotal-theme.scss';
+@import '../../../ClientFront/node_modules/bootstrap/scss/bootstrap';
 
 $primary-color: mat-color($computotal-app-primary);
 
 :host {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-size: 14px;
   color: #333;
   box-sizing: border-box;
@@ -103,6 +103,10 @@ button {
 
 // Footer
 footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   margin-top: auto;
   padding: 0.75rem 1rem;
   background: white !important;
