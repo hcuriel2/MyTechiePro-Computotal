@@ -13,7 +13,7 @@
         (click)="routeBasedOnUser()"
         class="p-0"
       >
-        <h5 id="app-title" class="mb-0">{{ "App.Title" | translate }}</h5>
+        <h5 id="app-title" class="mb-0">{{ 'App.Title' | translate }}</h5>
       </button>
 
       <!-- User Menu Dropdown when logged in -->
@@ -43,10 +43,10 @@
             <label>Your Profile</label>
           </button>
           <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
-            {{ "Label.JoinPro" | translate }}
+            {{ 'Label.JoinPro' | translate }}
           </button>
           <button mat-menu-item (click)="signOut()">
-            {{ "Dictionary.SignOut" | translate }}
+            {{ 'Dictionary.SignOut' | translate }}
           </button>
         </mat-menu>
       </div>
@@ -55,10 +55,10 @@
       <div *ngIf="!user" class="d-flex align-items-center">
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="signIn()">
-            {{ "Dictionary.SignIn" | translate }}
+            {{ 'Dictionary.SignIn' | translate }}
           </button>
           <button mat-menu-item (click)="signUp()">
-            {{ "Dictionary.SignUp" | translate }}
+            {{ 'Dictionary.SignUp' | translate }}
           </button>
         </mat-menu>
 
@@ -70,7 +70,7 @@
             class="d-flex align-items-center"
           >
             <span class="d-sm-inline mr-1">{{
-              "Dictionary.SignIn" | translate
+              'Dictionary.SignIn' | translate
             }}</span>
             <mat-icon>arrow_drop_down</mat-icon>
           </button>
@@ -79,7 +79,7 @@
             (click)="joinPro()"
             class="mx-1 d-none d-md-block"
           >
-            {{ "Label.JoinPro" | translate }}
+            {{ 'Label.JoinPro' | translate }}
           </button>
           <button
             mat-stroked-button
@@ -87,7 +87,7 @@
             class="mx-1"
             (click)="routeToContactUsPage()"
           >
-            {{ "Dictionary.ContactUs" | translate }}
+            {{ 'Dictionary.ContactUs' | translate }}
           </button>
         </div>
       </div>
@@ -96,5 +96,7 @@
 
   <router-outlet></router-outlet>
 
-  <footer class="footer px-5 py-3" id="footer">&copy; {{ currentYear }} Computotal</footer>
+  <footer class="footer px-5 py-3" id="footer">
+    &copy; {{ currentYear }} Computotal
+  </footer>
 </div>
