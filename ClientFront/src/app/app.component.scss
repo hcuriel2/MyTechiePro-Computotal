@@ -140,6 +140,15 @@ footer {
     min-width: 70px;
   }
 
+  .mat-menu-item {
+    font-size: 14px;
+    line-height: 18px;
+  }
+  .mat-menu-item label {
+    font-size: 14px;
+    margin: 0;
+  }
+
   #dropdownButton {
     margin: 0 0.25rem;
   }
