@@ -1,16 +1,26 @@
-@import "../assets/scss/computotal-theme.scss";
-@import "../../../ClientFront/node_modules/bootstrap/scss/bootstrap";
+@import '../assets/scss/computotal-theme.scss';
+@import '../../../ClientFront/node_modules/bootstrap/scss/bootstrap';
 
 $primary-color: mat-color($computotal-app-primary);
 
 :host {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-size: 14px;
   color: #333;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.flex-column.d-flex.h-100 {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
 }
 
 h1,
@@ -103,9 +113,11 @@ button {
 
 // Footer
 footer {
+  position: relative;
   margin-top: auto;
   padding: 0.75rem 1rem;
   background: white !important;
+  flex-shrink: 0;
 }
 
 // Media Queries

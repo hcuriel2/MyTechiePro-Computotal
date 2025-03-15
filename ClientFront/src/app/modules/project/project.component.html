@@ -3,7 +3,7 @@
     <div class="back-nav">
       <button mat-button class="back-button" (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
-        <span>{{ "Back to Projects" | translate }}</span>
+        <span>{{ 'Back to Projects' | translate }}</span>
       </button>
     </div>
     <mat-tab-group [(selectedIndex)]="activeTabIndex" mat-align-tabs="start">
@@ -11,25 +11,25 @@
       <mat-tab label="{{ 'Dictionary.Overview' | translate }}">
         <div class="tab-container">
           <h1 class="responsive-heading">
-            <strong> {{ "Your Project" | translate }} </strong>
+            <strong> {{ 'Your Project' | translate }} </strong>
           </h1>
           <h3 class="h3Details">
-            {{ "Label.ProjectState" | translate }}:
+            {{ 'Label.ProjectState' | translate }}:
             {{ project.state }}
           </h3>
           <h3 class="h3Details">
-            {{ "Label.UpdatedDate" | translate }}:
+            {{ 'Label.UpdatedDate' | translate }}:
             {{ project.updatedAt | date }}
           </h3>
           <h3 class="h3Details" *ngIf="project.state === 'OnGoing'">
-            {{ "Estimated Price" | translate }}:
+            {{ 'Estimated Price' | translate }}:
             {{ projectPrice }}
           </h3>
           <h3
             class="h3Details"
             *ngIf="project.state === 'Completed' || project.state === 'Paid'"
           >
-            {{ "Label.BillingCost" | translate }}:
+            {{ 'Label.BillingCost' | translate }}:
             {{ projectPrice }}
             <div
               *ngIf="
@@ -45,7 +45,7 @@
                 class="confirm-btn"
                 (click)="confirmPrice()"
               >
-                {{ "Confirm" | translate }}
+                {{ 'Confirm' | translate }}
               </button>
               <button
                 mat-raised-button
@@ -53,7 +53,7 @@
                 class="reject-btn"
                 (click)="rejectPrice()"
               >
-                {{ "Reject" | translate }}
+                {{ 'Reject' | translate }}
               </button>
             </div>
             <span
@@ -78,7 +78,7 @@
             </button>
           </div>
           <h3 class="h3Details" *ngIf="project.priceConfirmed">
-            {{ "Payment Status" | translate }}:
+            {{ 'Payment Status' | translate }}:
             <span [ngClass]="getPaymentStatusClass(transaction?.status)">
               {{ getPaymentStatusDisplay() | translate }}
             </span>
@@ -97,21 +97,21 @@
               mat-raised-button
               (click)="onPayProject()"
             >
-              <strong>{{ "Make Payment" | translate }}</strong>
+              <strong>{{ 'Make Payment' | translate }}</strong>
             </button>
           </div>
 
           <div class="section-divider"></div>
 
           <h2 class="section-title">
-            {{ "Project Details" | translate }}
+            {{ 'Project Details' | translate }}
           </h2>
           <h3 class="h3Details">
-            {{ "Dictionary.Service" | translate }}:
+            {{ 'Dictionary.Service' | translate }}:
             {{ project.serviceName }}
           </h3>
           <h3 class="h3Details">
-            {{ "Label.CreatedDate" | translate }}:
+            {{ 'Label.CreatedDate' | translate }}:
             {{ project.createdAt | date }}
           </h3>
 
@@ -119,19 +119,19 @@
             <div class="section-divider"></div>
 
             <h2 class="section-title">
-              {{ "Label.YourTechie" | translate }}
+              {{ 'Label.YourTechie' | translate }}
             </h2>
             <h3 class="detail-item">
-              {{ "Dictionary.Name" | translate }}:
+              {{ 'Dictionary.Name' | translate }}:
               {{ project.professional.firstName }}
               {{ project.professional.lastName }}
             </h3>
             <h3 class="detail-item">
-              {{ "Dictionary.Company" | translate }}:
+              {{ 'Dictionary.Company' | translate }}:
               {{ project.professional.company }}
             </h3>
             <h3 class="detail-item">
-              {{ "Dictionary.Email" | translate }}:
+              {{ 'Dictionary.Email' | translate }}:
               {{ project.professional.email }}
             </h3>
 
@@ -141,7 +141,7 @@
                 class="btn-action"
                 (click)="openReviewDialog()"
               >
-                <strong>{{ "Rate your Techie" | translate }}</strong>
+                <strong>{{ 'Rate your Techie' | translate }}</strong>
               </button>
             </div>
           </div>
@@ -150,19 +150,19 @@
             <div class="section-divider"></div>
 
             <h2 class="section-title">
-              {{ "Label.YourCustomer" | translate }}
+              {{ 'Label.YourCustomer' | translate }}
             </h2>
             <h3 class="detail-item">
-              {{ "Dictionary.Name" | translate }}:
+              {{ 'Dictionary.Name' | translate }}:
               {{ project.client.firstName }}
               {{ project.client.lastName }}
             </h3>
             <h3 class="detail-item">
-              {{ "Dictionary.Company" | translate }}:
+              {{ 'Dictionary.Company' | translate }}:
               {{ project.client.company }}
             </h3>
             <h3 class="detail-item">
-              {{ "Dictionary.Email" | translate }}:
+              {{ 'Dictionary.Email' | translate }}:
               {{ project.client.email }}
             </h3>
 
@@ -174,7 +174,7 @@
                 *ngIf="project.state == 'Requested'"
                 (click)="onStartProject()"
               >
-                <strong>{{ "Message.StartProject" | translate }}</strong>
+                <strong>{{ 'Message.StartProject' | translate }}</strong>
               </button>
 
               <button
@@ -184,7 +184,7 @@
                 *ngIf="project.state == 'OnGoing'"
                 (click)="onCompleteProject()"
               >
-                <strong>{{ "Message.MarkComplete" | translate }}</strong>
+                <strong>{{ 'Message.MarkComplete' | translate }}</strong>
               </button>
             </div>
           </div>
@@ -203,25 +203,25 @@
             | {{ project.professional.company }}
           </h1>
           <h3 class="important">
-            <strong>{{ "Dictionary.Email" | translate }}:</strong>
+            <strong>{{ 'Dictionary.Email' | translate }}:</strong>
             {{ project.professional.email }}
           </h3>
           <h3>
-            <strong>{{ "Dictionary.Address" | translate }}:</strong>
+            <strong>{{ 'Dictionary.Address' | translate }}:</strong>
             {{ project.professional.address?.street }},
             {{ project.professional.address?.city }}
           </h3>
           <h3 class="important">
-            <strong>{{ "Dictionary.Phone" | translate }}:</strong>
+            <strong>{{ 'Dictionary.Phone' | translate }}:</strong>
             {{ project.professional.phoneNumber }}
           </h3>
           <h3 class="important">
-            <strong>{{ "Dictionary.Rate" | translate }}:</strong>
+            <strong>{{ 'Dictionary.Rate' | translate }}:</strong>
             {{ project.professional.unitPrice | currency }} per
             {{ project.professional.unitType }}
           </h3>
           <h3 class="skills">
-            <strong>{{ "Dictionary.Skills" | translate }}:</strong>
+            <strong>{{ 'Dictionary.Skills' | translate }}:</strong>
             {{ proSkills }}
           </h3>
         </div>
@@ -235,16 +235,16 @@
             | {{ project.client.company }}
           </h1>
           <h3>
-            {{ "Dictionary.Email" | translate }}:
+            {{ 'Dictionary.Email' | translate }}:
             {{ project.client.email }}
           </h3>
           <h3>
-            {{ "Dictionary.Address" | translate }}:
+            {{ 'Dictionary.Address' | translate }}:
             {{ project.client.address?.street }},
             {{ project.client.address?.city }}
           </h3>
           <h3>
-            {{ "Dictionary.Phone" | translate }}:
+            {{ 'Dictionary.Phone' | translate }}:
             {{ project.client.phoneNumber }}
           </h3>
         </div>
@@ -259,9 +259,9 @@
                 {{ message.text }}
               </p>
               <p class="mat-small sender">
-                {{ message.authorId == user?._id ? "Me" : message.authorName }}
+                {{ message.authorId == user?._id ? 'Me' : message.authorName }}
                 |
-                {{ message.createdAt | date : "medium" }}
+                {{ message.createdAt | date : 'medium' }}
               </p>
               <br />
             </div>
@@ -285,7 +285,7 @@
             class="btn-action send-btn"
             (click)="onSubmit()"
           >
-            {{ "Dictionary.send" | translate }}
+            {{ 'Dictionary.send' | translate }}
           </button>
         </div>
       </mat-tab>
