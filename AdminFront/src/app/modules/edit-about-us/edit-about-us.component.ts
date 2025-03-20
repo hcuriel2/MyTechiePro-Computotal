@@ -37,7 +37,6 @@ export class EditAboutUsComponent implements OnInit {
         .updateAboutUsContent({ content: this.aboutUsContent })
         .subscribe({
           next: () => {
-            console.log('About Us content updated successfully');
             this.isEditing = false;
             this.snackBar.open(
               'About Us content updated successfully',
