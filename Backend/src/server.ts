@@ -9,6 +9,7 @@ import SurveyController from "./controllers/survey/survey.controller";
 import validateEnv from "./utils/validateEnv";
 import TransactionController from "./controllers/transaction/transaction.controller";
 import ConfigController from "./controllers/config/config.controller";
+import AboutUsController from "./controllers/aboutus/aboutus.controller";
 
 validateEnv();
 
@@ -21,6 +22,7 @@ const app = new App([
     new SurveyController(),
     new TransactionController(),
     new ConfigController(),
+    new AboutUsController(),
 ]);
 
 app.listen();

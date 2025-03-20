@@ -28,6 +28,7 @@ import { ClientRequestComponent } from './modules/client-request/client-request.
 import { HttpClientModule } from '@angular/common/http';
 import { AdminCreateDialogComponent } from './modules/admins/admin-create-dialog/admin-create-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ProjectsComponent,
     ClientRequestComponent,
     AdminCreateDialogComponent,
-    CreateCategoryComponent, //this is new
+    CreateCategoryComponent,
+    EditAboutUsComponent, //this is new
   ],
   imports: [
     BrowserModule,
