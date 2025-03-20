@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AboutUsService } from '../../shared/services/about-us.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-edit-about-us',
@@ -10,7 +11,10 @@ export class EditAboutUsComponent implements OnInit {
   public aboutUsContent: string = '';
   public isEditing: boolean = false;
 
-  constructor(private aboutUsService: AboutUsService) {}
+  constructor(
+    private aboutUsService: AboutUsService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.fetchAboutUsContent();
@@ -26,18 +30,30 @@ export class EditAboutUsComponent implements OnInit {
       },
     });
   }
-  
+
   public toggleEdit(): void {
     if (this.isEditing) {
-      this.aboutUsService.updateAboutUsContent({ content: this.aboutUsContent }).subscribe({
-        next: () => {
-          console.log('About Us content updated successfully');
-          this.isEditing = false;
-        },
-        error: (error: any) => {
-          console.error('Failed to update About Us content:', error);
-        },
-      });
+      this.aboutUsService
+        .updateAboutUsContent({ content: this.aboutUsContent })
+        .subscribe({
+          next: () => {
+            console.log('About Us content updated successfully');
+            this.isEditing = false;
+            this.snackBar.open(
+              'About Us content updated successfully',
+              'Close',
+              {
+                duration: 3000,
+              }
+            );
+          },
+          error: (error: any) => {
+            console.error('Failed to update About Us content:', error);
+            this.snackBar.open('Failed to update About Us content', 'Close', {
+              duration: 3000,
+            });
+          },
+        });
     } else {
       this.isEditing = true;
     }
