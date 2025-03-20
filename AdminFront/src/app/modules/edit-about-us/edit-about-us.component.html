@@ -1,0 +1,19 @@
+<p class="textStyle">About Us</p>
+<div class="about-us-container">
+  <textarea
+    [readonly]="!isEditing"
+    [(ngModel)]="aboutUsContent"
+    rows="10"
+    class="form-control about-us-textarea"
+  ></textarea>
+  <div class="edit-button-container">
+    <button
+      mat-raised-button
+      color="primary"
+      class="edit-button"
+      (click)="toggleEdit()"
+    >
+      {{ isEditing ? "Save" : "Edit" }}
+    </button>
+  </div>
+</div>
