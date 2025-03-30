@@ -3,7 +3,7 @@ name: Deploy to Digital Ocean
 on:
   push:
     branches:
-      - automatic_deploy
+      - dev-deployment
 jobs:
   deploy:
     runs-on: ubuntu-latest
