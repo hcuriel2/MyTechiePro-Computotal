@@ -3,7 +3,7 @@ name: Deploy to Digital Ocean
 on:
   push:
     branches:
-      - dev-deployment
+      - automatic_deploy
 
 jobs:
   deploy:
