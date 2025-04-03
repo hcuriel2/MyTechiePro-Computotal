@@ -2,7 +2,7 @@ import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendEmail = async (recipients: string | string[], subject: string, html: string, from: string = process.env.SENDGRID_FROM_EMAIL || 'noreply@iris-xu.me') => {
+const sendEmail = async (recipients: string | string[], subject: string, html: string, from: string = process.env.SENDGRID_FROM_EMAIL) => {
     const msg = {
         to: recipients, 
         from: from, 

@@ -125,6 +125,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    verificationTokenUsed: {
+        type: Boolean,
+        default: false
+    }
 });
 
 Object.assign(userSchema.statics, { userTypes });
