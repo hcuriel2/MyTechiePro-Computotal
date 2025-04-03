@@ -255,15 +255,21 @@ class AuthenticationController implements Controller {
         const { token } = request.params;
 
         try {
-            const user = await this.user.findOne({ verificationToken: token });
+            const user = await this.user.findOne({ 
+                verificationToken: token,
+                verificationTokenUsed: { $ne: true } 
+            });
+
             if (!user) {
                 return response
                     .status(400)
                     .send("Invalid or expired verification token");
             }
+
             // Update user as verified
             user.verified = true;
-            user.verificationToken = undefined; // clear the token
+            user.verificationTokenUsed = true; 
+            user.verificationToken = crypto.randomBytes(32).toString("hex");
             await user.save();
             // Create authentication token and cookie
             const tokenData = this.createToken(user);
