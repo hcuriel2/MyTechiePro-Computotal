@@ -1,13 +1,13 @@
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 
-let emailtransporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: 'noreply.mytechie.pro@gmail.com', // generated ethereal user
-      pass: 'ghkximirbhujxaeh', // generated ethereal password
-    },
-  });
+// let emailtransporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     port: 587,
+//     secure: false, // true for 465, false for other ports
+//     auth: {
+//       user: 'noreply.mytechie.pro@gmail.com', // generated ethereal user
+//       pass: 'ghkximirbhujxaeh', // generated ethereal password
+//     },
+//   });
 
-  export default emailtransporter
+//   export default emailtransporter

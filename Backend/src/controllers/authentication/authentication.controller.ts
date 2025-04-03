@@ -18,7 +18,7 @@ import speakeasy from "speakeasy";
 import qrcode from "qrcode";
 import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
-import emailtransporter from "../../middleware/emailtransporter.middleware";
+import sendEmail from '../../middleware/sendgrid.middleware';
 import UserNotVerify from "../../exceptions/UserNotVerify";
 import authMiddleware from "../../middleware/error.middleware";
 import * as crypto from "crypto";
@@ -298,22 +298,21 @@ class AuthenticationController implements Controller {
             return;
         }
 
-        let setPwEmailOptions = {
-            from: "noreply.mytechie.pro@gmail.com",
-            to: emailAddress,
-            subject: "Reset Password",
-            html:
-                "<b>Reset Password</b><br/><br/>" +
-                `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`,
-        };
+        const resetPasswordHtml = 
+        "<b>Reset Password</b><br/><br/>" +
+        `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`;
 
-        emailtransporter.sendMail(setPwEmailOptions, function (error, info) {
-            if (error) {
-                response.status(500);
-            } else {
-                response.status(200);
-            }
-        });
+        try {
+            await sendEmail(
+                emailAddress,
+                "Reset Password",
+                resetPasswordHtml
+            );
+            response.status(200).send();
+        } catch (error) {
+            console.error("Failed to send reset password email:", error);
+            response.status(500).send();
+        }
     };
 
     // Updates User's information in the frontend '/settings' route
@@ -395,19 +394,18 @@ class AuthenticationController implements Controller {
 
             // Send verification email
             const verificationUrl = `${this.CLIENT_URL}/verify-email/${verificationToken}`;
-            let verifyEmailOptions = {
-                from: "noreply.mytechie.pro@gmail.com",
-                to: user.email,
-                subject: "Verify Your Email Address",
-                html: `
-          <h2>Welcome to MyTechie!</h2>
-          <p>Please click the link below to verify your email address:</p>
-          <p><a href="${verificationUrl}">Verify Email</a></p>
-        `,
-            };
+            const verifyEmailHtml = `
+                <h2>Welcome to MyTechie!</h2>
+                <p>Please click the link below to verify your email address:</p>
+                <p><a href="${verificationUrl}">Verify Email</a></p>
+            `;
 
-            await emailtransporter.sendMail(verifyEmailOptions);
-
+            await sendEmail(
+                user.email,
+                "Verify Your Email Address",
+                verifyEmailHtml
+            );
+    
             return response.status(200).send({
                 message: "Verification email sent. Please check your inbox.",
             });
