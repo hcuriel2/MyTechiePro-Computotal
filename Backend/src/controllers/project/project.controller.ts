@@ -10,7 +10,7 @@ import projectModel from "../../models/project/project.model";
 import userModel from "../../models/user/user.model";
 import categoryModel from "../../models/category/category.model";
 import adminMiddleware from "../../middleware/admin.middleware";
-import emailtransporter from "../../middleware/emailtransporter.middleware";
+import sendEmail from '../../middleware/sendgrid.middleware';
 import HttpException from "../../exceptions/HttpException";
 import TransactionModel from "../../models/transaction/transaction.model";
 import Stripe from 'stripe';
@@ -538,29 +538,9 @@ class ProjectController implements Controller {
 
             `
 
-            this.sendEmail(process.env.ADMIN_EMAIL, "Notification of Negative Review", html);
+            await sendEmail(process.env.ADMIN_EMAIL, "Notification of Negative Review", html);
         }
     }
-
-
-    private async sendEmail(recipients, subject, message){
-        let email = {
-            from: 'noreply.mytechie.pro@gmail.com',
-            to: recipients,
-            subject: subject,
-            html: message
-        }
-        emailtransporter.sendMail(email, function(error, info) {
-            if (error){
-                
-                
-            } else {
-                
-            }
-        })
-    }
-
-
 
     // TODO Check if this is necessary, remove otherwise
     private reviewProject = async (
