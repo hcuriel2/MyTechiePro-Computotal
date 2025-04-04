@@ -4,25 +4,35 @@
     <mat-card-content>
       <div class="row">
         <div class="col-md-12 text-center">
-          <h2 *ngIf="verifying">{{ "Dictionary.Verifying" | translate }}</h2>
-          <h2 *ngIf="verificationSuccess">
-            {{ "Dictionary.EmailVerified" | translate }}
-          </h2>
-          <h2 *ngIf="!verifying && !verificationSuccess">
-            {{ "Dictionary.VerificationFailed" | translate }}
-          </h2>
+           <!-- Loading state -->
+           <div *ngIf="isLoading" class="loading-spinner">
+            <h2>{{ "Dictionary.Verifying" | translate }}</h2>
+            <mat-spinner class="mx-auto my-4"></mat-spinner>
+          </div>
 
-          <mat-spinner *ngIf="verifying" class="mx-auto my-4"></mat-spinner>
+          <!-- Error state -->
+          <div *ngIf="!isLoading && error" class="error-message">
+            <h2>{{ "Dictionary.VerificationFailed" | translate }}</h2>
+            <p>{{ error }}</p>
+            <button mat-raised-button color="primary" [routerLink]="['/']">
+              {{ "Dictionary.BackToHome" | translate }}
+            </button>
+          </div>
 
-          <div *ngIf="verificationSuccess" class="success-message">
+          <!-- Already verified state -->
+          <div *ngIf="!isLoading && !error && isVerified" class="success-message">
+            <h2>{{ "Dictionary.EmailVerified" | translate }}</h2>
             <p>{{ "Message.EmailVerificationSuccess" | translate }}</p>
             <p>{{ "Message.LoggingYouIn" | translate }}</p>
           </div>
 
-          <div *ngIf="!verifying && !verificationSuccess" class="error-message">
-            <p>{{ errorMessage }}</p>
-            <button mat-raised-button color="primary" [routerLink]="['/']">
-              {{ "Dictionary.BackToHome" | translate }}
+          <!-- Verification confirmation required state -->
+          <div *ngIf="!isLoading && !error && !isVerified && isTokenValid" class="verify-form">
+            <h2>{{ "Label.CompleteVerification" | translate }}</h2>
+            <p>{{ "Message.ClickToConfirmEmail" | translate }}: <strong>{{ userEmail }}</strong></p>
+            
+            <button mat-raised-button color="primary" (click)="confirmVerification()" [disabled]="isLoading">
+              {{ isLoading ? ("Dictionary.Processing" | translate) : ("Dictionary.VerifyMyEmail" | translate) }}
             </button>
           </div>
         </div>

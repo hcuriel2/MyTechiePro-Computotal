@@ -10,9 +10,13 @@ import { HttpResponseBase } from "@angular/common/http";
   styleUrls: ["./verify-email.component.scss"],
 })
 export class VerifyEmailComponent implements OnInit {
-  verifying = true;
-  verificationSuccess = false;
-  errorMessage = "";
+  isLoading = true;
+  isTokenValid = false;
+  isVerified = false;
+  error: string | null = null;
+  userEmail: string | null = null;
+  token: string | null = null;
+  session: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,34 +26,67 @@ export class VerifyEmailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const token = this.route.snapshot.params["token"];
-
-    if (!token) {
-      this.verifying = false;
-      this.errorMessage = "Invalid verification token.";
-      return;
-    }
-
-    this.authService.verifyEmail(token).subscribe(
-      (response) => {
-        this.verifying = false;
-        this.verificationSuccess = true;
-
-        // Auto-redirect after 3 seconds
-        if (response && response.success) {
-          this.authService.setUserValue(response.user);
-
-          setTimeout(() => {
-            this.router.navigateByUrl("/");
-          }, 3000);
-        }
-      },
-      (error) => {
-        this.verifying = false;
-        this.errorMessage =
-          "Email verification failed. The link may be invalid or expired.";
-        console.error("Verification error:", error);
+    this.route.queryParams.subscribe(params => {
+      this.token = params['token'];
+      this.session = params['session'];
+      
+      if (this.token && this.session) {
+        this.checkVerification();
+      } else {
+        this.isLoading = false;
+        this.error = 'Invalid verification link. Missing token or session.';
       }
-    );
+    });
+  }
+
+  // First step: Check verification status
+  checkVerification(): void {
+    this.authService.checkVerification(this.token!, this.session!)
+      .subscribe(
+        response => {
+          this.isLoading = false;
+          this.isTokenValid = true;
+          this.isVerified = response.isVerified;
+          this.userEmail = response.email;
+        },
+        error => {
+          this.isLoading = false;
+          this.error = error.error?.message || 'Verification failed';
+          console.error("Verification check error:", error);
+        }
+      );
+  }
+
+  // Second step: Confirm verification
+  confirmVerification(): void {
+    this.isLoading = true;
+    
+    this.authService.confirmVerification(this.token!, this.session!)
+      .subscribe(
+        response => {
+          this.isLoading = false;
+          this.isVerified = true;
+          
+          // If user info is returned, update the auth service
+          if (response.user) {
+            this.authService.setUserValue(response.user);
+          }
+          
+          // Display success message
+          this.snackBar.open('Email verified successfully', 'Close', {
+            duration: 5000,
+          });
+          
+          // Redirect to home page after a delay
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 3000);
+        },
+        error => {
+          this.isLoading = false;
+          this.error = error.error?.message || 'Verification failed';
+          console.error("Verification confirmation error:", error);
+        }
+      );
   }
 }

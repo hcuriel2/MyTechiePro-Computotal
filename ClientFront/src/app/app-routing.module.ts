@@ -41,7 +41,7 @@ const routes: Routes = [
   { path: "projects", component: ProjectsListComponent },
   { path: "settings", component: SettingsComponent },
   {
-    path: "verify-email/:token",
+    path: "verify-email",
     component: VerifyEmailComponent,
   },
   {
