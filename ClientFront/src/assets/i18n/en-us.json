@@ -216,7 +216,8 @@
     "ClickVerificationLink": "Please click the verification link in the email to activate your account.",
     "CheckSpamFolder": "If you don't see the email in your inbox, please check your spam folder.",
     "VerificationEmailResent": "Verification email has been resent. Please check your inbox.",
-    "ErrorResendingVerificationEmail": "There was a problem resending the verification email. Please try again later."
+    "ErrorResendingVerificationEmail": "There was a problem resending the verification email. Please try again later.",
+    "EmailAddressRequired": "Email address is required to resend verification"
   },
   "Warning": {
     "PasswordRequired": "Please enter your new password",
