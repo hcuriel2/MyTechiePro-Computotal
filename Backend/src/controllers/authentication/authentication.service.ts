@@ -45,8 +45,9 @@ class AuthenticationService {
             throw new UserWithThatEmailAlreadyExistsException(userData.email);
         }
 
-        // Generate a verification token
+        // Generate a verification token and session id
         const verificationToken = crypto.randomBytes(32).toString("hex");
+        const sessionId = crypto.randomBytes(16).toString("hex");
         const hashedPassword = await bcrypt.hash(userData.password, 10);
 
         //create the user in database with given user object.
@@ -58,10 +59,12 @@ class AuthenticationService {
             rating: 0,
             verified: false,
             verificationToken: verificationToken,
+            verificationSessionId: sessionId,
         });
 
         // Send verification email
-        const verificationUrl = `${this.CLIENT_URL}/verify-email/${verificationToken}`;
+        const verificationUrl = `${this.CLIENT_URL}/verify-email?token=${verificationToken}&session=${sessionId}`;
+
         const verifyEmailHtml = `
             <h2>Welcome to MyTechie!</h2>
             <p>Please click the link below to verify your email address:</p>
@@ -99,7 +102,14 @@ class AuthenticationService {
         } catch (error) {
             console.error("Error sending verification email:", error);
         }
-        return { user };
+
+        const tokenData = this.createToken(user);
+        const cookie = this.createCookie(tokenData);
+
+        return { 
+            cookie,
+            user 
+        };
     }
 }
 

@@ -84,7 +84,8 @@ class AuthenticationController implements Controller {
             authMiddleware,
             this.getUserInfo
         );
-        this.router.get(`${this.path}/verify/:token`, this.verifyEmail);
+        this.router.get(`${this.path}/check-verification`, this.checkVerification);
+        this.router.post(`${this.path}/confirm-verification`, this.confirmVerification);
         this.router.post(
             `${this.path}/resend-verification`,
             this.resendVerificationEmail
@@ -395,11 +396,13 @@ class AuthenticationController implements Controller {
 
             // Generate new verification token
             const verificationToken = crypto.randomBytes(32).toString("hex");
+            const sessionId = crypto.randomBytes(16).toString("hex");
             user.verificationToken = verificationToken;
+            user.verificationSessionId = sessionId;
             await user.save();
 
             // Send verification email
-            const verificationUrl = `${this.CLIENT_URL}/verify-email/${verificationToken}`;
+            const verificationUrl = `${this.CLIENT_URL}/verify-email?token=${verificationToken}&session=${sessionId}`;
             const verifyEmailHtml = `
                 <h2>Welcome to MyTechie!</h2>
                 <p>Please click the link below to verify your email address:</p>
@@ -417,6 +420,83 @@ class AuthenticationController implements Controller {
             });
         } catch (error) {
             console.error("Error resending verification email:", error);
+            next(error);
+        }
+    };
+    
+    private checkVerification = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const token = request.query.token as string;
+        const session = request.query.session as string;
+        
+        if (!token || !session) {
+            return response.status(400).send("Missing verification parameters");
+        }
+        
+        try {
+            const user = await this.user.findOne({ 
+                verificationToken: token,
+                verificationSessionId: session
+            });
+            
+            if (!user) {
+                return response.status(400).json({ 
+                    message: "Invalid or expired verification link" 
+                });
+            }
+            
+            return response.status(200).json({ 
+                isVerified: user.verified,
+                email: user.email
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    private confirmVerification = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { token, session } = request.body;
+        
+        if (!token || !session) {
+            return response.status(400).send("Missing verification parameters");
+        }
+        
+        try {
+            const user = await this.user.findOne({ 
+                verificationToken: token,
+                verificationSessionId: session,
+                verified: false 
+            });
+            
+            if (!user) {
+                return response.status(400).json({ 
+                    message: "Invalid or expired verification link" 
+                });
+            }
+            
+            user.verified = true;
+            user.verificationToken = crypto.randomBytes(32).toString("hex");
+            user.verificationTokenUsed = true;
+            await user.save();
+            
+            const tokenData = this.createToken(user);
+            const cookie = this.createCookie(tokenData);
+            
+            response.setHeader("Set-Cookie", [cookie]);
+            return response.status(200).json({
+                success: true,
+                message: "Email verified successfully",
+                user,
+            });
+        } catch (error) {
+            console.error("Verification confirmation error:", error);
             next(error);
         }
     };
