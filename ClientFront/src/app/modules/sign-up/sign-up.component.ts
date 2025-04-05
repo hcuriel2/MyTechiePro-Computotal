@@ -215,9 +215,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
             .get("Message.SignUpVerificationNeeded")
             .pipe(first())
             .subscribe((translation) => {
-              const config = new MatSnackBarConfig();
-              config.duration = Constants.LongDuration; // Longer duration for important info
-
               // Redirect to home page or specific verification instructions page
               this.router.navigate(['/verification-instructions'], { 
                 queryParams: { email: this.emailAddress.value } 
