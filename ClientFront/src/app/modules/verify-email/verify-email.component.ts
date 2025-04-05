@@ -72,11 +72,6 @@ export class VerifyEmailComponent implements OnInit {
             this.authService.setUserValue(response.user);
           }
           
-          // Display success message
-          this.snackBar.open('Email verified successfully', 'Close', {
-            duration: 5000,
-          });
-          
           // Redirect to home page after a delay
           setTimeout(() => {
             this.router.navigate(['/']);
