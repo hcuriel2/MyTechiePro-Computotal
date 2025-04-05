@@ -220,7 +220,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
               this.snackBar.open(translation, "", config);
 
               // Redirect to home page or specific verification instructions page
-              this.router.navigateByUrl("/verification-instructions");
+              this.router.navigate(['/verification-instructions'], { 
+                queryParams: { email: this.emailAddress.value } 
+              });
             });
         },
         // *C-06: fix for error message

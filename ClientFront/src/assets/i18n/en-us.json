@@ -23,6 +23,8 @@
     "DateUpdated": "Last Updated",
     "DateCreated": "Date Created",
     "Email": "Email",
+    "VerifyMyEmail": "Verify My Email",
+    "Processing": "Processing...",
     "ForgotPassword": "Forgot Password",
     "GenericCategory": "Generic Category",
     "Go": "Go",
@@ -112,6 +114,7 @@
     "DateCreated": "Date Created",
     "Distance": "Distance (km)",
     "Email": "Email",
+    "CompleteVerification": "Complete Your Email Verification",
     "ETransferEmail": "eTransfer Email",
     "FindTechnicians": "Find Technicians",
     "FirstName": "First Name",
@@ -201,6 +204,7 @@
     "SignUpFailure": "Sign up failed. Please retry.",
     "EmailExists": "The email address you provided is already registered. Please use a different email.",
     "InvalidEmail": "Please enter a valid email address.",
+    "ClickToConfirmEmail": "Please click the button below to confirm your email address",
     "WeakPassword": "Password is too weak, please use a stronger password.",
     "ServerError": "Server error occurred. Please try again later.",
     "InvalidCredentials": "Invalid email or password, please try again.",
@@ -212,7 +216,8 @@
     "ClickVerificationLink": "Please click the verification link in the email to activate your account.",
     "CheckSpamFolder": "If you don't see the email in your inbox, please check your spam folder.",
     "VerificationEmailResent": "Verification email has been resent. Please check your inbox.",
-    "ErrorResendingVerificationEmail": "There was a problem resending the verification email. Please try again later."
+    "ErrorResendingVerificationEmail": "There was a problem resending the verification email. Please try again later.",
+    "EmailAddressRequired": "Email address is required to resend verification"
   },
   "Warning": {
     "PasswordRequired": "Please enter your new password",

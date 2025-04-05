@@ -66,6 +66,8 @@ interface User {
     approved: boolean;
     verified: boolean;
     verificationToken?: string;
+    verificationTokenUsed?: boolean;
+    verificationSessionId?: string;
 }
 
 export default User;

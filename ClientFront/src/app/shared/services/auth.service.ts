@@ -149,4 +149,17 @@ export class AuthService {
       email,
     });
   }
+
+  public checkVerification(token: string, session: string): Observable<any> {
+    return this.httpClient.get<any>(`${this.API_URL}/check-verification`, {
+      params: { token, session }
+    });
+  }
+
+  public confirmVerification(token: string, session: string): Observable<any> {
+    return this.httpClient.post<any>(`${this.API_URL}/confirm-verification`, 
+      { token, session }, 
+      { withCredentials: true }
+    );
+  }
 }

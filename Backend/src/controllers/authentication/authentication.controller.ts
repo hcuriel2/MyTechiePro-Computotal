@@ -18,7 +18,7 @@ import speakeasy from "speakeasy";
 import qrcode from "qrcode";
 import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
-import emailtransporter from "../../middleware/emailtransporter.middleware";
+import sendEmail from '../../middleware/sendgrid.middleware';
 import UserNotVerify from "../../exceptions/UserNotVerify";
 import authMiddleware from "../../middleware/error.middleware";
 import * as crypto from "crypto";
@@ -84,7 +84,8 @@ class AuthenticationController implements Controller {
             authMiddleware,
             this.getUserInfo
         );
-        this.router.get(`${this.path}/verify/:token`, this.verifyEmail);
+        this.router.get(`${this.path}/check-verification`, this.checkVerification);
+        this.router.post(`${this.path}/confirm-verification`, this.confirmVerification);
         this.router.post(
             `${this.path}/resend-verification`,
             this.resendVerificationEmail
@@ -255,15 +256,21 @@ class AuthenticationController implements Controller {
         const { token } = request.params;
 
         try {
-            const user = await this.user.findOne({ verificationToken: token });
+            const user = await this.user.findOne({ 
+                verificationToken: token,
+                verificationTokenUsed: { $ne: true } 
+            });
+
             if (!user) {
                 return response
                     .status(400)
                     .send("Invalid or expired verification token");
             }
+
             // Update user as verified
             user.verified = true;
-            user.verificationToken = undefined; // clear the token
+            user.verificationTokenUsed = true; 
+            user.verificationToken = crypto.randomBytes(32).toString("hex");
             await user.save();
             // Create authentication token and cookie
             const tokenData = this.createToken(user);
@@ -298,22 +305,21 @@ class AuthenticationController implements Controller {
             return;
         }
 
-        let setPwEmailOptions = {
-            from: "noreply.mytechie.pro@gmail.com",
-            to: emailAddress,
-            subject: "Reset Password",
-            html:
-                "<b>Reset Password</b><br/><br/>" +
-                `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`,
-        };
+        const resetPasswordHtml = 
+        "<b>Reset Password</b><br/><br/>" +
+        `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`;
 
-        emailtransporter.sendMail(setPwEmailOptions, function (error, info) {
-            if (error) {
-                response.status(500);
-            } else {
-                response.status(200);
-            }
-        });
+        try {
+            await sendEmail(
+                emailAddress,
+                "Reset Password",
+                resetPasswordHtml
+            );
+            response.status(200).send();
+        } catch (error) {
+            console.error("Failed to send reset password email:", error);
+            response.status(500).send();
+        }
     };
 
     // Updates User's information in the frontend '/settings' route
@@ -390,29 +396,107 @@ class AuthenticationController implements Controller {
 
             // Generate new verification token
             const verificationToken = crypto.randomBytes(32).toString("hex");
+            const sessionId = crypto.randomBytes(16).toString("hex");
             user.verificationToken = verificationToken;
+            user.verificationSessionId = sessionId;
             await user.save();
 
             // Send verification email
-            const verificationUrl = `${this.CLIENT_URL}/verify-email/${verificationToken}`;
-            let verifyEmailOptions = {
-                from: "noreply.mytechie.pro@gmail.com",
-                to: user.email,
-                subject: "Verify Your Email Address",
-                html: `
-          <h2>Welcome to MyTechie!</h2>
-          <p>Please click the link below to verify your email address:</p>
-          <p><a href="${verificationUrl}">Verify Email</a></p>
-        `,
-            };
+            const verificationUrl = `${this.CLIENT_URL}/verify-email?token=${verificationToken}&session=${sessionId}`;
+            const verifyEmailHtml = `
+                <h2>Welcome to MyTechie!</h2>
+                <p>Please click the link below to verify your email address:</p>
+                <p><a href="${verificationUrl}">Verify Email</a></p>
+            `;
 
-            await emailtransporter.sendMail(verifyEmailOptions);
-
+            await sendEmail(
+                user.email,
+                "Verify Your Email Address",
+                verifyEmailHtml
+            );
+    
             return response.status(200).send({
                 message: "Verification email sent. Please check your inbox.",
             });
         } catch (error) {
             console.error("Error resending verification email:", error);
+            next(error);
+        }
+    };
+    
+    private checkVerification = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const token = request.query.token as string;
+        const session = request.query.session as string;
+        
+        if (!token || !session) {
+            return response.status(400).send("Missing verification parameters");
+        }
+        
+        try {
+            const user = await this.user.findOne({ 
+                verificationToken: token,
+                verificationSessionId: session
+            });
+            
+            if (!user) {
+                return response.status(400).json({ 
+                    message: "Invalid or expired verification link" 
+                });
+            }
+            
+            return response.status(200).json({ 
+                isVerified: user.verified,
+                email: user.email
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    private confirmVerification = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const { token, session } = request.body;
+        
+        if (!token || !session) {
+            return response.status(400).send("Missing verification parameters");
+        }
+        
+        try {
+            const user = await this.user.findOne({ 
+                verificationToken: token,
+                verificationSessionId: session,
+                verified: false 
+            });
+            
+            if (!user) {
+                return response.status(400).json({ 
+                    message: "Invalid or expired verification link" 
+                });
+            }
+            
+            user.verified = true;
+            user.verificationToken = crypto.randomBytes(32).toString("hex");
+            user.verificationTokenUsed = true;
+            await user.save();
+            
+            const tokenData = this.createToken(user);
+            const cookie = this.createCookie(tokenData);
+            
+            response.setHeader("Set-Cookie", [cookie]);
+            return response.status(200).json({
+                success: true,
+                message: "Email verified successfully",
+                user,
+            });
+        } catch (error) {
+            console.error("Verification confirmation error:", error);
             next(error);
         }
     };
