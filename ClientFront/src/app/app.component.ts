@@ -82,8 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
     const joinBtn = document.getElementById('app-menu-join-btn');
     const projectBtn = document.getElementById('app-menu-project-btn');
     const userInfo = document.getElementById('app-menu-user-info');
-    const toolbar = document.getElementById('app-toolbar');
-    const footer = document.getElementById('footer');
 
     if (signupBtn) {
       signupBtn.style.display = 'none';
@@ -96,12 +94,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     if (userInfo) {
       userInfo.style.display = 'block';
-    }
-    if (toolbar && footer) {
-      if (this.user?.userType === 'Professional') {
-        toolbar.style.backgroundColor = '#ef0078';
-        footer.style.background = '#ef0078';
-      }
     }
 
     this.changeDetectorRef.detectChanges();
