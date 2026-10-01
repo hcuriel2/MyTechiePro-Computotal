@@ -5,12 +5,14 @@
   "main": "dist/server.js",
   "engines": {
     "node": "14.16.1",
-    "npm": ">=6.0.0"
+    "npm": "6.14.12"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node ./dist/server.js",
-    "startall": "cd ../ClientFront && ng build && cd ../AdminFront && ng build && cd ../Backend && tsc && node ./dist/server.js"
+    "startall": "cd ../ClientFront && ng build && cd ../AdminFront && ng build && cd ../Backend && tsc && node ./dist/server.js",
+    "build": "tsc",
+    "dev": "tsc && node ./dist/server.js"
   },
   "keywords": [],
   "author": "",

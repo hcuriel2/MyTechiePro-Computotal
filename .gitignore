@@ -106,3 +106,12 @@ backend/dist
 
 # TernJS port file
 .tern-port
+
+# Local IDE / Angular caches
+.idea/
+**/.angular/
+
+# Local environment files (examples are safe to commit)
+**/.env
+**/.env.*
+!**/.env.example

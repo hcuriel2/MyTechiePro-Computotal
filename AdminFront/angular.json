@@ -65,7 +65,8 @@
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
                 }
-              ]
+              ],
+              "baseHref": "/admin/"
             }
           }
         },
