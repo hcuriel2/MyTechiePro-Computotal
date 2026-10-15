@@ -10,6 +10,8 @@ import {
   FormControl,
   FormBuilder,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from "@angular/forms";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -162,8 +164,42 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.destroyed.complete();
   }
 
+  private professionalEmailValidator(
+    control: AbstractControl,
+  ): ValidationErrors | null {
+    const email = String(control.value || "")
+      .trim()
+      .toLowerCase();
+
+    if (!email.includes("@")) {
+      return null;
+    }
+
+    const domain = email.split("@").pop();
+
+    const blockedDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "hotmail.com",
+      "outlook.com",
+      "msn.com",
+    ];
+
+    if (domain && blockedDomains.includes(domain)) {
+      return { personalEmailNotAllowed: true };
+    }
+
+    return null;
+  }
+
   // User information is saved to the backend, such as location, first and last name etc.
   public onSubmit(): void {
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      this.changeDetectorRef.markForCheck();
+      return;
+    }
+
     const newUser: User = new User();
     const userAddress: Address = new Address();
 
@@ -266,6 +302,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.emailAddress = new FormControl(null, [
       Validators.required,
       Validators.email,
+      ...(this.forPro ? [this.professionalEmailValidator] : []),
     ]);
     //password validation; must be between 8-16, have 1 number, 1 uppercase, 1 lowercase, and 1 special character
     this.password = new FormControl(null, [
