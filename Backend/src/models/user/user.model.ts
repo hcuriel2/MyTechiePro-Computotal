@@ -75,6 +75,12 @@ const userSchema = new mongoose.Schema({
     company: {
         type: String,
     },
+    // Require business fields on new Professionals; legacy email-verification saves must still work.
+    dba: { type: String, trim: true, maxlength: 200, required: function () { return this.isNew && this.userType === 'Professional'; } },
+    gstNumber: { type: String, trim: true, maxlength: 50, required: function () { return this.isNew && this.userType === 'Professional'; } },
+    pstNumber: { type: String, trim: true, maxlength: 50, required: function () { return this.isNew && this.userType === 'Professional'; } },
+    businessNumber: { type: String, trim: true, maxlength: 50 },
+    dunsNumber: { type: String, trim: true, maxlength: 50 },
     phoneNumber: {
         type: String,
         required: true,

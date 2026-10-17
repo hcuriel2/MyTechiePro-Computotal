@@ -1,3 +1,4 @@
+import { SignupControlsComponent } from './modules/signup-controls/signup-controls.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -32,6 +33,7 @@ import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.comp
 
 @NgModule({
   declarations: [
+    SignupControlsComponent,
     AppComponent,
     DashboardComponent,
     UsersComponent,

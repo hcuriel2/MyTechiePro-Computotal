@@ -2,6 +2,7 @@ import * as bcrypt from "bcryptjs";
 import { Request, Response, NextFunction, Router } from "express";
 import * as jwt from "jsonwebtoken";
 import WrongCredentialsException from "../../exceptions/WrongCredentialsException";
+import HttpException from "../../exceptions/HttpException";
 import Controller from "../../interfaces/controller.interface";
 import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import TokenData from "../../interfaces/tokenData.interface";
@@ -26,6 +27,8 @@ import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import AuthenticationTokenMissingException from "../../exceptions/AuthenticationTokenMissingException";
 import { validate, ValidationError } from "class-validator";
 
+import { signupGuard } from '../../signup/signup.middleware';
+
 class AuthenticationController implements Controller {
     public path = "/auth";
     public router = Router();
@@ -44,6 +47,7 @@ class AuthenticationController implements Controller {
     private initializeRoutes() {
         this.router.post(
             `${this.path}/admin/register`,
+            adminMiddleware,
             validationMiddleware(CreateUserDto),
             this.registration
         );
@@ -60,11 +64,13 @@ class AuthenticationController implements Controller {
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(
             `${this.path}/professional/register`,
+            signupGuard(),
             validationMiddleware(CreateUserDto),
             this.registration
         );
         this.router.post(
             `${this.path}/register`,
+            signupGuard(),
             validationMiddleware(CreateUserDto),
             this.registration
         );
@@ -244,6 +250,9 @@ class AuthenticationController implements Controller {
             );
             response.status(201).send(user);
         } catch (error) {
+            if (error instanceof HttpException) {
+                return response.status(error.status).json({ message: error.message });
+            }
             next(error);
         }
     };

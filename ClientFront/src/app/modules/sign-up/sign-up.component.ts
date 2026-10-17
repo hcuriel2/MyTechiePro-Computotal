@@ -10,6 +10,8 @@ import {
   FormControl,
   FormBuilder,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from "@angular/forms";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -21,6 +23,8 @@ import { UserType } from "src/app/shared/enums/user-type.enum";
 import { Address } from "src/app/shared/models/address";
 import { User } from "src/app/shared/models/user";
 import { AuthService } from "src/app/shared/services/auth.service";
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 import { passwordValidator } from "./password.directive";
 import { Category } from "src/app/shared/models/category";
 import { CategoryService } from "src/app/shared/services/category.service";
@@ -35,6 +39,19 @@ import { GoogleMapsService } from "src/app/shared/services/google-maps.service";
 })
 export class SignUpComponent implements OnInit, OnDestroy {
   showForm = false;
+  signupEnabled = false;
+  signupNotice = 'Checking signup availability…';
+  refreshAvailability(): void {
+    this.http.get<any>(environment.apiEndpoint + '/signup-settings').pipe(takeUntil(this.destroyed)).subscribe(settings => {
+      this.signupEnabled = this.forPro ? settings.professionalEnabled === true : settings.clientEnabled === true;
+      this.signupNotice = this.signupEnabled ? '' : (this.forPro ? settings.professionalNotice : settings.clientNotice);
+      this.changeDetectorRef.markForCheck();
+    }, () => {
+      this.signupEnabled = false;
+      this.signupNotice = 'Signup availability could not be checked. Please try again later.';
+      this.changeDetectorRef.markForCheck();
+    });
+  }
   public formGroup: FormGroup;
   public firstName: FormControl;
   public lastName: FormControl;
@@ -60,6 +77,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
   public skills: any = {};
   public website: FormControl;
 
+  public dba: FormControl;
+  public gstNumber: FormControl;
+  public pstNumber: FormControl;
+  public businessNumber: FormControl;
+  public dunsNumber: FormControl;
+
   public forPro: boolean;
   private destroyed: Subject<void>;
 
@@ -84,6 +107,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   };
 
   constructor(
+    private http: HttpClient,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private translateService: TranslateService,
@@ -99,6 +123,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.refreshAvailability();
     // ensure the Google Maps script is loaded before showing the form
     if (!this.googleMapsService.isLoaded()) {
       this.googleMapsService
@@ -162,8 +187,43 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.destroyed.complete();
   }
 
+  private professionalEmailValidator(
+    control: AbstractControl,
+  ): ValidationErrors | null {
+    const email = String(control.value || "")
+      .trim()
+      .toLowerCase();
+
+    if (!email.includes("@")) {
+      return null;
+    }
+
+    const domain = email.split("@").pop();
+
+    const blockedDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "hotmail.com",
+      "outlook.com",
+      "msn.com",
+    ];
+
+    if (domain && blockedDomains.includes(domain)) {
+      return { personalEmailNotAllowed: true };
+    }
+
+    return null;
+  }
+
   // User information is saved to the backend, such as location, first and last name etc.
   public onSubmit(): void {
+    if (!this.signupEnabled) { return; }
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      this.changeDetectorRef.markForCheck();
+      return;
+    }
+
     const newUser: User = new User();
     const userAddress: Address = new Address();
 
@@ -189,6 +249,11 @@ export class SignUpComponent implements OnInit, OnDestroy {
     // newUser.placeid = this.userPlaceId
 
     if (this.forPro) {
+      newUser.dba = this.dba.value ? this.dba.value.trim() : undefined;
+      newUser.gstNumber = this.gstNumber.value ? this.gstNumber.value.trim() : undefined;
+      newUser.pstNumber = this.pstNumber.value ? this.pstNumber.value.trim() : undefined;
+      newUser.businessNumber = this.businessNumber.value ? this.businessNumber.value.trim() : undefined;
+      newUser.dunsNumber = this.dunsNumber.value ? this.dunsNumber.value.trim() : undefined;
       newUser.skills = [];
 
       // Iterates through JSON to find selected skills
@@ -224,7 +289,19 @@ export class SignUpComponent implements OnInit, OnDestroy {
         // *C-06: fix for error message
         (error) => {
           console.error("User signup failed", error);
+          if (error.status === 403 && error.error && error.error.code === 'SIGNUP_DISABLED') {
+            this.signupEnabled = false;
+            this.signupNotice = error.error.message;
+            this.changeDetectorRef.markForCheck();
+            return;
+          }
 
+          if (this.forPro && error.status === 400 && error.error &&
+              typeof error.error.message === 'string' &&
+              /DBA|GST Number|PST Number|Business Number|D-U-N-S Number/.test(error.error.message)) {
+            this.snackBar.open(error.error.message, '', { duration: Constants.ShortDuration });
+            return;
+          }
           let messageKey = "Message.SignUpFailure";
 
           if (
@@ -266,6 +343,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     this.emailAddress = new FormControl(null, [
       Validators.required,
       Validators.email,
+      ...(this.forPro ? [this.professionalEmailValidator] : []),
     ]);
     //password validation; must be between 8-16, have 1 number, 1 uppercase, 1 lowercase, and 1 special character
     this.password = new FormControl(null, [
@@ -304,6 +382,16 @@ export class SignUpComponent implements OnInit, OnDestroy {
     });
 
     if (this.forPro) {
+      this.dba = new FormControl(null, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]);
+      this.formGroup.addControl('dba', this.dba);
+      this.gstNumber = new FormControl(null, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('gstNumber', this.gstNumber);
+      this.pstNumber = new FormControl(null, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('pstNumber', this.pstNumber);
+      this.businessNumber = new FormControl(null, [Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('businessNumber', this.businessNumber);
+      this.dunsNumber = new FormControl(null, [Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('dunsNumber', this.dunsNumber);
       this.skill1 = new FormControl(null);
       this.skill2 = new FormControl(null);
       this.skill3 = new FormControl(null);
