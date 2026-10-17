@@ -81,9 +81,11 @@ npm install
 
 cd ../ClientFront
 npm install
+npm run build
 
 cd ../AdminFront
 npm install
+npm runbuild
 ```
 
 Some dependency warnings are expected because the project uses an older Angular and Node.js toolchain.
