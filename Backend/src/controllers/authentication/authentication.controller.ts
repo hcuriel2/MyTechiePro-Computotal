@@ -26,6 +26,8 @@ import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import AuthenticationTokenMissingException from "../../exceptions/AuthenticationTokenMissingException";
 import { validate, ValidationError } from "class-validator";
 
+import { signupGuard } from '../../signup/signup.middleware';
+
 class AuthenticationController implements Controller {
     public path = "/auth";
     public router = Router();
@@ -44,6 +46,7 @@ class AuthenticationController implements Controller {
     private initializeRoutes() {
         this.router.post(
             `${this.path}/admin/register`,
+            adminMiddleware,
             validationMiddleware(CreateUserDto),
             this.registration
         );
@@ -60,11 +63,13 @@ class AuthenticationController implements Controller {
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(
             `${this.path}/professional/register`,
+            signupGuard(),
             validationMiddleware(CreateUserDto),
             this.registration
         );
         this.router.post(
             `${this.path}/register`,
+            signupGuard(),
             validationMiddleware(CreateUserDto),
             this.registration
         );

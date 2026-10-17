@@ -1,3 +1,4 @@
+import { SignupControlsComponent } from './modules/signup-controls/signup-controls.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -14,6 +15,7 @@ import { CreateCategoryComponent } from './modules/create-category/create-catego
 import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.component';
 
 const routes: Routes = [
+  { path: 'signup-controls', component: SignupControlsComponent },
   { path: '', component: DashboardComponent },
   { path: 'users', component: UsersComponent },
   { path: 'projects', component: ProjectsComponent },

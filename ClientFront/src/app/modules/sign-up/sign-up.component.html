@@ -1,6 +1,10 @@
 <div class="container m-0 p-5 mw-100">
   <mat-card>
-    <mat-card-content *ngIf="showForm" [formGroup]="formGroup">
+    <div *ngIf="!signupEnabled" role="status" style="padding: 24px; white-space: pre-wrap;">
+      <h1>{{ forPro ? 'Professional signup' : 'Client signup' }}</h1><p>{{ signupNotice }}</p>
+      <button mat-button (click)="refreshAvailability()">Check availability again</button>
+    </div>
+    <mat-card-content *ngIf="showForm && signupEnabled" [formGroup]="formGroup">
       <div class="row">
         <div class="col-md-12">
           <mat-card-title class="mb-3" *ngIf="!forPro">
@@ -294,7 +298,7 @@
         </div>
       </div>
     </mat-card-content>
-    <mat-card-actions align="end">
+    <mat-card-actions *ngIf="signupEnabled" align="end">
       <button
         mat-raised-button
         id="sign-up-submit-btn"
