@@ -50,6 +50,17 @@
                   type="email"
                   required
                 />
+
+
+                  <mat-error
+                    *ngIf="
+                      forPro &&
+                      emailAddress.hasError('personalEmailNotAllowed')
+                    "
+                  >
+                    Business email required.
+                  </mat-error>
+
               </mat-form-field>
             </div>
           </div>

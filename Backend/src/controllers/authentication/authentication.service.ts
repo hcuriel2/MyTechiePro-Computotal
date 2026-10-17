@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import UserWithThatEmailAlreadyExistsException from "../../exceptions/UserWithThatEmailAlreadyExistsException";
+import HttpException from "../../exceptions/HttpException";
 import * as crypto from "crypto";
 import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import TokenData from "../../interfaces/tokenData.interface";
@@ -41,6 +42,31 @@ class AuthenticationService {
     // Hashes password
     // Sends verification email - if pro's sign up, it notifies admin
     public async register(userData: CreateUserDto) {
+        // FEATURE 1: Professional Email Restriction
+        // Only Professional accounts must use business email domains.
+        if (userData.userType === "Professional") {
+            const emailDomain = userData.email
+                .trim()
+                .toLowerCase()
+                .split("@")
+                .pop();
+
+            const blockedDomains = [
+                "gmail.com",
+                "yahoo.com",
+                "hotmail.com",
+                "outlook.com",
+                "msn.com",
+            ];
+
+            if (emailDomain && blockedDomains.includes(emailDomain)) {
+                throw new HttpException(
+                    400,
+                    "Business email required. Personal email providers are not allowed.",
+                );
+            }
+        }
+
         if (await this.user.findOne({ email: userData.email })) {
             throw new UserWithThatEmailAlreadyExistsException(userData.email);
         }

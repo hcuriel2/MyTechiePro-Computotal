@@ -2,6 +2,7 @@ import * as bcrypt from "bcryptjs";
 import { Request, Response, NextFunction, Router } from "express";
 import * as jwt from "jsonwebtoken";
 import WrongCredentialsException from "../../exceptions/WrongCredentialsException";
+import HttpException from "../../exceptions/HttpException";
 import Controller from "../../interfaces/controller.interface";
 import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import TokenData from "../../interfaces/tokenData.interface";
@@ -244,6 +245,9 @@ class AuthenticationController implements Controller {
             );
             response.status(201).send(user);
         } catch (error) {
+            if (error instanceof HttpException) {
+                return response.status(error.status).json({ message: error.message });
+            }
             next(error);
         }
     };
