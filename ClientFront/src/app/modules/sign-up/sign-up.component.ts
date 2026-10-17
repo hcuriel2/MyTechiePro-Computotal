@@ -21,6 +21,8 @@ import { UserType } from "src/app/shared/enums/user-type.enum";
 import { Address } from "src/app/shared/models/address";
 import { User } from "src/app/shared/models/user";
 import { AuthService } from "src/app/shared/services/auth.service";
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 import { passwordValidator } from "./password.directive";
 import { Category } from "src/app/shared/models/category";
 import { CategoryService } from "src/app/shared/services/category.service";
@@ -35,6 +37,19 @@ import { GoogleMapsService } from "src/app/shared/services/google-maps.service";
 })
 export class SignUpComponent implements OnInit, OnDestroy {
   showForm = false;
+  signupEnabled = false;
+  signupNotice = 'Checking signup availability…';
+  refreshAvailability(): void {
+    this.http.get<any>(environment.apiEndpoint + '/signup-settings').pipe(takeUntil(this.destroyed)).subscribe(settings => {
+      this.signupEnabled = this.forPro ? settings.professionalEnabled === true : settings.clientEnabled === true;
+      this.signupNotice = this.signupEnabled ? '' : (this.forPro ? settings.professionalNotice : settings.clientNotice);
+      this.changeDetectorRef.markForCheck();
+    }, () => {
+      this.signupEnabled = false;
+      this.signupNotice = 'Signup availability could not be checked. Please try again later.';
+      this.changeDetectorRef.markForCheck();
+    });
+  }
   public formGroup: FormGroup;
   public firstName: FormControl;
   public lastName: FormControl;
@@ -84,6 +99,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   };
 
   constructor(
+    private http: HttpClient,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private translateService: TranslateService,
@@ -99,6 +115,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.refreshAvailability();
     // ensure the Google Maps script is loaded before showing the form
     if (!this.googleMapsService.isLoaded()) {
       this.googleMapsService
@@ -164,6 +181,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
   // User information is saved to the backend, such as location, first and last name etc.
   public onSubmit(): void {
+    if (!this.signupEnabled || !this.formGroup.valid) { return; }
     const newUser: User = new User();
     const userAddress: Address = new Address();
 
@@ -224,6 +242,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
         // *C-06: fix for error message
         (error) => {
           console.error("User signup failed", error);
+          if (error.status === 403 && error.error && error.error.code === 'SIGNUP_DISABLED') {
+            this.signupEnabled = false;
+            this.signupNotice = error.error.message;
+            this.changeDetectorRef.markForCheck();
+            return;
+          }
 
           let messageKey = "Message.SignUpFailure";
 

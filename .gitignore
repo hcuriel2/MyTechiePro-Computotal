@@ -106,3 +106,6 @@ backend/dist
 
 # TernJS port file
 .tern-port
+
+# Local isolated presentation data (never real accounts)
+Backend/.demo/
