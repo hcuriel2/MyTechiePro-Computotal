@@ -60,6 +60,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
   public skills: any = {};
   public website: FormControl;
 
+  public dba: FormControl;
+  public gstNumber: FormControl;
+  public pstNumber: FormControl;
+  public businessNumber: FormControl;
+  public dunsNumber: FormControl;
+
   public forPro: boolean;
   private destroyed: Subject<void>;
 
@@ -164,6 +170,10 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
   // User information is saved to the backend, such as location, first and last name etc.
   public onSubmit(): void {
+    if (this.forPro && this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return;
+    }
     const newUser: User = new User();
     const userAddress: Address = new Address();
 
@@ -189,6 +199,11 @@ export class SignUpComponent implements OnInit, OnDestroy {
     // newUser.placeid = this.userPlaceId
 
     if (this.forPro) {
+      newUser.dba = this.dba.value ? this.dba.value.trim() : undefined;
+      newUser.gstNumber = this.gstNumber.value ? this.gstNumber.value.trim() : undefined;
+      newUser.pstNumber = this.pstNumber.value ? this.pstNumber.value.trim() : undefined;
+      newUser.businessNumber = this.businessNumber.value ? this.businessNumber.value.trim() : undefined;
+      newUser.dunsNumber = this.dunsNumber.value ? this.dunsNumber.value.trim() : undefined;
       newUser.skills = [];
 
       // Iterates through JSON to find selected skills
@@ -225,6 +240,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
         (error) => {
           console.error("User signup failed", error);
 
+          if (this.forPro && error.status === 400 && error.error &&
+              typeof error.error.message === 'string' &&
+              /DBA|GST Number|PST Number|Business Number|D-U-N-S Number/.test(error.error.message)) {
+            this.snackBar.open(error.error.message, '', { duration: Constants.ShortDuration });
+            return;
+          }
           let messageKey = "Message.SignUpFailure";
 
           if (
@@ -304,6 +325,16 @@ export class SignUpComponent implements OnInit, OnDestroy {
     });
 
     if (this.forPro) {
+      this.dba = new FormControl(null, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]);
+      this.formGroup.addControl('dba', this.dba);
+      this.gstNumber = new FormControl(null, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('gstNumber', this.gstNumber);
+      this.pstNumber = new FormControl(null, [Validators.required, Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('pstNumber', this.pstNumber);
+      this.businessNumber = new FormControl(null, [Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('businessNumber', this.businessNumber);
+      this.dunsNumber = new FormControl(null, [Validators.pattern(/\S/), Validators.maxLength(50)]);
+      this.formGroup.addControl('dunsNumber', this.dunsNumber);
       this.skill1 = new FormControl(null);
       this.skill2 = new FormControl(null);
       this.skill3 = new FormControl(null);

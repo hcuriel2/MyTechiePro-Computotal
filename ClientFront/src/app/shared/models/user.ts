@@ -4,6 +4,11 @@ import { Company } from './company';
 export class User {
     _id: string;
     firstName: string;
+    dba?: string;
+    gstNumber?: string;
+    pstNumber?: string;
+    businessNumber?: string;
+    dunsNumber?: string;
     lastName: string;
     phoneNumber: string;
     email: string;
