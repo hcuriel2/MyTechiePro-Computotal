@@ -1,4 +1,4 @@
-import { IsOptional, IsString, ValidateNested, IsEnum, IsNotEmpty, IsNumber, IsEmail } from "class-validator";
+import { IsOptional, IsString, ValidateNested, IsEnum, IsNotEmpty, IsNumber, IsEmail, ValidateIf, Matches, MaxLength } from "class-validator";
 
 import CreateAddressDto from "./address.dto";
 import { Type } from 'class-transformer';
@@ -29,6 +29,41 @@ import { Type } from 'class-transformer';
         @IsEnum(UserType)
         readonly userType: UserType;
     
+        // Business registration applies only to Professionals.
+        @ValidateIf(o => o.userType === 'Professional')
+        @IsString({ message: 'DBA must be text.' })
+        @Matches(/\S/, { message: 'DBA is required.' })
+        @MaxLength(200, { message: 'DBA must be at most 200 characters.' })
+        public dba?: string;
+
+        // Business registration applies only to Professionals.
+        @ValidateIf(o => o.userType === 'Professional')
+        @IsString({ message: 'GST Number must be text.' })
+        @Matches(/\S/, { message: 'GST Number is required.' })
+        @MaxLength(50, { message: 'GST Number must be at most 50 characters.' })
+        public gstNumber?: string;
+
+        // Business registration applies only to Professionals.
+        @ValidateIf(o => o.userType === 'Professional')
+        @IsString({ message: 'PST Number must be text.' })
+        @Matches(/\S/, { message: 'PST Number is required.' })
+        @MaxLength(50, { message: 'PST Number must be at most 50 characters.' })
+        public pstNumber?: string;
+
+        // Business registration applies only to Professionals.
+        @ValidateIf(o => o.userType === 'Professional' && o.businessNumber !== undefined && o.businessNumber !== null && o.businessNumber !== '')
+        @IsString({ message: 'Business Number must be text.' })
+        @Matches(/\S/, { message: 'Business Number must not be blank.' })
+        @MaxLength(50, { message: 'Business Number must be at most 50 characters.' })
+        public businessNumber?: string;
+
+        // Business registration applies only to Professionals.
+        @ValidateIf(o => o.userType === 'Professional' && o.dunsNumber !== undefined && o.dunsNumber !== null && o.dunsNumber !== '')
+        @IsString({ message: 'D-U-N-S Number must be text.' })
+        @Matches(/\S/, { message: 'D-U-N-S Number must not be blank.' })
+        @MaxLength(50, { message: 'D-U-N-S Number must be at most 50 characters.' })
+        public dunsNumber?: string;
+
         @IsOptional()
         readonly proStatus?: string; // Assuming this is specific to professionals
     
