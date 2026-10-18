@@ -1,19 +1,64 @@
-<p class="textStyle">About Us</p>
-<div class="about-us-container">
+<header class="page-header">
+  <p class="textStyle">Site Content</p>
+  <p class="page-description">Manage the public Who We Are and Appendix content.</p>
+</header>
+
+<section class="about-us-container" aria-labelledby="who-we-are-heading">
+  <h2 id="who-we-are-heading">Who We Are</h2>
   <textarea
-    [readonly]="!isEditing"
+    [readonly]="editingSection !== 'whoWeAre'"
     [(ngModel)]="aboutUsContent"
-    rows="10"
+    rows="8"
     class="form-control about-us-textarea"
+    aria-label="Who We Are content"
   ></textarea>
   <div class="edit-button-container">
     <button
+      *ngIf="editingSection !== 'whoWeAre'"
       mat-raised-button
       color="primary"
       class="edit-button"
-      (click)="toggleEdit()"
+      (click)="startEditing('whoWeAre')"
     >
-      {{ isEditing ? "Save" : "Edit" }}
+      Edit
     </button>
+    <ng-container *ngIf="editingSection === 'whoWeAre'">
+      <button mat-raised-button color="primary" class="edit-button" [disabled]="isSaving" (click)="saveSection('whoWeAre')">
+        {{ isSaving ? "Saving..." : "Save" }}
+      </button>
+      <button mat-button class="cancel-button" [disabled]="isSaving" (click)="cancelEditing('whoWeAre')">
+        Cancel
+      </button>
+    </ng-container>
   </div>
-</div>
+</section>
+
+<section class="about-us-container" aria-labelledby="appendix-heading">
+  <h2 id="appendix-heading">Appendix</h2>
+  <textarea
+    [readonly]="editingSection !== 'appendix'"
+    [(ngModel)]="appendixContent"
+    rows="8"
+    class="form-control about-us-textarea"
+    aria-label="Appendix content"
+  ></textarea>
+  <div class="edit-button-container">
+    <button
+      *ngIf="editingSection !== 'appendix'"
+      mat-raised-button
+      color="primary"
+      class="edit-button"
+      (click)="startEditing('appendix')"
+    >
+      Edit
+    </button>
+    <ng-container *ngIf="editingSection === 'appendix'">
+      <button mat-raised-button color="primary" class="edit-button" [disabled]="isSaving" (click)="saveSection('appendix')">
+        {{ isSaving ? "Saving..." : "Save" }}
+      </button>
+      <button mat-button class="cancel-button" [disabled]="isSaving" (click)="cancelEditing('appendix')">
+        Cancel
+      </button>
+    </ng-container>
+  </div>
+</section>

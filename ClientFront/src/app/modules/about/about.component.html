@@ -1,2 +1,43 @@
+<main class="about-page">
+  <section class="content-section" [attr.aria-label]="title">
+    <div class="section-header">
+      <h1>{{ title }}</h1>
+      <button
+        *ngIf="isAdmin && !isEditing"
+        mat-stroked-button
+        id="edit-content-btn"
+        (click)="startEditing()"
+      >
+        Edit ✏️
+      </button>
+    </div>
 
-{{ aboutUsContent }}
+    <ng-container *ngIf="isEditing">
+      <div class="editor">
+        <label for="markdown-editor">Markdown</label>
+        <textarea
+          id="markdown-editor"
+          class="form-control markdown-input"
+          rows="14"
+          [(ngModel)]="draft"
+          placeholder="Write in Markdown, e.g. # Heading, **bold**, - list"
+        ></textarea>
+        <div class="editor-actions">
+          <button mat-flat-button color="primary" [disabled]="isSaving" (click)="save()">
+            {{ isSaving ? "Saving..." : "Save" }}
+          </button>
+          <button mat-button [disabled]="isSaving" (click)="cancelEditing()">
+            Cancel
+          </button>
+        </div>
+        <label>Preview</label>
+      </div>
+    </ng-container>
+
+    <div
+      *ngIf="isEditing || content"
+      class="page-content markdown-body"
+      [innerHTML]="renderedContent"
+    ></div>
+  </section>
+</main>

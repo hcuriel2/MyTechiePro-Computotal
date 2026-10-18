@@ -1,5 +1,98 @@
-#aboutUs {
-  text-align: center;
-  width: 50%;
-  margin: 5em auto;
+.about-page {
+  width: min(100% - 32px, 900px);
+  margin: 48px auto;
+  color: #263746;
+}
+
+.content-section {
+  padding: 28px 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 43, 92, 0.06);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+h1 {
+  margin: 0;
+  color: #002b5c;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+
+  label {
+    margin: 0;
+    font-weight: 500;
+    color: #002b5c;
+  }
+}
+
+.markdown-input {
+  font-family: Consolas, Menlo, monospace;
+  resize: vertical;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.page-content {
+  margin-top: 16px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+::ng-deep .markdown-body {
+  h1, h2, h3, h4 {
+    color: #002b5c;
+    margin: 1.2em 0 0.5em;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  pre {
+    padding: 12px;
+    background: #f7f9fc;
+    border-radius: 4px;
+    overflow: auto;
+  }
+
+  blockquote {
+    margin: 0;
+    padding-left: 16px;
+    border-left: 4px solid #337dd1;
+    color: #596675;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-page {
+    margin: 24px auto;
+  }
+
+  .content-section {
+    padding: 22px 18px;
+  }
 }
