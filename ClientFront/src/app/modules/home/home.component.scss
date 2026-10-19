@@ -1,4 +1,4 @@
-@use "../../../assets/scss/computotal-theme.scss" as theme;
+﻿@use "../../../assets/scss/computotal-theme.scss" as theme;
 
 .row {
   align-items: center;
@@ -50,13 +50,19 @@ a.serviceItem {
 }
 
 .search-button {
-  background-color: #f94144; 
+  // Keep the search action in the signed-in user's role color.
+  background-color: var(--role-primary, #3f51b5);
   color: white;
   position: absolute;
   right: 5px;
   top: 50%;
   padding: 0;
   transform: translateY(-50%);
+}
+
+.search-button:hover,
+.search-button:focus {
+  background-color: var(--role-primary-dark, #303f9f);
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-wrapper {
@@ -103,7 +109,7 @@ mat-form-field {
 }
 
 .custom-bg-primary {
-  //background-color: #3f51b5;
+  //background-color: var(--role-primary, #3f51b5);
   color: #0e5968;
 }
 
@@ -130,8 +136,9 @@ mat-form-field {
   color: #fff;
 }
 
-.client-banner-color {
-  background-color: #105081; 
+.role-banner-color {
+  // Keep signed-in banner text readable by matching the current role color.
+  background-color: var(--role-primary, #3f51b5);
 }
 
 .default-banner-color {

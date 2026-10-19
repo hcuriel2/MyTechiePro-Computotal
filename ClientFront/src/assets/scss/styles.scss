@@ -7,6 +7,53 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+// Public pages keep the existing brand color until a signed-in role is known.
+body {
+  --role-primary: #3f51b5;
+  --role-primary-dark: #303f9f;
+}
+
+// These role classes are applied by AppComponent when the session changes.
+body.theme-client {
+  --role-primary: #2e7d32;
+  --role-primary-dark: #1b5e20;
+}
+
+body.theme-professional {
+  --role-primary: #e65100;
+  --role-primary-dark: #bf360c;
+}
+
+body.theme-admin {
+  --role-primary: #6a1b9a;
+  --role-primary-dark: #4a148c;
+}
+
+// Use the active role color for Angular Material and Bootstrap primary actions.
+body[class*="theme-"] .mat-raised-button.mat-primary,
+body[class*="theme-"] .mat-flat-button.mat-primary,
+body[class*="theme-"] .mat-fab.mat-primary,
+body[class*="theme-"] .mat-mini-fab.mat-primary {
+  background-color: var(--role-primary);
+}
+
+body[class*="theme-"] .mat-button.mat-primary,
+body[class*="theme-"] .mat-icon-button.mat-primary,
+body[class*="theme-"] .mat-stroked-button.mat-primary {
+  color: var(--role-primary);
+}
+
+body[class*="theme-"] .btn-primary {
+  background-color: var(--role-primary);
+  border-color: var(--role-primary);
+}
+
+body[class*="theme-"] .btn-primary:hover,
+body[class*="theme-"] .btn-primary:focus {
+  background-color: var(--role-primary-dark);
+  border-color: var(--role-primary-dark);
+}
+
 
 .tab-container {
   padding: 0px 2px 2px 2px;

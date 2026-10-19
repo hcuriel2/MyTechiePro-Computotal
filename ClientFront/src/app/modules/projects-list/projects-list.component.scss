@@ -1,4 +1,4 @@
-/* Base container styling */
+﻿/* Base container styling */
 .content-container {
   max-width: 1200px;
   margin: 24px auto;
@@ -45,14 +45,14 @@
 }
 
 .btnProfiles {
-  background-color: #225d9c;
+  background-color: var(--role-primary, #225d9c);
   color: white;
   border: none;
 }
 
 .btnProfiles:hover,
 .btnProfiles:focus {
-  background-color: #17396f;
+  background-color: var(--role-primary-dark, #17396f);
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
@@ -63,8 +63,8 @@
 
 .btnPayment {
   background-color: white;
-  color: #225d9c;
-  border: 1px solid #225d9c;
+  color: var(--role-primary, #225d9c);
+  border: 1px solid var(--role-primary, #225d9c);
 }
 
 .btnPayment:hover,

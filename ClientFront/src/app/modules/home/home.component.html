@@ -1,8 +1,7 @@
 <div
   class="container-fluid row align-items-center pt-5 pb-5"
   [ngClass]="{
-    'client-banner-color': isCustomer,
-    'custom-bg-pro': !isCustomer,
+    'role-banner-color': !!user,
     'default-banner-color': !user
   }"
   id="banner"

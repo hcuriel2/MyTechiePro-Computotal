@@ -28,6 +28,8 @@ export class AppComponent {
             window.location.href = environment.clientUrl;
             return;
           }
+          // AdminFront is restricted to admins, so its authenticated theme is violet.
+          document.body.classList.add('theme-admin');
           document.getElementById("fullName")!.innerHTML = 
             `${user.firstName} ${user.lastName}`;
           

@@ -31,6 +31,7 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
+              "src/brand-shield.ico",
               "src/assets"
             ],
             "styles": [
@@ -98,6 +99,7 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
+              "src/brand-shield.ico",
               "src/assets"
             ],
             "styles": [

@@ -1,8 +1,8 @@
-.textStyle {
+﻿.textStyle {
     padding-top: 25px;
     font-size: xx-large;
     font-weight: bold;
-    color: #002b5c;
+    color: var(--role-primary, #002b5c);
   }
   
   .row {
@@ -40,7 +40,7 @@
 
   .backBtn {
     margin-top: 35px;
-    color: #002b5c;
+    color: var(--role-primary, #002b5c);
   }
   
   table {

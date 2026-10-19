@@ -2,7 +2,6 @@
 <div class="flex-column d-flex h-100">
   <nav
     class="navbar px-3 px-md-5"
-    [class.pro-navbar]="isProfessional"
     id="app-toolbar"
   >
     <div class="d-flex justify-content-between align-items-center w-100">
@@ -13,7 +12,11 @@
         (click)="routeBasedOnUser()"
         class="p-0"
       >
-        <h5 id="app-title" class="mb-0">{{ 'App.Title' | translate }}</h5>
+        <!-- Keep the brand mark the same for clients, professionals, and admins. -->
+        <span class="app-brand">
+          <img src="/brand-shield.ico" class="app-brand-icon" alt="" aria-hidden="true" />
+          <h5 id="app-title" class="mb-0">{{ 'App.Title' | translate }}</h5>
+        </span>
       </button>
 
       <!-- User Menu Dropdown when logged in -->
@@ -31,7 +34,7 @@
           aria-label="User menu"
           id="hamburger-btn"
         >
-          <mat-icon [ngStyle]="{ color: isProfessional ? 'white' : 'black' }">
+          <mat-icon>
             menu
           </mat-icon>
         </button>

@@ -1,4 +1,4 @@
-// Survey Container
+﻿// Survey Container
 .survey-container {
   height: auto;
   width: 90%; // Adjusted for responsiveness
@@ -48,7 +48,7 @@
   margin-top: 15px;
   float: right;
   margin-top: 5vh !important;
-  background-color: #225d9c;
+  background-color: var(--role-primary, #225d9c);
   color: white;
   padding: 4px 10px;
   border: none;

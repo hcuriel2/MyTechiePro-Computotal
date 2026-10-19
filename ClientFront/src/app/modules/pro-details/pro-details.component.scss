@@ -1,4 +1,4 @@
-.mat-tab-group {
+﻿.mat-tab-group {
   margin-top: 30px;
   width: 1200px;
 }
@@ -28,11 +28,11 @@ table {
   padding-top: 25px;
   font-size: x-large;
   font-weight: bold;
-  color: #002b5c;
+  color: var(--role-primary, #002b5c);
 }
 
 .backBtn {
-  color: #002b5c;
+  color: var(--role-primary, #002b5c);
   float: right;
 }
 
