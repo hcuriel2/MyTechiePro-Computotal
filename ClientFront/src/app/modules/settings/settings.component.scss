@@ -40,7 +40,8 @@ button {
   padding: 10px 20px;
   margin-right: 10px;
   border-radius: 45px;
-  background-color: #174e89;
+  // Use the signed-in user's role color for profile actions.
+  background-color: var(--role-primary, #174e89);
   color: white;
   border: none;
   cursor: pointer;
@@ -51,8 +52,8 @@ button:last-child {
 }
 
 button:hover {
-  background-color: #89c0f8;
-  color: rgb(0, 0, 0);
+  background-color: var(--role-primary-dark, #123d6b);
+  color: white;
 }
 
 .cancel-button {

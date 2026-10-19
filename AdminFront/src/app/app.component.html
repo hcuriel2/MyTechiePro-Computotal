@@ -7,7 +7,11 @@
       close
     </mat-icon>
   </button>
-  <a href="/" class="logo">Computer Guys</a>
+  <a href="/" class="logo">
+    <!-- Use the same shield mark as ClientFront so the brand stays consistent. -->
+    <img src="/brand-shield.ico" class="admin-brand-icon" alt="" aria-hidden="true" />
+    <span>Computer Guys</span>
+  </a>
   <span class="fill-remaining-space"></span>
   <button mat-raised-button id="app-menu-signout-btn" class="m-1" (click)="signOut()">
     Sign Out

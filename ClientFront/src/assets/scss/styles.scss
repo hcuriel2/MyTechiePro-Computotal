@@ -35,6 +35,8 @@ body[class*="theme-"] .mat-flat-button.mat-primary,
 body[class*="theme-"] .mat-fab.mat-primary,
 body[class*="theme-"] .mat-mini-fab.mat-primary {
   background-color: var(--role-primary);
+  // Keep labels readable on the role-colored primary action buttons.
+  color: white;
 }
 
 body[class*="theme-"] .mat-button.mat-primary,

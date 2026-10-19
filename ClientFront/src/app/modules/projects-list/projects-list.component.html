@@ -245,7 +245,8 @@
   <!-- Start of tech view -->
 
   <div *ngIf="!isCustomer && !isLoading">
-    <div class="header">
+    <!-- Limit the gray highlight to the professional title and availability control. -->
+    <div class="header professional-header">
       <h1 class="mat-display-1 head-title">
         <strong> {{ user?.firstName }}'s Projects </strong>
       </h1>
@@ -254,7 +255,6 @@
           isActive ? "I am Available" : "I am Busy"
         }}</span></mat-slide-toggle
       >
-      <br />
     </div>
     <br /><br />
     <div class="border rounded center">

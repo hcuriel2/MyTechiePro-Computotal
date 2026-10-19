@@ -1,7 +1,8 @@
 <div
   class="container-fluid row align-items-center pt-5 pb-5"
   [ngClass]="{
-    'role-banner-color': !!user,
+    'role-banner-color': !!user && user.userType !== 'Client',
+    'client-banner-color': !!user && user.userType === 'Client',
     'default-banner-color': !user
   }"
   id="banner"
@@ -12,10 +13,10 @@
         Welcome back, {{ user.firstName }}.
       </p>
       <br />
-      <p class="h1 d-inline" [ngClass]="{ 'black-text': !user }">
+      <p class="h1 d-inline" [ngClass]="{ 'black-text': !user || user.userType === 'Client' }">
         {{ "Message.HowCanWeHelp" | translate }}
       </p>
-      <p class="h6" [ngClass]="{ 'black-text': !user }">
+      <p class="h6" [ngClass]="{ 'black-text': !user || user.userType === 'Client' }">
         {{ "Message.GetStarted" | translate }}
       </p>
     </div>

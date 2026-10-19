@@ -1,8 +1,18 @@
 a.logo {
   background: var(--role-primary, #6a1b9a);
   padding: 1em 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   text-decoration: none;
   color: white;
+}
+
+// Keep the shield aligned beside the AdminFront brand name.
+.admin-brand-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 mat-toolbar {

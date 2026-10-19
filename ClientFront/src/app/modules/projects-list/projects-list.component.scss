@@ -17,6 +17,15 @@
   text-align: center;
 }
 
+// Keep the professional title and busy slider together on a soft gray backdrop.
+.professional-header {
+  background-color: rgba(128, 128, 128, 0.14);
+  border-radius: 8px;
+  // Give the title and availability control more vertical breathing room.
+  padding: 4rem 0 3rem;
+  margin-bottom: 1rem;
+}
+
 /* Button styling */
 .btn,
 .btnProfiles,
