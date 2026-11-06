@@ -10,7 +10,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EditAboutUsComponent implements OnInit {
   public aboutUsContent: string = '';
   public isEditing: boolean = false;
+  // Blocks a second Save click while the first request is still going out.
   public isSaving: boolean = false;
+  // Short note under the title: loading, saved, or why the save failed.
   public statusMessage: string = '';
 
   constructor(
@@ -26,6 +28,7 @@ export class EditAboutUsComponent implements OnInit {
     this.statusMessage = 'Loading About Us text…';
     this.aboutUsService.getAboutUsContent().subscribe({
       next: (response: { content: string } | null) => {
+        // Same guard as the client page: don't assume the body always has content.
         this.aboutUsContent = response && response.content ? response.content : '';
         this.statusMessage = '';
       },
@@ -35,6 +38,7 @@ export class EditAboutUsComponent implements OnInit {
     });
   }
 
+  // First click unlocks the box. The next click is the save.
   public toggleEdit(): void {
     if (!this.isEditing) {
       this.isEditing = true;
@@ -47,6 +51,7 @@ export class EditAboutUsComponent implements OnInit {
     }
 
     const content = (this.aboutUsContent || '').trim();
+    // The textarea also has maxlength="5000". This catches anything that slips past it.
     if (content.length > 5000) {
       this.statusMessage = 'About Us text must be 5000 characters or fewer.';
       return;
@@ -65,6 +70,7 @@ export class EditAboutUsComponent implements OnInit {
       },
       error: (error: any) => {
         this.isSaving = false;
+        // 401/403 means the admin cookie is missing or the account is not an Admin.
         this.statusMessage =
           error && (error.status === 401 || error.status === 403)
             ? 'An authenticated Admin session is required to save.'

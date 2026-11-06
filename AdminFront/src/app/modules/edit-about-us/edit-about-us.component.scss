@@ -1,9 +1,11 @@
+// Help text sits under the title and matches the width of the textarea.
 .about-us-help {
   max-width: 70%;
   margin-top: 8px;
   color: #334155;
 }
 
+// min-height keeps the layout from jumping when the status line appears and disappears.
 .about-us-status {
   min-height: 1.4em;
   white-space: pre-wrap;

@@ -14,11 +14,13 @@ export class AboutUsService {
   }
 
   public getAboutUsContent(): Observable<{ content: string }> {
+    // withCredentials sends the admin login cookie along with the request.
     return this.httpClient.get<{ content: string }>(this.API_URL, {
       withCredentials: true,
     });
   }
 
+  // Returns the saved text now, instead of an empty body, so the page can show what was stored.
   public updateAboutUsContent(data: {
     content: string;
   }): Observable<{ content: string }> {

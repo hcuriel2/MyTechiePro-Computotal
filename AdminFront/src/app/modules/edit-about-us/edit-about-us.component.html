@@ -1,10 +1,13 @@
 <p class="textStyle">About Us</p>
+<!-- Reminds the admin where this text shows up and what the limits are. -->
 <p class="about-us-help">
   This text is shown in the About Us section on the client home page.
   Line breaks are kept. Maximum 5000 characters.
 </p>
+<!-- Stays on the page so loading and save results are not only in the snackbar. -->
 <p class="about-us-status" role="status">{{ statusMessage }}</p>
 <div class="about-us-container">
+  <!-- Locked until Edit is clicked, and locked again while a save is in progress. -->
   <textarea
     [readonly]="!isEditing || isSaving"
     [(ngModel)]="aboutUsContent"
