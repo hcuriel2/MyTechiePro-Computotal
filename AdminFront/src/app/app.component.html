@@ -9,6 +9,10 @@
   </button>
   <a href="/" class="logo">Computer Guys</a>
   <span class="fill-remaining-space"></span>
+  <!-- Same authenticator settings as the client profile page. Admins don't see that page. -->
+  <button mat-icon-button (click)="openMfaSettings()" aria-label="Account settings">
+    <mat-icon>settings</mat-icon>
+  </button>
   <button mat-raised-button id="app-menu-signout-btn" class="m-1" (click)="signOut()">
     Sign Out
   </button>

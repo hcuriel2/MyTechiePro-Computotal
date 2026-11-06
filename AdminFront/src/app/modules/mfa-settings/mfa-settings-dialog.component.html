@@ -1,0 +1,53 @@
+<!-- Turn the authenticator on, confirm a code from the QR, reset it, or turn it off. -->
+<h2 mat-dialog-title>Authenticator</h2>
+
+<mat-dialog-content>
+  <p *ngIf="!enrolling">
+    {{ mfaEnabled ? 'On. Sign-in asks for a 6-digit code after your password.' : 'Off. Sign-in uses your email and password only.' }}
+  </p>
+  <p class="ok" *ngIf="message">{{ message }}</p>
+  <p class="problem" *ngIf="error">{{ error }}</p>
+
+  <div *ngIf="!enrolling && !mfaEnabled" class="actions">
+    <button mat-raised-button color="primary" (click)="startSetup(false)" [disabled]="busy">
+      Turn on authenticator
+    </button>
+  </div>
+
+  <div *ngIf="!enrolling && mfaEnabled">
+    <mat-form-field class="full">
+      <input matInput type="password" placeholder="Password" [(ngModel)]="disablePassword" autocomplete="current-password">
+    </mat-form-field>
+    <div class="actions">
+      <button mat-stroked-button (click)="disable()" [disabled]="busy">Turn off</button>
+      <button mat-raised-button color="primary" (click)="startSetup(true)" [disabled]="busy">
+        Reset authenticator
+      </button>
+    </div>
+  </div>
+
+  <!-- QR plus the raw key. MFA stays off until the code from the app is confirmed. -->
+  <div *ngIf="enrolling">
+    <p *ngIf="replacing">
+      Scan this new code. Your current authenticator keeps working until you confirm the new one.
+    </p>
+    <p *ngIf="!replacing">
+      Scan this QR code with your authenticator app, or enter the key yourself.
+    </p>
+    <img [src]="qrDataUrl" alt="Authenticator QR code" class="qr-code">
+    <mat-form-field class="full">
+      <input matInput [value]="manualSecret" readonly placeholder="Setup key">
+    </mat-form-field>
+    <mat-form-field class="full">
+      <input matInput placeholder="6-digit code" maxlength="6" inputmode="numeric" autocomplete="one-time-code" [(ngModel)]="confirmCode">
+    </mat-form-field>
+    <div class="actions">
+      <button mat-stroked-button (click)="cancelSetup()" [disabled]="busy">Cancel</button>
+      <button mat-raised-button color="primary" (click)="confirmSetup()" [disabled]="busy">Confirm</button>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

@@ -21,8 +21,11 @@ export class User {
     lat: number;
     lng: number;
     placeid: string;
+    // Only sent while signing in. The server never sends the real secret back.
     secret?: string;
     tempSecret?: string;
+    // True when this account has finished authenticator setup.
+    mfaEnabled?: boolean;
 
     // Professional's attributes
     alias: string;

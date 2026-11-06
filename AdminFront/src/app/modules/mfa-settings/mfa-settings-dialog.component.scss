@@ -1,0 +1,26 @@
+.full {
+  width: 100%;
+}
+
+/* The setup QR. Kept square so the phone camera can read it. */
+.qr-code {
+  display: block;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 12px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ok {
+  color: #1b5e20;
+}
+
+.problem {
+  color: #b00020;
+}

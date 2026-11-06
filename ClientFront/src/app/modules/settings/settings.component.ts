@@ -17,6 +17,18 @@ export class SettingsComponent implements OnInit {
   public settingsForm: FormGroup;
   public successMessage: string = '';
   public errorMessage: string = '';
+  // Authenticator section. enrolling means we're showing a QR that isn't active yet.
+  // replacing is a reset: they already had MFA, and the old code still works until they confirm.
+  public mfaEnabled = false;
+  public enrolling = false;
+  public replacing = false;
+  public mfaBusy = false;
+  public qrDataUrl = '';
+  public manualSecret = '';
+  public confirmCode = '';
+  public disablePassword = '';
+  public mfaMessage = '';
+  public mfaError = '';
   private messages: any = {};
   private originalUserData: User | null = null;
   private editSnapshot: any = null;
@@ -48,12 +60,14 @@ export class SettingsComponent implements OnInit {
 
     this.authService.user.subscribe((user) => {
       if (user) {
-        this.originalUserData = user;
+        this.mfaEnabled = !!user.mfaEnabled;
         this.userId = user._id;
-        // this.isProfessional = user.userType === 'Professional';
-        // this.stripeConnected = !!user.stripeAccountId;
-        // this.stripeAccountId = user.stripeAccountId || '';
-        this.populateForm(user);
+        // Don't refill the profile form while they're mid-edit. Confirming MFA
+        // updates the user and would otherwise wipe what they typed.
+        if (!this.editing) {
+          this.originalUserData = user;
+          this.populateForm(user);
+        }
       }
     });
   }
@@ -145,5 +159,93 @@ export class SettingsComponent implements OnInit {
         this.errorMessage = '';
       }, 3000);
     }
+  }
+
+  // First-time setup and "reset" both hit the same endpoint.
+  // The server parks the new secret aside until confirmMfaSetup.
+  startMfaSetup(replacing: boolean): void {
+    this.mfaBusy = true;
+    this.mfaError = '';
+    this.mfaMessage = '';
+    this.replacing = replacing;
+    this.authService.setupMfa().subscribe({
+      next: (setup) => {
+        this.qrDataUrl = setup.qrDataUrl;
+        this.manualSecret = setup.secret;
+        this.confirmCode = '';
+        this.enrolling = true;
+        this.mfaBusy = false;
+      },
+      error: (error) => {
+        this.mfaBusy = false;
+        this.mfaError = this.readMfaError(error, 'Could not start authenticator setup.');
+      },
+    });
+  }
+
+  // Just hides the QR. The pending secret on the server is harmless until they confirm it.
+  cancelMfaSetup(): void {
+    this.enrolling = false;
+    this.qrDataUrl = '';
+    this.manualSecret = '';
+    this.confirmCode = '';
+    this.mfaError = '';
+  }
+
+  // The code has to match the QR on screen. That's what actually turns MFA on.
+  confirmMfaSetup(): void {
+    const token = (this.confirmCode || '').replace(/\s/g, '');
+    if (!/^\d{6}$/.test(token)) {
+      this.mfaError = 'Enter the 6-digit code from your authenticator app.';
+      return;
+    }
+    this.mfaBusy = true;
+    this.mfaError = '';
+    this.authService.confirmMfa(token).subscribe({
+      next: () => {
+        this.mfaEnabled = true;
+        this.enrolling = false;
+        this.qrDataUrl = '';
+        this.manualSecret = '';
+        this.confirmCode = '';
+        this.mfaBusy = false;
+        this.mfaMessage = 'Authenticator is on for this account.';
+      },
+      error: (error) => {
+        this.mfaBusy = false;
+        this.mfaError = this.readMfaError(error, 'That code was not accepted.');
+      },
+    });
+  }
+
+  // Password is required so someone sitting at an open session can't switch MFA off.
+  disableMfa(): void {
+    if (!this.disablePassword) {
+      this.mfaError = 'Password is required to turn off the authenticator.';
+      return;
+    }
+    this.mfaBusy = true;
+    this.mfaError = '';
+    this.mfaMessage = '';
+    this.authService.disableMfa(this.disablePassword).subscribe({
+      next: () => {
+        this.mfaEnabled = false;
+        this.disablePassword = '';
+        this.mfaBusy = false;
+        this.mfaMessage = 'Authenticator is off. Sign-in uses your password only.';
+      },
+      error: (error) => {
+        this.mfaBusy = false;
+        this.mfaError = this.readMfaError(error, 'Could not turn off the authenticator.');
+      },
+    });
+  }
+
+  // Use the server's message when it sent one (bad code, wrong password, and so on).
+  private readMfaError(error: any, fallback: string): string {
+    if (error && error.error && error.error.message) {
+      return error.error.message;
+    }
+    return fallback;
   }
 }

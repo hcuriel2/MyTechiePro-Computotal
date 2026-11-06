@@ -5,7 +5,13 @@ import { Observable } from "rxjs/internal/Observable";
 import { tap, switchMap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { User } from "../models/user";
-import { MfaDto } from "../models/mfaDto";
+
+// What /auth/mfa/setup gives back so the settings page can show a QR and a type-in key.
+export interface MfaSetup {
+  qrDataUrl: string;
+  secret: string;
+  otpauthUrl: string;
+}
 
 @Injectable({
   providedIn: "root",
@@ -68,15 +74,58 @@ export class AuthService {
   // Signs in a User
   // Assigns the User's values to the UserSubject
   // It's then accessible through the 'this.user' value
-  public signIn(user: User): Observable<User> {
+  // If the account uses an authenticator, the first response is { mfaRequired: true }
+  // and we do not treat that as a logged-in user.
+  public signIn(user: User): Observable<any> {
     return this.httpClient
-      .post<User>(`${this.API_URL}/login`, user, { withCredentials: true })
+      .post<any>(`${this.API_URL}/login`, user, { withCredentials: true })
       .pipe(
-        tap((user: User) => {
-          this.setUserValue(user);
+        tap((body: any) => {
+          if (body && body.mfaRequired) {
+            return;
+          }
+          this.setUserValue(body);
         })
-        //switchMap(() => this.checkSession())
       );
+  }
+
+  // Asks the server for a new QR code. Nothing is turned on until confirmMfa.
+  public setupMfa(): Observable<MfaSetup> {
+    return this.httpClient.post<MfaSetup>(
+      `${this.API_URL}/mfa/setup`,
+      {},
+      { withCredentials: true }
+    );
+  }
+
+  // Sends the 6-digit code from the app. On success the account really has MFA.
+  public confirmMfa(token: string): Observable<{ mfaEnabled: boolean }> {
+    return this.httpClient
+      .post<{ mfaEnabled: boolean }>(
+        `${this.API_URL}/mfa/confirm`,
+        { token },
+        { withCredentials: true }
+      )
+      .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));
+  }
+
+  // Turns MFA off. The server checks the password before it clears the secret.
+  public disableMfa(password: string): Observable<{ mfaEnabled: boolean }> {
+    return this.httpClient
+      .post<{ mfaEnabled: boolean }>(
+        `${this.API_URL}/mfa/disable`,
+        { password },
+        { withCredentials: true }
+      )
+      .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));
+  }
+
+  // Keeps the gear / settings page in sync without waiting for another session check.
+  public setMfaEnabled(enabled: boolean): void {
+    const current = this.userValue;
+    if (current) {
+      this.setUserValue({ ...current, mfaEnabled: enabled });
+    }
   }
 
   // Modified the function - it needs to be a POST request in order to be secure

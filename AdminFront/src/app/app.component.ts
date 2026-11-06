@@ -2,9 +2,10 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { ViewChild } from '@angular/core';
 import { Component } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { MfaSettingsDialogComponent } from './modules/mfa-settings/mfa-settings-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +15,11 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   @ViewChild(MatSidenav)
   sidenav!: MatSidenav;
+  public mfaEnabled = false;
 
   constructor(private observer: BreakpointObserver,
-    private http: HttpClient
+    private http: HttpClient,
+    private dialog: MatDialog
   ) { }
 
   ngAfterViewInit() {
@@ -28,6 +31,8 @@ export class AppComponent {
             window.location.href = environment.clientUrl;
             return;
           }
+          // Session check tells us if this admin already finished authenticator setup.
+          this.mfaEnabled = !!user.mfaEnabled;
           document.getElementById("fullName")!.innerHTML = 
             `${user.firstName} ${user.lastName}`;
           
@@ -51,6 +56,20 @@ export class AppComponent {
           window.location.href = environment.clientUrl;
         }
       });
+  }
+
+  // Gear in the toolbar. disableClose so they leave through Close and we get the new on/off value back.
+  public openMfaSettings(): void {
+    this.dialog.open(MfaSettingsDialogComponent, {
+      width: '440px',
+      autoFocus: true,
+      disableClose: true,
+      data: { mfaEnabled: this.mfaEnabled },
+    }).afterClosed().subscribe((enabled: boolean | undefined) => {
+      if (typeof enabled === 'boolean') {
+        this.mfaEnabled = enabled;
+      }
+    });
   }
 
   public signOut() {
