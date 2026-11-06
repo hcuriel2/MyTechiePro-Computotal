@@ -18,10 +18,11 @@ export class AboutComponent implements OnInit {
   private fetchAboutUsContent(): void {
     this.aboutUsService.getAboutUsContent().subscribe({
       next: (response) => {
-        this.aboutUsContent = response.content;
+        this.aboutUsContent = response && response.content ? response.content : "";
       },
       error: (error) => {
         console.error("Failed to fetch About Us content:", error);
+        this.aboutUsContent = "";
       },
     });
   }

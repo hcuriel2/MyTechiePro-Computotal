@@ -1,19 +1,27 @@
 <p class="textStyle">About Us</p>
+<p class="about-us-help">
+  This text is shown in the About Us section on the client home page.
+  Line breaks are kept. Maximum 5000 characters.
+</p>
+<p class="about-us-status" role="status">{{ statusMessage }}</p>
 <div class="about-us-container">
   <textarea
-    [readonly]="!isEditing"
+    [readonly]="!isEditing || isSaving"
     [(ngModel)]="aboutUsContent"
-    rows="10"
+    rows="12"
+    maxlength="5000"
     class="form-control about-us-textarea"
+    placeholder="Write the About Us text visitors will see."
   ></textarea>
   <div class="edit-button-container">
     <button
       mat-raised-button
       color="primary"
       class="edit-button"
+      [disabled]="isSaving"
       (click)="toggleEdit()"
     >
-      {{ isEditing ? "Save" : "Edit" }}
+      {{ isSaving ? "Saving…" : isEditing ? "Save" : "Edit" }}
     </button>
   </div>
 </div>

@@ -14,10 +14,16 @@ export class AboutUsService {
   }
 
   public getAboutUsContent(): Observable<{ content: string }> {
-    return this.httpClient.get<{ content: string }>(this.API_URL);
+    return this.httpClient.get<{ content: string }>(this.API_URL, {
+      withCredentials: true,
+    });
   }
 
-  public updateAboutUsContent(data: { content: string }): Observable<void> {
-    return this.httpClient.put<void>(this.API_URL, data);
+  public updateAboutUsContent(data: {
+    content: string;
+  }): Observable<{ content: string }> {
+    return this.httpClient.put<{ content: string }>(this.API_URL, data, {
+      withCredentials: true,
+    });
   }
 }

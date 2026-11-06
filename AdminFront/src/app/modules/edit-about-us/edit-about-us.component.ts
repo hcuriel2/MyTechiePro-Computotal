@@ -10,6 +10,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EditAboutUsComponent implements OnInit {
   public aboutUsContent: string = '';
   public isEditing: boolean = false;
+  public isSaving: boolean = false;
+  public statusMessage: string = '';
 
   constructor(
     private aboutUsService: AboutUsService,
@@ -21,40 +23,56 @@ export class EditAboutUsComponent implements OnInit {
   }
 
   private fetchAboutUsContent(): void {
+    this.statusMessage = 'Loading About Us text…';
     this.aboutUsService.getAboutUsContent().subscribe({
-      next: (response: { content: string }) => {
-        this.aboutUsContent = response.content;
+      next: (response: { content: string } | null) => {
+        this.aboutUsContent = response && response.content ? response.content : '';
+        this.statusMessage = '';
       },
-      error: (error: any) => {
-        console.error('Failed to fetch About Us content:', error);
+      error: () => {
+        this.statusMessage = 'Could not load About Us text. Retry before editing.';
       },
     });
   }
 
   public toggleEdit(): void {
-    if (this.isEditing) {
-      this.aboutUsService
-        .updateAboutUsContent({ content: this.aboutUsContent })
-        .subscribe({
-          next: () => {
-            this.isEditing = false;
-            this.snackBar.open(
-              'About Us content updated successfully',
-              'Close',
-              {
-                duration: 3000,
-              }
-            );
-          },
-          error: (error: any) => {
-            console.error('Failed to update About Us content:', error);
-            this.snackBar.open('Failed to update About Us content', 'Close', {
-              duration: 3000,
-            });
-          },
-        });
-    } else {
+    if (!this.isEditing) {
       this.isEditing = true;
+      this.statusMessage = '';
+      return;
     }
+
+    if (this.isSaving) {
+      return;
+    }
+
+    const content = (this.aboutUsContent || '').trim();
+    if (content.length > 5000) {
+      this.statusMessage = 'About Us text must be 5000 characters or fewer.';
+      return;
+    }
+
+    this.isSaving = true;
+    this.aboutUsService.updateAboutUsContent({ content }).subscribe({
+      next: (response) => {
+        this.aboutUsContent = response && response.content ? response.content : content;
+        this.isEditing = false;
+        this.isSaving = false;
+        this.statusMessage = 'About Us text saved. It now appears on the client home page.';
+        this.snackBar.open('About Us content updated successfully', 'Close', {
+          duration: 3000,
+        });
+      },
+      error: (error: any) => {
+        this.isSaving = false;
+        this.statusMessage =
+          error && (error.status === 401 || error.status === 403)
+            ? 'An authenticated Admin session is required to save.'
+            : 'About Us text was not saved. Please retry.';
+        this.snackBar.open('Failed to update About Us content', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 }
