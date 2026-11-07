@@ -26,6 +26,11 @@ const transactionSchema = new Schema({
         type: Number,
         required: true
     },
+    // DevLink 2026: commission rate (%) used for this transaction. Saved so
+    // that changing the brackets later doesn't change past records.
+    platformFeeRate: {
+        type: Number
+    },
     status: {
         type: String,
         required: true,

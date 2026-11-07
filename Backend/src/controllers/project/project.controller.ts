@@ -13,6 +13,7 @@ import adminMiddleware from "../../middleware/admin.middleware";
 import sendEmail from '../../middleware/sendgrid.middleware';
 import HttpException from "../../exceptions/HttpException";
 import TransactionModel from "../../models/transaction/transaction.model";
+import { calculatePlatformFee } from "../../utils/commission";
 import Stripe from 'stripe';
 
 class ProjectController implements Controller {
@@ -618,7 +619,10 @@ class ProjectController implements Controller {
           const clientId = (proj.client as any)._id;
           const professionalId = (proj.professional as any)._id;
           const totalAmount = proj.totalCost;
-          const platformFee = 8.5;
+          // DevLink 2026: the commission now comes from the bracket table in
+          // utils/commission.ts instead of a hardcoded 8.5. platformFee is the
+          // commission in dollars; platformFeeRate is the percentage applied.
+          const { fee: platformFee, rate: platformFeeRate } = calculatePlatformFee(totalAmount);
       
           let transaction = await TransactionModel
             .findOne({ project: projectId })
@@ -627,6 +631,7 @@ class ProjectController implements Controller {
           if (transaction) {
             transaction.totalAmount = totalAmount;
             transaction.platformFee = platformFee;
+            transaction.platformFeeRate = platformFeeRate;
             transaction.paymentIntentId = "pending_" + Date.now();
             transaction.status = "pending";
             transaction = await transaction.save();
@@ -637,6 +642,7 @@ class ProjectController implements Controller {
               professional: professionalId,
               totalAmount: totalAmount,
               platformFee: platformFee,
+              platformFeeRate: platformFeeRate,
               paymentIntentId: "pending_" + Date.now(),
               status: "pending"
             });

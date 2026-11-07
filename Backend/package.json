@@ -10,6 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node ./dist/server.js",
+    "test:commission": "tsc && node ./dist/utils/commission.test.js",
     "startall": "cd ../ClientFront && ng build && cd ../AdminFront && ng build && cd ../Backend && tsc && node ./dist/server.js"
   },
   "keywords": [],

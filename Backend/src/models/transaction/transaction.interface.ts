@@ -6,6 +6,7 @@ interface Transaction {
   paymentIntentId: string;
   totalAmount: number;
   platformFee: number;
+  platformFeeRate?: number;
   status: string;
   createdAt: Date;
 }
