@@ -11,9 +11,12 @@ import TransactionController from "./controllers/transaction/transaction.control
 import ConfigController from "./controllers/config/config.controller";
 import AboutUsController from "./controllers/aboutus/aboutus.controller";
 
+import SignupController from './signup/signup.controller';
+
 validateEnv();
 
 const app = new App([
+    new SignupController(),
     new ContactController(),
     new ProjectController(),
     new AuthenticationController(),

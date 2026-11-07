@@ -50,6 +50,11 @@ interface User {
     userType: "Admin" | "Client" | "Professional";
     address?: Address;
     company?: string;
+    dba?: string;
+    gstNumber?: string;
+    pstNumber?: string;
+    businessNumber?: string;
+    dunsNumber?: string;
     proStatus?: "Busy" | "Active";
     skills?: string[];
     unitPrice?: number;

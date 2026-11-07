@@ -1,6 +1,10 @@
 <div class="container m-0 p-5 mw-100">
   <mat-card>
-    <mat-card-content *ngIf="showForm" [formGroup]="formGroup">
+    <div *ngIf="!signupEnabled" role="status" style="padding: 24px; white-space: pre-wrap;">
+      <h1>{{ forPro ? 'Professional signup' : 'Client signup' }}</h1><p>{{ signupNotice }}</p>
+      <button mat-button (click)="refreshAvailability()">Check availability again</button>
+    </div>
+    <mat-card-content *ngIf="showForm && signupEnabled" [formGroup]="formGroup">
       <div class="row">
         <div class="col-md-12">
           <mat-card-title class="mb-3" *ngIf="!forPro">
@@ -50,6 +54,17 @@
                   type="email"
                   required
                 />
+
+
+                  <mat-error
+                    *ngIf="
+                      forPro &&
+                      emailAddress.hasError('personalEmailNotAllowed')
+                    "
+                  >
+                    Business email required.
+                  </mat-error>
+
               </mat-form-field>
             </div>
           </div>
@@ -225,6 +240,52 @@
         </div>
       </div>
 
+      <section *ngIf="forPro" aria-label="Professional business registration">
+        <h2>Business Registration</h2>
+        <p>DBA, GST Number and PST Number are required. Business Number and D-U-N-S Number are optional.</p>
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>DBA</mat-label>
+              <input matInput type="text" formControlName="dba" maxlength="200" required />
+              <mat-error *ngIf="dba.hasError('required') || dba.hasError('pattern')">DBA is required.</mat-error>
+              <mat-error *ngIf="dba.hasError('maxlength')">Use at most 200 characters.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>GST Number</mat-label>
+              <input matInput type="text" formControlName="gstNumber" maxlength="50" required />
+              <mat-error *ngIf="gstNumber.hasError('required') || gstNumber.hasError('pattern')">GST Number is required.</mat-error>
+              <mat-error *ngIf="gstNumber.hasError('maxlength')">Use at most 50 characters.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>PST Number</mat-label>
+              <input matInput type="text" formControlName="pstNumber" maxlength="50" required />
+              <mat-error *ngIf="pstNumber.hasError('required') || pstNumber.hasError('pattern')">PST Number is required.</mat-error>
+              <mat-error *ngIf="pstNumber.hasError('maxlength')">Use at most 50 characters.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Business Number (optional)</mat-label>
+              <input matInput type="text" formControlName="businessNumber" maxlength="50"  />
+              <mat-error *ngIf="businessNumber.hasError('required') || businessNumber.hasError('pattern')">Business Number cannot contain only spaces.</mat-error>
+              <mat-error *ngIf="businessNumber.hasError('maxlength')">Use at most 50 characters.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>D-U-N-S Number (optional)</mat-label>
+              <input matInput type="text" formControlName="dunsNumber" maxlength="50"  />
+              <mat-error *ngIf="dunsNumber.hasError('required') || dunsNumber.hasError('pattern')">D-U-N-S Number cannot contain only spaces.</mat-error>
+              <mat-error *ngIf="dunsNumber.hasError('maxlength')">Use at most 50 characters.</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </section>
       <hr />
       <h3>{{ "Dictionary.Address" | translate }}</h3>
       <div class="row">
@@ -294,7 +355,7 @@
         </div>
       </div>
     </mat-card-content>
-    <mat-card-actions align="end">
+    <mat-card-actions *ngIf="signupEnabled" align="end">
       <button
         mat-raised-button
         id="sign-up-submit-btn"
