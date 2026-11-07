@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 
-// Admins never land on the client settings page after login, so they get the
-// same authenticator controls here. It talks to the same /auth/mfa routes.
+// Admins do not use the client profile page, so this dialog provides the same
+// enrollment, reset, confirmation, and disable flow through the shared /auth/mfa API.
 @Component({
   selector: 'app-mfa-settings-dialog',
   templateUrl: './mfa-settings-dialog.component.html',
@@ -39,7 +39,8 @@ export class MfaSettingsDialogComponent {
     this.dialogRef.close(this.mfaEnabled);
   }
 
-  // First-time setup and reset both call /mfa/setup. Confirm is what actually switches it on.
+  // First-time setup and reset both request a pending key. MFA becomes active only
+  // after confirmSetup validates a code from the matching authenticator app.
   public startSetup(replacing: boolean): void {
     this.busy = true;
     this.error = '';
@@ -62,7 +63,7 @@ export class MfaSettingsDialogComponent {
       });
   }
 
-  // Hides the QR only. A leftover temp secret doesn't affect login.
+  // Hide and clear the QR form. Any pending key is ignored at sign-in until confirmed.
   public cancelSetup(): void {
     this.enrolling = false;
     this.qrDataUrl = '';

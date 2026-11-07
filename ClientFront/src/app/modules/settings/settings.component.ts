@@ -17,8 +17,9 @@ export class SettingsComponent implements OnInit {
   public settingsForm: FormGroup;
   public successMessage: string = '';
   public errorMessage: string = '';
-  // Authenticator section. enrolling means we're showing a QR that isn't active yet.
-  // replacing is a reset: they already had MFA, and the old code still works until they confirm.
+  // MFA screen state: `enrolling` shows the pending QR flow; `replacing` keeps the
+  // copy accurate during a reset. The server continues accepting the old key until
+  // the replacement is confirmed.
   public mfaEnabled = false;
   public enrolling = false;
   public replacing = false;
@@ -161,8 +162,8 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  // First-time setup and "reset" both hit the same endpoint.
-  // The server parks the new secret aside until confirmMfaSetup.
+  // First-time setup and reset share the same endpoint. The API stores a pending key
+  // and returns its QR/manual form; neither action enables MFA by itself.
   startMfaSetup(replacing: boolean): void {
     this.mfaBusy = true;
     this.mfaError = '';
@@ -183,7 +184,8 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  // Just hides the QR. The pending secret on the server is harmless until they confirm it.
+  // Hide and clear the enrollment UI. The server-side pending key is not active, so
+  // cancelling here leaves the current sign-in behavior unchanged.
   cancelMfaSetup(): void {
     this.enrolling = false;
     this.qrDataUrl = '';
@@ -192,7 +194,8 @@ export class SettingsComponent implements OnInit {
     this.mfaError = '';
   }
 
-  // The code has to match the QR on screen. That's what actually turns MFA on.
+  // Confirm the pending key with a current 6-digit code. Only a successful response
+  // switches this view to the enabled state and updates the shared user session model.
   confirmMfaSetup(): void {
     const token = (this.confirmCode || '').replace(/\s/g, '');
     if (!/^\d{6}$/.test(token)) {

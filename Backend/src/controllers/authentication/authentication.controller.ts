@@ -65,8 +65,10 @@ class AuthenticationController implements Controller {
             validationMiddleware(LogInDto),
             this.loggingIn
         );
-        // Logged-in users turn the authenticator on, confirm the first code, or turn it off.
-        // Reset uses setup again. The old code keeps working until confirm succeeds.
+        // MFA setup routes require an existing authenticated session. Setup creates a
+        // pending key, confirm activates it after a valid code, and disable removes it
+        // after a password check. Reset follows setup, so the current key stays active
+        // until the replacement key is confirmed.
         this.router.post(`${this.path}/mfa/setup`, authMiddleware, this.setupMfa);
         this.router.post(`${this.path}/mfa/confirm`, authMiddleware, this.confirmMfa);
         this.router.post(`${this.path}/mfa/disable`, authMiddleware, this.disableMfa);
@@ -223,6 +225,8 @@ class AuthenticationController implements Controller {
             return;
         }
 
+        // Only the confirmed secret enables the second sign-in step. tempSecret is
+        // intentionally ignored so an unfinished enrollment cannot lock out the user.
         const sec = user.get("secret");
         if (sec) {
             const token = (logInData.secret || "").replace(/\s/g, "");
@@ -258,10 +262,17 @@ class AuthenticationController implements Controller {
         try {
             const secret = generateMfaSecret();
             const otpauthUrl = buildOtpAuthUrl(user.email, secret);
-            user.tempSecret = secret;
-            await user.save();
             // The phone app scans this image. The link inside it is the otpauth url above.
             const qrDataUrl = await qrcode.toDataURL(otpauthUrl);
+
+            // Update only the pending MFA field. Saving the whole user document here
+            // re-runs validation for unrelated profile fields and can fail for older
+            // accounts whose data predates the current schema requirements.
+            await this.user.updateOne(
+                { _id: user._id },
+                { $set: { tempSecret: secret } }
+            );
+
             return response.status(200).json({
                 otpauthUrl,
                 secret,
@@ -278,6 +289,7 @@ class AuthenticationController implements Controller {
     // The user typed the code their app is showing for the QR we just gave them.
     // If it matches tempSecret, that secret becomes the real one and MFA is actually on.
     private confirmMfa = async (request: RequestWithUser, response: Response) => {
+        // Reject malformed input before querying the account or checking the TOTP.
         const code = ((request.body && request.body.token) || "").replace(/\s/g, "");
         if (!/^\d{6}$/.test(code)) {
             return response.status(400).json({
@@ -292,6 +304,8 @@ class AuthenticationController implements Controller {
             });
         }
 
+        // Verify against the pending key, never the currently active key. A reset only
+        // replaces the old authenticator after the new key proves it can generate codes.
         const pending = user.get("tempSecret");
         if (!verifyTotp(pending, code)) {
             return response.status(401).json({
@@ -310,6 +324,8 @@ class AuthenticationController implements Controller {
     // Turns the authenticator off.
     // Asking for the password here so a stolen session can't quietly disable it.
     private disableMfa = async (request: RequestWithUser, response: Response) => {
+        // Require a fresh password check before removing the active key, even though
+        // the request already has a valid session cookie.
         const password = request.body && request.body.password;
         if (!password) {
             return response.status(400).json({
