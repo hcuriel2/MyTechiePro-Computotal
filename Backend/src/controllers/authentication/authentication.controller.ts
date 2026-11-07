@@ -321,29 +321,11 @@ class AuthenticationController implements Controller {
         return response.status(200).json({ mfaEnabled: true });
     };
 
-    // Turns the authenticator off.
-    // Asking for the password here so a stolen session can't quietly disable it.
+    // Turns the authenticator off for the signed-in account.
     private disableMfa = async (request: RequestWithUser, response: Response) => {
-        // Require a fresh password check before removing the active key, even though
-        // the request already has a valid session cookie.
-        const password = request.body && request.body.password;
-        if (!password) {
-            return response.status(400).json({
-                message: "Password is required to turn off the authenticator.",
-            });
-        }
-
         const user = await this.user.findById(request.user._id);
         if (!user) {
             return response.status(401).json({ message: "Unauthorized" });
-        }
-
-        const isPasswordMatching = await bcrypt.compare(
-            password,
-            user.get("password", null, { getters: false })
-        );
-        if (!isPasswordMatching) {
-            return response.status(400).json({ message: "Password is incorrect." });
         }
 
         await this.user.findByIdAndUpdate(user._id, {

@@ -20,7 +20,6 @@ export class MfaSettingsDialogComponent {
   public qrDataUrl = '';
   public manualSecret = '';
   public confirmCode = '';
-  public disablePassword = '';
   public message = '';
   public error = '';
 
@@ -100,25 +99,15 @@ export class MfaSettingsDialogComponent {
       });
   }
 
-  // The account password is required so an open admin session can't turn MFA off by itself.
   public disable(): void {
-    if (!this.disablePassword) {
-      this.error = 'Password is required to turn off the authenticator.';
-      return;
-    }
     this.busy = true;
     this.error = '';
     this.message = '';
     this.http
-      .post<any>(
-        `${this.api}/mfa/disable`,
-        { password: this.disablePassword },
-        { withCredentials: true }
-      )
+      .post<any>(`${this.api}/mfa/disable`, {}, { withCredentials: true })
       .subscribe({
         next: () => {
           this.mfaEnabled = false;
-          this.disablePassword = '';
           this.busy = false;
           this.message = 'Authenticator is off. Sign-in uses your password only.';
         },

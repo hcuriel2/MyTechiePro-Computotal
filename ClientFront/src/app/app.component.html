@@ -25,17 +25,6 @@
         >
           <strong>Welcome back, {{ user?.firstName }}</strong>
         </span>
-        <!-- Gear opens the profile page, which is where MFA is turned on or off. -->
-        <button
-          mat-icon-button
-          (click)="settings()"
-          aria-label="Account settings"
-          id="account-settings-btn"
-        >
-          <mat-icon [ngStyle]="{ color: isProfessional ? 'white' : 'black' }">
-            settings
-          </mat-icon>
-        </button>
         <button
           mat-icon-button
           [matMenuTriggerFor]="userMenu"
@@ -51,7 +40,7 @@
             My Projects
           </button>
           <button mat-menu-item (click)="settings()">
-            <label>Your Profile</label>
+            Your Profile
           </button>
           <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
             {{ 'Label.JoinPro' | translate }}

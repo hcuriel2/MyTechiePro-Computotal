@@ -113,13 +113,12 @@ export class AuthService {
       .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));
   }
 
-  // Requests MFA removal. The server checks the password again before deleting the
-  // active and pending keys; this keeps an unattended session from disabling MFA.
-  public disableMfa(password: string): Observable<{ mfaEnabled: boolean }> {
+  // Requests MFA removal for the signed-in account. The session cookie is enough.
+  public disableMfa(): Observable<{ mfaEnabled: boolean }> {
     return this.httpClient
       .post<{ mfaEnabled: boolean }>(
         `${this.API_URL}/mfa/disable`,
-        { password },
+        {},
         { withCredentials: true }
       )
       .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));

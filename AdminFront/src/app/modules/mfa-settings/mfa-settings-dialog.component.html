@@ -15,9 +15,6 @@
   </div>
 
   <div *ngIf="!enrolling && mfaEnabled">
-    <mat-form-field class="full">
-      <input matInput type="password" placeholder="Password" [(ngModel)]="disablePassword" autocomplete="current-password">
-    </mat-form-field>
     <div class="actions">
       <button mat-stroked-button (click)="disable()" [disabled]="busy">Turn off</button>
       <button mat-raised-button color="primary" (click)="startSetup(true)" [disabled]="busy">

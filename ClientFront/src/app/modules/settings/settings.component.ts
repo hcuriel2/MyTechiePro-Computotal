@@ -27,7 +27,6 @@ export class SettingsComponent implements OnInit {
   public qrDataUrl = '';
   public manualSecret = '';
   public confirmCode = '';
-  public disablePassword = '';
   public mfaMessage = '';
   public mfaError = '';
   private messages: any = {};
@@ -221,19 +220,13 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  // Password is required so someone sitting at an open session can't switch MFA off.
   disableMfa(): void {
-    if (!this.disablePassword) {
-      this.mfaError = 'Password is required to turn off the authenticator.';
-      return;
-    }
     this.mfaBusy = true;
     this.mfaError = '';
     this.mfaMessage = '';
-    this.authService.disableMfa(this.disablePassword).subscribe({
+    this.authService.disableMfa().subscribe({
       next: () => {
         this.mfaEnabled = false;
-        this.disablePassword = '';
         this.mfaBusy = false;
         this.mfaMessage = 'Authenticator is off. Sign-in uses your password only.';
       },
