@@ -1,11 +1,11 @@
-import { IsOptional, IsString } from "class-validator";
+import { ValidateIf, IsString } from "class-validator";
 
 class UpdateAboutUsDto {
-    @IsOptional()
+    @ValidateIf((_object, value) => value !== undefined)
     @IsString()
     public content?: string;
 
-    @IsOptional()
+    @ValidateIf((_object, value) => value !== undefined)
     @IsString()
     public appendixContent?: string;
 }

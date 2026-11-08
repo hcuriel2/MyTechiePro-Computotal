@@ -41,7 +41,9 @@ export class AboutComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.add(
       this.authService.user.subscribe((user) => {
-        this.isAdmin = !!user && user.userType === "Admin";
+        this.isAdmin = !!user && user.userType === "Admin" &&
+          (!user.adminRole || user.adminRole === "Admin" || user.adminRole === "Editor");
+        if (!this.isAdmin) { this.isEditing = false; }
       })
     );
   }
@@ -56,6 +58,7 @@ export class AboutComponent implements OnInit, OnDestroy {
   }
 
   public startEditing(): void {
+    if (!this.isAdmin) { return; }
     this.draft = this.content;
     this.isEditing = true;
   }
@@ -65,6 +68,7 @@ export class AboutComponent implements OnInit, OnDestroy {
   }
 
   public save(): void {
+    if (!this.isAdmin || this.isSaving) { return; }
     const update =
       this.section === "appendix"
         ? { appendixContent: this.draft }
