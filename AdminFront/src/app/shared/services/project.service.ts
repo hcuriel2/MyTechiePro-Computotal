@@ -24,7 +24,7 @@ export class ProjectService {
 
   public getProjectsByProId(id: string): Observable<Project[]> {
     return this.httpClient
-      .get<Project[]>(`${this.API_URL}/professional/${id}`)
+      .get<Project[]>(`${this.API_URL}/professional/${id}`, { withCredentials: true })
       .pipe(map((project) => plainToClass(Project, project)));
   }
 }

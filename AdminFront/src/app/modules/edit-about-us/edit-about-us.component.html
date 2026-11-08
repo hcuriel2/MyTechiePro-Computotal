@@ -6,7 +6,7 @@
 <section class="about-us-container" aria-labelledby="who-we-are-heading">
   <h2 id="who-we-are-heading">Who We Are</h2>
   <textarea
-    [readonly]="editingSection !== 'whoWeAre'"
+    [readonly]="!canEditContent || editingSection !== 'whoWeAre'"
     [(ngModel)]="aboutUsContent"
     rows="8"
     class="form-control about-us-textarea"
@@ -14,7 +14,7 @@
   ></textarea>
   <div class="edit-button-container">
     <button
-      *ngIf="editingSection !== 'whoWeAre'"
+      *ngIf="canEditContent && editingSection !== 'whoWeAre'"
       mat-raised-button
       color="primary"
       class="edit-button"
@@ -22,7 +22,7 @@
     >
       Edit
     </button>
-    <ng-container *ngIf="editingSection === 'whoWeAre'">
+    <ng-container *ngIf="canEditContent && editingSection === 'whoWeAre'">
       <button mat-raised-button color="primary" class="edit-button" [disabled]="isSaving" (click)="saveSection('whoWeAre')">
         {{ isSaving ? "Saving..." : "Save" }}
       </button>
@@ -36,7 +36,7 @@
 <section class="about-us-container" aria-labelledby="appendix-heading">
   <h2 id="appendix-heading">Appendix</h2>
   <textarea
-    [readonly]="editingSection !== 'appendix'"
+    [readonly]="!canEditContent || editingSection !== 'appendix'"
     [(ngModel)]="appendixContent"
     rows="8"
     class="form-control about-us-textarea"
@@ -44,7 +44,7 @@
   ></textarea>
   <div class="edit-button-container">
     <button
-      *ngIf="editingSection !== 'appendix'"
+      *ngIf="canEditContent && editingSection !== 'appendix'"
       mat-raised-button
       color="primary"
       class="edit-button"
@@ -52,7 +52,7 @@
     >
       Edit
     </button>
-    <ng-container *ngIf="editingSection === 'appendix'">
+    <ng-container *ngIf="canEditContent && editingSection === 'appendix'">
       <button mat-raised-button color="primary" class="edit-button" [disabled]="isSaving" (click)="saveSection('appendix')">
         {{ isSaving ? "Saving..." : "Save" }}
       </button>

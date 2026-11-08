@@ -79,6 +79,9 @@ class AuthenticationService {
         //create the user in database with given user object.
         const user = await this.user.create({
             ...userData,
+            adminRole: userData.userType === "Admin"
+                ? userData.adminRole || "Admin"
+                : undefined,
             password: hashedPassword,
             ratingSum: 0,
             ratingCount: 0,

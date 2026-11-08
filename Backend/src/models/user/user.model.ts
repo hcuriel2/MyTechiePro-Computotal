@@ -24,6 +24,12 @@ const userTypes = Object.freeze({
     Professional: "Professional",
 });
 
+const adminRoles = Object.freeze({
+    Admin: "Admin",
+    Editor: "Editor",
+    ReadOnly: "Read-only",
+});
+
 //User signup rate types here, value tag in html must match the variable string
 const uniTypes = Object.freeze({
     Hour: "Hour",
@@ -97,6 +103,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: Object.values(userTypes),
         required: true,
+    },
+    adminRole: {
+        type: String,
+        enum: Object.values(adminRoles),
     },
     proStatus: {
         type: String,

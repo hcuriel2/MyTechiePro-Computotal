@@ -18,7 +18,7 @@ export class ContactUsService {
 
   public getClientRequests(): Observable<ClientRequest[]> {
     return this.http
-      .get<ClientRequest[]>(this.API_URL)
+      .get<ClientRequest[]>(this.API_URL, { withCredentials: true })
       .pipe(
         map((clientRequests: ClientRequest[]) =>
           plainToClass(ClientRequest, clientRequests)
