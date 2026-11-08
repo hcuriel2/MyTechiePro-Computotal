@@ -13,27 +13,30 @@ import { ProDetailsComponent } from './modules/pro-details/pro-details.component
 import { ClientRequestComponent } from './modules/client-request/client-request.component';
 import { CreateCategoryComponent } from './modules/create-category/create-category.component'; 
 import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.component';
+import { AdminRoleGuard } from './shared/admin-role.guard';
 
 const routes: Routes = [
-  { path: 'signup-controls', component: SignupControlsComponent },
-  { path: '', component: DashboardComponent },
-  { path: 'users', component: UsersComponent },
-  { path: 'projects', component: ProjectsComponent },
+  { path: 'signup-controls', component: SignupControlsComponent, canActivate: [AdminRoleGuard] },
+  { path: '', component: DashboardComponent, canActivate: [AdminRoleGuard] },
+  { path: 'users', component: UsersComponent, canActivate: [AdminRoleGuard] },
+  { path: 'projects', component: ProjectsComponent, canActivate: [AdminRoleGuard] },
   {
     path: 'customers',
     component: CustomersComponent,
+    canActivate: [AdminRoleGuard],
     children: [{ path: ':id', component: CustomerDetailsComponent }],
   },
   {
     path: 'pros',
     component: ProsComponent,
+    canActivate: [AdminRoleGuard],
     children: [{ path: ':id', component: ProDetailsComponent }],
   },
-  { path: 'admins', component: AdminsComponent },
-  { path: 'customerDetails', component: CustomerDetailsComponent },
-  { path: 'proDetails', component: ProDetailsComponent },
-  { path: 'client-request', component: ClientRequestComponent },
-  { path: 'create-category', component: CreateCategoryComponent }, 
+  { path: 'admins', component: AdminsComponent, canActivate: [AdminRoleGuard] },
+  { path: 'customerDetails', component: CustomerDetailsComponent, canActivate: [AdminRoleGuard] },
+  { path: 'proDetails', component: ProDetailsComponent, canActivate: [AdminRoleGuard] },
+  { path: 'client-request', component: ClientRequestComponent, canActivate: [AdminRoleGuard] },
+  { path: 'create-category', component: CreateCategoryComponent, canActivate: [AdminRoleGuard] },
   { path: 'edit-about-us', component: EditAboutUsComponent },
 ];
 

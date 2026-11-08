@@ -40,6 +40,8 @@ interface Performance {
     service: string;
 }
 
+export type AdminRole = "Admin" | "Editor" | "Read-only";
+
 interface User {
     _id: string;
     firstName: string;
@@ -48,6 +50,7 @@ interface User {
     email: string;
     password: string;
     userType: "Admin" | "Client" | "Professional";
+    adminRole?: AdminRole;
     address?: Address;
     company?: string;
     dba?: string;

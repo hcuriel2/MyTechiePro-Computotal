@@ -1,11 +1,14 @@
+
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { ViewChild } from '@angular/core';
 import { Component } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { MfaSettingsDialogComponent } from './modules/mfa-settings/mfa-settings-dialog.component';
+import { AdminAccessService, AdminRole } from './shared/services/admin-access.service';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +18,16 @@ import { MfaSettingsDialogComponent } from './modules/mfa-settings/mfa-settings-
 export class AppComponent {
   @ViewChild(MatSidenav)
   sidenav!: MatSidenav;
-  public mfaEnabled = false;
 
-  constructor(private observer: BreakpointObserver,
+  public mfaEnabled = false;
+  public adminRole: AdminRole = 'Read-only';
+
+  constructor(
+    private observer: BreakpointObserver,
     private http: HttpClient,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    private adminAccessService: AdminAccessService
   ) { }
 
   ngAfterViewInit() {
@@ -31,16 +39,25 @@ export class AppComponent {
             window.location.href = environment.clientUrl;
             return;
           }
-          // Session check tells us if this admin already finished authenticator setup.
+
+          // MFA status from the session check.
           this.mfaEnabled = !!user.mfaEnabled;
-          document.getElementById("fullName")!.innerHTML = 
+
+          // Preserve the role-based restrictions from dev.
+          this.adminRole = user.adminRole || 'Admin';
+          this.adminAccessService.setAdminRole(this.adminRole);
+          if (this.adminRole !== 'Admin' && this.router.url !== '/edit-about-us') {
+            this.router.navigateByUrl('/edit-about-us');
+          }
+
+          document.getElementById('fullName')!.innerHTML =
             `${user.firstName} ${user.lastName}`;
-          
-          const avatar = document.getElementById("userAvatar");
+
+          const avatar = document.getElementById('userAvatar');
           if (avatar) {
             avatar.setAttribute('src', `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&background=edf2fa`);
           }
-  
+
           this.observer.observe(['(max-width: 800px)']).subscribe((res) => {
             if (res.matches) {
               this.sidenav.mode = 'over';
@@ -52,13 +69,13 @@ export class AppComponent {
           });
         },
         error: () => {
-          console.log("error");
+          console.log('error');
           window.location.href = environment.clientUrl;
         }
       });
   }
 
-  // Gear in the toolbar. disableClose so they leave through Close and we get the new on/off value back.
+  // Opens MFA enrollment/reset/disable settings.
   public openMfaSettings(): void {
     this.dialog.open(MfaSettingsDialogComponent, {
       width: '440px',
@@ -73,24 +90,23 @@ export class AppComponent {
   }
 
   public signOut() {
-    this.http.post(`${environment.apiEndpoint}/auth/logout`, {}, { 
+    this.http.post(`${environment.apiEndpoint}/auth/logout`, {}, {
       withCredentials: true,
       observe: 'response'
     }).subscribe({
       next: (response) => {
         console.log('Logout successful');
-        window.location.href = environment.clientUrl
+        window.location.href = environment.clientUrl;
         setTimeout(() => {
           window.location.href = environment.clientUrl;
-        }, 500); // adding short delay to ensure the logout request completes
+        }, 500);
       },
       error: (error) => {
         console.error('Logout failed:', error);
         setTimeout(() => {
           window.location.href = environment.clientUrl;
-        }, 500); 
+        }, 500);
       }
     });
   }
 }
-

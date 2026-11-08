@@ -21,7 +21,7 @@ export class UserService {
 
   // Gets list of all users regardless of role
   public getAll(): Observable<User[]> {
-    return this.httpClient.get<User[]>(this.API_URL).pipe(
+    return this.httpClient.get<User[]>(this.API_URL, { withCredentials: true }).pipe(
       first(),
       map((users: User[]) => plainToClass(User, users))
     );
@@ -29,7 +29,7 @@ export class UserService {
 
   // Gets information about a single user based on user ID
   public getById(id: string): Observable<User> {
-    return this.httpClient.get<User>(`${this.API_URL}/${id}`).pipe(
+    return this.httpClient.get<User>(`${this.API_URL}/${id}`, { withCredentials: true }).pipe(
       first(),
       map((user: User) => plainToClass(User, user))
     );
@@ -37,7 +37,7 @@ export class UserService {
 
   //Get list of all clients from backend/database
   public getAllClients(): Observable<User[]> {
-    return this.httpClient.get<User[]>(`${this.API_URL}/clients`).pipe(
+    return this.httpClient.get<User[]>(`${this.API_URL}/clients`, { withCredentials: true }).pipe(
       first(),
       map((users: User[]) => plainToClass(User, users))
     );
@@ -53,30 +53,25 @@ export class UserService {
 
   // Approves the professionals account
   public approveAccount(id: string): Observable<User> {
-    return this.httpClient.put<User>(`${this.API_URL}/approve/${id}`, id).pipe(
+    return this.httpClient.put<User>(`${this.API_URL}/approve/${id}`, id, { withCredentials: true }).pipe(
       map((user: User) => plainToClass(User, user))
     );
   }
 
   //Get list of current admins from backend/database
   public getAllAdmins(): Observable<User[]> {
-    return this.httpClient.get<User[]>(`${this.API_URL}/admins`).pipe(
+    return this.httpClient.get<User[]>(`${this.API_URL}/admins`, { withCredentials: true }).pipe(
       first(),
       map((users: User[]) => plainToClass(User, users))
     );
   }
 
   // Registers a new admin from the admin panel
-  public registerUser(user: User): Observable<User> {
-    
-    
+  public registerUser(user: Partial<User>): Observable<User> {
     return this.httpClient
-      .post<User>(`${this.AUTH_API_URL}/register`, user)
+      .post<User>(`${this.AUTH_API_URL}/admin/register`, user, { withCredentials: true })
       .pipe(
-        map((user: User) => {
-          localStorage.setItem('user', JSON.stringify(user));
-          return user;
-        })
+        map((user: User) => plainToClass(User, user))
       );
   }
 }
