@@ -20,38 +20,38 @@
     <img class="avatar mat-elevation-z8" id="userAvatar" />
 
     <h4 class="name" id="fullName">John Smith</h4>
-    <p class="designation">Admin Panel</p>
+    <p class="designation">{{ adminRole === 'Admin' ? 'Admin Panel' : 'Admin ' + adminRole }}</p>
 
     <mat-divider></mat-divider>
 
-    <button mat-button class="menu-button" routerLink="/">
+    <button mat-button class="menu-button" routerLink="/" *ngIf="adminRole === 'Admin'">
       <mat-icon>home</mat-icon>
       <span>Dashboard</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/users">
+    <button mat-button class="menu-button" routerLink="/users" *ngIf="adminRole === 'Admin'">
       <mat-icon>supervisor_account</mat-icon>
       <span>Users</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/admins">
+    <button mat-button class="menu-button" routerLink="/admins" *ngIf="adminRole === 'Admin'">
       <mat-icon>person</mat-icon>
       <span>Admins</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/projects">
+    <button mat-button class="menu-button" routerLink="/projects" *ngIf="adminRole === 'Admin'">
       <mat-icon>dashboard</mat-icon>
       <span>Projects</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/client-request">
+    <button mat-button class="menu-button" routerLink="/client-request" *ngIf="adminRole === 'Admin'">
       <mat-icon>contact_mail</mat-icon>
       <span>Client Requests</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/create-category">
+    <button mat-button class="menu-button" routerLink="/create-category" *ngIf="adminRole === 'Admin'">
       <mat-icon>brush</mat-icon>
       <span>Create Category</span>
     </button>
-    <button mat-button class="menu-button" routerLink="/signup-controls">Signup controls</button>
+    <button mat-button class="menu-button" routerLink="/signup-controls" *ngIf="adminRole === 'Admin'">Signup controls</button>
     <button mat-button class="menu-button" routerLink="/edit-about-us">
       <mat-icon>edit</mat-icon>
-      <span>Edit About Us</span>
+      <span>Site Content</span>
     </button>
   </mat-sidenav>
 

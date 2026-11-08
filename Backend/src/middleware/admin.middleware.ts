@@ -2,9 +2,11 @@ import { NextFunction, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import WrongAdminException from "../exceptions/WrongAdminException";
 import WrongAuthenticationTokenException from "../exceptions/WrongAuthenticationTokenException";
+import NotAuthorizedException from "../exceptions/NotAuthorizedException";
 import DataStoredInToken from "../interfaces/dataStoredInToken";
 import RequestWithUser from "../interfaces/requestWithUser.interface";
 import userModel from "../models/user/user.model";
+import { AdminRole } from "../models/user/user.interface";
 
 async function adminMiddleware(
     request: RequestWithUser,
@@ -21,7 +23,7 @@ async function adminMiddleware(
             ) as DataStoredInToken;
             const id = verificationResponse._id;
             const user = await userModel.findById(id);
-            if (user.userType === "Admin") {
+            if (user && user.userType === "Admin") {
                 request.user = user;
                 next();
             } else {
@@ -33,6 +35,41 @@ async function adminMiddleware(
     } else {
         next(new WrongAdminException());
     }
+}
+
+export function adminRoleMiddleware(...allowedRoles: AdminRole[]) {
+    return (
+        request: RequestWithUser,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const role = request.user && request.user.userType === "Admin"
+            ? request.user.adminRole || "Admin"
+            : undefined;
+
+        if (role && allowedRoles.indexOf(role) !== -1) {
+            next();
+        } else {
+            next(new NotAuthorizedException());
+        }
+    };
+}
+
+export function adminWriteMiddleware(
+    request: RequestWithUser,
+    response: Response,
+    next: NextFunction
+) {
+    if (
+        request.user &&
+        request.user.userType === "Admin" &&
+        (request.user.adminRole || "Admin") !== "Admin"
+    ) {
+        next(new NotAuthorizedException());
+        return;
+    }
+
+    next();
 }
 
 export default adminMiddleware;

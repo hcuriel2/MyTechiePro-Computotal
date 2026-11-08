@@ -21,7 +21,9 @@ import { VerificationInstructionsComponent } from "./modules/verification-instru
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
-  { path: "about", component: AboutComponent },
+  { path: "about", redirectTo: "who-we-are", pathMatch: "full" },
+  { path: "who-we-are", component: AboutComponent, data: { section: "whoWeAre" } },
+  { path: "appendix", component: AboutComponent, data: { section: "appendix" } },
   { path: "contact-us", component: ContactUsComponent },
   { path: "sign-up", component: SignUpComponent },
   { path: "service-survey", component: ServiceSurveyComponent },

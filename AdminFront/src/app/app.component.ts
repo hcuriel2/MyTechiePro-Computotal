@@ -5,6 +5,8 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
+import { AdminAccessService, AdminRole } from './shared/services/admin-access.service';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +16,12 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   @ViewChild(MatSidenav)
   sidenav!: MatSidenav;
+  public adminRole: AdminRole = 'Read-only';
 
   constructor(private observer: BreakpointObserver,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,
+    private adminAccessService: AdminAccessService
   ) { }
 
   ngAfterViewInit() {
@@ -27,6 +32,11 @@ export class AppComponent {
             console.log(user);
             window.location.href = environment.clientUrl;
             return;
+          }
+          this.adminRole = user.adminRole || 'Admin';
+          this.adminAccessService.setAdminRole(this.adminRole);
+          if (this.adminRole !== 'Admin' && this.router.url !== '/edit-about-us') {
+            this.router.navigateByUrl('/edit-about-us');
           }
           document.getElementById("fullName")!.innerHTML = 
             `${user.firstName} ${user.lastName}`;
@@ -74,4 +84,3 @@ export class AppComponent {
     });
   }
 }
-
