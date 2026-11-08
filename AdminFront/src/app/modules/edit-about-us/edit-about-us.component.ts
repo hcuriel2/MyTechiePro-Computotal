@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AboutUsService } from '../../shared/services/about-us.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AdminAccessService } from '../../shared/services/admin-access.service';
 
 @Component({
   selector: 'app-edit-about-us',
@@ -12,14 +13,19 @@ export class EditAboutUsComponent implements OnInit {
   public appendixContent: string = '';
   public editingSection: 'whoWeAre' | 'appendix' | null = null;
   public isSaving: boolean = false;
+  public canEditContent: boolean = false;
   private originalContent: string = '';
 
   constructor(
     private aboutUsService: AboutUsService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private adminAccessService: AdminAccessService
   ) {}
 
   ngOnInit(): void {
+    this.adminAccessService.adminRole$.subscribe((role) => {
+      this.canEditContent = role === 'Admin' || role === 'Editor';
+    });
     this.fetchAboutUsContent();
   }
 

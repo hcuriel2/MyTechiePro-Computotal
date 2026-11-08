@@ -7,6 +7,7 @@ import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import TokenData from "../../interfaces/tokenData.interface";
 import validationMiddleware from "../../middleware/validation.middleware";
 import adminMiddleware from "../../middleware/admin.middleware";
+import { adminRoleMiddleware } from "../../middleware/admin.middleware";
 import CreateUserDto from "../user/user.dto";
 import CreateAddressDto from "../user/address.dto";
 import User from "../../models/user/user.interface";
@@ -20,11 +21,12 @@ import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
 import sendEmail from '../../middleware/sendgrid.middleware';
 import UserNotVerify from "../../exceptions/UserNotVerify";
-import authMiddleware from "../../middleware/error.middleware";
+import authMiddleware from "../../middleware/auth.middleware";
 import * as crypto from "crypto";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import AuthenticationTokenMissingException from "../../exceptions/AuthenticationTokenMissingException";
 import { validate, ValidationError } from "class-validator";
+import NotAuthorizedException from "../../exceptions/NotAuthorizedException";
 
 class AuthenticationController implements Controller {
     public path = "/auth";
@@ -44,8 +46,11 @@ class AuthenticationController implements Controller {
     private initializeRoutes() {
         this.router.post(
             `${this.path}/admin/register`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
             validationMiddleware(CreateUserDto),
-            this.registration
+            this.adminRegistration
         );
         this.router.get(
             `${this.path}/checkSession`,
@@ -237,6 +242,33 @@ class AuthenticationController implements Controller {
         next: NextFunction
     ) => {
         const userData: CreateUserDto = request.body;
+
+        if (userData.userType === "Admin") {
+            return next(new NotAuthorizedException());
+        }
+
+        try {
+            const { user } = await this.authenticationService.register(
+                userData
+            );
+            response.status(201).send(user);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    private adminRegistration = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const userData: CreateUserDto = request.body;
+
+        if (userData.userType !== "Admin") {
+            return response.status(400).json({
+                message: "Admin registration requires userType Admin.",
+            });
+        }
 
         try {
             const { user } = await this.authenticationService.register(

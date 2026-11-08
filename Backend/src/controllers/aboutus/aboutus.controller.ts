@@ -4,7 +4,7 @@ import Controller from "../../interfaces/controller.interface";
 import { validate } from "class-validator";
 import UpdateAboutUsDto from "./aboutus.dto";
 import authMiddleware from "../../middleware/auth.middleware";
-import adminMiddleware from "../../middleware/admin.middleware";
+import adminMiddleware, { adminRoleMiddleware } from "../../middleware/admin.middleware";
 
 
 class AboutUsController implements Controller {
@@ -18,7 +18,13 @@ class AboutUsController implements Controller {
 
     private initializeRoutes() {
         this.router.get(this.path, this.getAboutUsContent);
-        this.router.put(this.path, authMiddleware, adminMiddleware, this.updateAboutUsContent);
+        this.router.put(
+            this.path,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin", "Editor"),
+            this.updateAboutUsContent
+        );
     }
 
     private getAboutUsContent = async (req: Request, res: Response, next: NextFunction) => {
