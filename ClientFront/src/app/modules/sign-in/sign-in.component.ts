@@ -25,6 +25,9 @@ export class SignInComponent implements OnInit {
   public authCode: FormControl;
   public isResetPw: boolean;
   public isResetEmailSend: boolean;
+  // True only after the password was accepted and this account has an authenticator.
+  public mfaStep = false;
+  public mfaError = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,6 +39,7 @@ export class SignInComponent implements OnInit {
   public ngOnInit(): void {
     this.emailAddress = new FormControl(null, Validators.required);
     this.password = new FormControl(null, Validators.required);
+    // Left optional on purpose. Password-only accounts never have to fill this in.
     this.authCode = new FormControl(null);
     this.isResetPw = false;
     this.isResetEmailSend = false;
@@ -78,28 +82,49 @@ export class SignInComponent implements OnInit {
   }
 
   public signIn(): void {
+    this.mfaError = false;
     const user: User = new User();
     user.email = this.emailAddress.value;
     user.password = this.password.value;
-    user.secret = this.authCode?.value;
+    // Only attach a code once the extra box is open. A normal login stays email + password.
+    if (this.mfaStep && this.authCode.value) {
+      user.secret = String(this.authCode.value).replace(/\s/g, "");
+    }
 
-    /**
-     * if signin success -> user data will be returned to app.component.ts
-     *
-     * Retrieves the 'user' item from localstorage and checks the usertype to correctly
-     * navigate to the corresponding URL.
-     */
+    // Password-only accounts come back as a user and follow the old redirect.
+    // Authenticator accounts come back first as { mfaRequired: true }, with no cookie.
     this.authService.signIn(user).subscribe(
-      (user: User) => {
-        if (!user) return;
+      (result: any) => {
+        if (!result) return;
 
-        if (user.userType == "Professional") {
-          this.dialogRef.close(user);
+        if (result.mfaRequired) {
+          this.mfaStep = true;
+          // Now the code is required, and it has to be exactly 6 digits.
+          this.authCode.setValidators([
+            Validators.required,
+            Validators.pattern(/^\d{6}$/),
+          ]);
+          this.authCode.updateValueAndValidity();
+          document.getElementById("failedLogin")!.style.display = "none";
+          document.getElementById("notVerified")!.style.display = "none";
+          // Wait for the slide-out, then put the cursor in the code box.
+          setTimeout(() => {
+            const input = document.getElementById("mfaCodeInput");
+            if (input) {
+              input.focus();
+            }
+          }, 280);
+          return;
+        }
+
+        const signedInUser: User = result;
+        if (signedInUser.userType == "Professional") {
+          this.dialogRef.close(signedInUser);
           this.router.navigateByUrl("/projects").then(() => {
             //window.location.reload()
           });
-        } else if (user.userType == "Client") {
-          this.dialogRef.close(user);
+        } else if (signedInUser.userType == "Client") {
+          this.dialogRef.close(signedInUser);
           this.router.navigateByUrl("/").then(() => {});
         } else {
           window.location.href = environment.adminUrl;
@@ -109,11 +134,20 @@ export class SignInComponent implements OnInit {
         if (error.status == 403) {
           document.getElementById("notVerified")!.style.display = "block";
           document.getElementById("failedLogin")!.style.display = "none";
-        } else if (error.status == 401 && !this.authCode.value) {
-          // Authentication code handling...
+        } else if (this.mfaStep && error.status == 401) {
+          // Code was wrong. Leave the extra box open so they can try the next one.
+          this.mfaError = true;
+          document.getElementById("failedLogin")!.style.display = "none";
           document.getElementById("notVerified")!.style.display = "none";
         } else {
           console.error(`Error in SignIn.signIn(): ${error}`, error);
+          // Bad password (or anything else). Fold the code box back up so a normal
+          // failed login looks the same as it did before MFA existed.
+          this.mfaStep = false;
+          this.mfaError = false;
+          this.authCode.clearValidators();
+          this.authCode.setValue(null);
+          this.authCode.updateValueAndValidity();
           document.getElementById("failedLogin")!.style.display = "block";
           document.getElementById("notVerified")!.style.display = "none";
         }

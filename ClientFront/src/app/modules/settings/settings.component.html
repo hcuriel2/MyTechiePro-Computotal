@@ -50,6 +50,56 @@
     </div>
   </form>
 
+  <!-- Optional authenticator. Off means the normal email + password login is unchanged. -->
+  <div class="settings-card mfa-card" *ngIf="userId">
+    <h2 class="section-title"><strong>Authenticator</strong></h2>
+    <p class="mfa-status" *ngIf="!enrolling">
+      {{ mfaEnabled ? 'On. Sign-in asks for a 6-digit code after your password.' : 'Off. Sign-in uses your email and password only.' }}
+    </p>
+    <p class="mfa-help" *ngIf="mfaMessage">{{ mfaMessage }}</p>
+    <p class="mfa-problem" *ngIf="mfaError">{{ mfaError }}</p>
+
+    <div *ngIf="!enrolling && !mfaEnabled" class="text-center">
+      <button type="button" (click)="startMfaSetup(false)" [disabled]="mfaBusy">
+        <strong>Turn on authenticator</strong>
+      </button>
+    </div>
+
+    <div *ngIf="!enrolling && mfaEnabled">
+      <div class="text-center">
+        <button type="button" class="cancel-button" (click)="disableMfa()" [disabled]="mfaBusy">
+          <strong>Turn off</strong>
+        </button>
+        <button type="button" (click)="startMfaSetup(true)" [disabled]="mfaBusy">
+          <strong>Reset authenticator</strong>
+        </button>
+      </div>
+    </div>
+
+    <!-- QR plus the raw key, for apps that can't scan. Confirm is what turns it on. -->
+    <div *ngIf="enrolling" class="enroll">
+      <p class="mfa-help" *ngIf="replacing">
+        Scan this new code. Your current authenticator keeps working until you confirm the new one.
+      </p>
+      <p class="mfa-help" *ngIf="!replacing">
+        Scan this QR code with your authenticator app, or enter the key yourself.
+      </p>
+      <img [src]="qrDataUrl" alt="Authenticator QR code" class="qr-code">
+      <label for="manualSecret"><strong>Setup key</strong></label>
+      <input id="manualSecret" type="text" [value]="manualSecret" readonly>
+      <label for="confirmCode"><strong>6-digit code</strong></label>
+      <input id="confirmCode" type="text" inputmode="numeric" maxlength="6" [(ngModel)]="confirmCode" autocomplete="one-time-code">
+      <div class="text-center">
+        <button type="button" class="cancel-button" (click)="cancelMfaSetup()" [disabled]="mfaBusy">
+          <strong>Cancel</strong>
+        </button>
+        <button type="button" (click)="confirmMfaSetup()" [disabled]="mfaBusy">
+          <strong>Confirm</strong>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- <div class="section-divider"></div> -->
 
   <!-- Stripe Connection Section -->

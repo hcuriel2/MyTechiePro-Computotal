@@ -15,6 +15,7 @@ import { CreateCategoryComponent } from './modules/create-category/create-catego
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatSortModule } from '@angular/material/sort';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -30,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AdminCreateDialogComponent } from './modules/admins/admin-create-dialog/admin-create-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.component';
+import { MfaSettingsDialogComponent } from './modules/mfa-settings/mfa-settings-dialog.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +49,7 @@ import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.comp
     AdminCreateDialogComponent,
     CreateCategoryComponent,
     EditAboutUsComponent, //this is new
+    MfaSettingsDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -60,6 +63,7 @@ import { EditAboutUsComponent } from './modules/edit-about-us/edit-about-us.comp
     HttpClientModule,
     MatSortModule,
     MatDialogModule,
+    MatFormFieldModule,
     FormsModule,
     ReactiveFormsModule,
   ],

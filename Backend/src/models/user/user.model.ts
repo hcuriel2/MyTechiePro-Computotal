@@ -130,6 +130,8 @@ const userSchema = new mongoose.Schema({
     inquiry: String,
     performance: { type: [performaceSchema], default: [] },
     website: String,
+    // secret is the live authenticator key. Empty means MFA is off and login is password-only.
+    // tempSecret is the key from a setup/reset that hasn't been confirmed yet. Login ignores it.
     secret: String,
     tempSecret: String,
     approved: Boolean,
@@ -149,6 +151,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
     }
+});
+
+// Any time a user document is sent as JSON (user lists, etc.) drop the authenticator
+// secret and the email-verification tokens. The settings page only needs mfaEnabled.
+// Login still reads `secret` off the mongoose document itself, before this runs.
+userSchema.set("toJSON", {
+    transform: (_doc, ret) => {
+        ret.mfaEnabled = Boolean(ret.secret);
+        delete ret.secret;
+        delete ret.tempSecret;
+        delete ret.verificationToken;
+        delete ret.verificationSessionId;
+        return ret;
+    },
 });
 
 Object.assign(userSchema.statics, { userTypes });
