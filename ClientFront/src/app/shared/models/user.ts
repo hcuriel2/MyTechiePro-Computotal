@@ -14,6 +14,7 @@ export class User {
     email: string;
     password: string;
     userType: string;
+    adminRole?: 'Admin' | 'Editor' | 'Read-only';
     address: Address;
     company: Company;
     skills: any[];

@@ -3,7 +3,7 @@ import NotAuthorizedException from "../../exceptions/NotAuthorizedException";
 import Controller from "../../interfaces/controller.interface";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import authMiddleware from "../../middleware/auth.middleware";
-import adminMiddleware from "../../middleware/admin.middleware";
+import adminMiddleware, { adminRoleMiddleware, adminWriteMiddleware } from "../../middleware/admin.middleware";
 import userModel from "../../models/user/user.model";
 import UserNotFoundException from "../../exceptions/UserNotFoundException";
 import ResetPasswordDto from "../authentication/resetPassword.dto";
@@ -28,16 +28,39 @@ class UserController implements Controller {
         this.router.get(`${this.path}/verify/:id`, this.verifyUserEmail);
         this.router.get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill);
         this.router.get(`${this.path}/professionals`, this.getAllProfessionals)
-        this.router.delete(`${this.path}/:id`, this.deleteUser)
-        this.router.patch(`${this.path}/stripe-account/:id`, this.setStripeAccountId)
+        this.router.delete(
+            `${this.path}/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.deleteUser
+        );
+        this.router.patch(
+            `${this.path}/stripe-account/:id`,
+            authMiddleware,
+            adminWriteMiddleware,
+            this.setStripeAccountId
+        );
 
         //Admin routes - Admin authentication needed (only admins can access these)
-        this.router.get(`${this.path}`, this.getAllUsers)
-        this.router.get(`${this.path}/clients`, this.getAllClients)
-        this.router.get(`${this.path}/admins`, this.getAllAdmins)
-        this.router.put(`${this.path}/approve/:id`, this.approveUser)
-        this.router.get(`${this.path}/:id`, this.getUserById)
-        this.router.patch(`${this.path}/:id`, this.changeStatus)
+        this.router.get(`${this.path}`, authMiddleware, adminMiddleware, this.getAllUsers);
+        this.router.get(`${this.path}/clients`, authMiddleware, adminMiddleware, this.getAllClients);
+        this.router.get(`${this.path}/admins`, authMiddleware, adminMiddleware, this.getAllAdmins);
+        this.router.put(
+            `${this.path}/approve/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.approveUser
+        );
+        this.router.get(`${this.path}/:id`, authMiddleware, adminMiddleware, this.getUserById);
+        this.router.patch(
+            `${this.path}/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.changeStatus
+        );
 
         
 

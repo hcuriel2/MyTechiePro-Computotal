@@ -12,12 +12,12 @@ import { first } from 'rxjs/operators';
 })
 export class AdminsComponent implements OnInit {
   public admins: User[];
-  public admin: User;
+  public admin: Partial<User>;
   displayedColumns: string[] = [
     'id',
     'username',
     'email',
-    // 'permissions',
+    'adminRole',
     // 'viewProfile',
     // 'editPermissions',
   ];
@@ -57,16 +57,17 @@ export class AdminsComponent implements OnInit {
       .afterClosed()
       .subscribe((data: any) => {
         
+        if (!data) {
+          return;
+        }
+
         this.admin = data;
-        
         this.admin.userType = "Admin";
-        
+
         this.userService
-          .registerUser(this.admin
-          )
+          .registerUser(this.admin)
           .pipe(first())
-          .subscribe((project) => {
-            
+          .subscribe(() => {
             window.location.reload();
           });
       });
@@ -78,16 +79,18 @@ export interface Admins {
   username: string;
   email: string;
   permissions: string;
+  password: string;
 }
 
 // const ADMINS_DATA: Admins[] = [
-//   {
+// {
 //     id: 1,
 //     username: 'admin',
-//     email: 'jason@gmail.com',
+//     email: 'example@gmail.com',
 //     permissions: 'Admin',
+//     password: 'admin123'
 //   },
-//   {
+//  {
 //     id: 2,
 //     username: 'admin2',
 //     email: 'jason@gmail.com',
@@ -104,5 +107,5 @@ export interface Admins {
 //     username: 'moderator',
 //     email: 'jason@gmail.com',
 //     permissions: 'Moderator',
-//   },
+//  },
 // ];
