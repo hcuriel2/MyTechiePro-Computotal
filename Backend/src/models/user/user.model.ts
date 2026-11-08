@@ -139,6 +139,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    passwordResetTokenHash: { type: String, select: false },
+    passwordResetExpiresAt: { type: Date, select: false },
+    passwordResetRequestedAt: { type: Date, select: false },
     verificationToken: {
         type: String,
         required: false,

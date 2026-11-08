@@ -1,3 +1,4 @@
+import { ComponentTestModule } from '../../../../testing/component-test.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectCompleteDialogComponent } from './project-complete-dialog.component';
@@ -8,7 +9,7 @@ describe('ProjectCompleteDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProjectCompleteDialogComponent ]
+      imports: [ComponentTestModule]
     })
     .compileComponents();
   });

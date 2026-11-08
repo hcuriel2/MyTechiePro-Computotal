@@ -1,73 +1,33 @@
-// @ts-ignore
-import { Component, OnInit } from "@angular/core";
-import { Options } from "ngx-google-places-autocomplete/objects/options/options";
+import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { ComponentTestModule } from '../../../testing/component-test.module';
+import { AboutComponent } from './about.component';
+import { AuthService } from '../../shared/services/auth.service';
+import { environment } from '../../../environments/environment';
 
-@Component({
-  selector: "app-about",
-  templateUrl: "./about.component.html",
-  styleUrls: ["./about.component.scss"],
-})
-export class AboutComponent implements OnInit {
-  title = "google-places-autocomplete";
-  userAddress: string = "";
-  userLatitude: string = "";
-  userLongitude: string = "";
-
-  userCountry: string = "";
-  userPostal: string = "";
-  userCity: string = "";
-  userStreetAddress: string = "";
-
-  options: Options = {
-    bounds: undefined!,
-    fields: ["ALL"],
-    strictBounds: false,
-    types: ["address"],
-    origin: undefined!,
-    componentRestrictions: undefined!,
-  };
-
-  constructor() {}
-
-  ngOnInit(): void {}
-
-  handleAddressChange(address: any) {
-    let addressComponents = address.address_components;
-    
-
-    this.userAddress = address.formatted_address;
-    this.userLatitude = address.geometry.location.lat();
-    this.userLongitude = address.geometry.location.lng();
-
-    let streetNumber;
-    let streetName;
-
-    for (let i = 0; i < addressComponents.length; i++) {
-      let types = addressComponents[i].types;
-      for (let j = 0; j < types.length; j++) {
-        if (types[j] == "country") {
-          this.userCountry = addressComponents[i].long_name;
-        }
-        if (types[j] == "postal_code") {
-          this.userPostal = addressComponents[i].long_name;
-        }
-        if (types[j] == "locality") {
-          this.userCity = addressComponents[i].long_name;
-        }
-        if (types[j] == "street_number") {
-          streetNumber = addressComponents[i].long_name;
-        }
-        if (types[j] == "route") {
-          streetName = addressComponents[i].long_name;
-        }
-      }
-      this.userStreetAddress = streetNumber + " " + streetName;
-    }
-    
-    
-    
-    
-    
-    // this.userCountry = address.geometry.location.country()
-  }
-}
+describe('AboutComponent content permissions', () => {
+  let http: HttpTestingController;
+  beforeEach(async()=>{
+    await TestBed.configureTestingModule({imports:[ComponentTestModule]}).compileComponents();
+    http=TestBed.inject(HttpTestingController);
+  });
+  afterEach(()=>http.verify());
+  it('renders public content without an edit button for a Read-only account',()=>{
+    TestBed.inject(AuthService).setUserValue({userType:'Admin',adminRole:'Read-only'} as any);
+    const fixture=TestBed.createComponent(AboutComponent);fixture.detectChanges();
+    http.expectOne(environment.apiEndpoint+'/aboutus').flush({content:'Public content'});fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Public content');
+    expect(fixture.nativeElement.querySelector('#edit-content-btn')).toBeNull();
+  });
+  it('allows Editor partial updates and keeps draft on a rejected save',()=>{
+    spyOn(console, 'error');
+    TestBed.inject(AuthService).setUserValue({userType:'Admin',adminRole:'Editor'} as any);
+    const fixture=TestBed.createComponent(AboutComponent);fixture.detectChanges();
+    http.expectOne(environment.apiEndpoint+'/aboutus').flush({content:'Original'});
+    const component=fixture.componentInstance;component.startEditing();component.draft='Updated';component.save();
+    const req=http.expectOne(environment.apiEndpoint+'/aboutus');
+    expect(req.request.body).toEqual({content:'Updated'});expect(req.request.withCredentials).toBeTrue();
+    req.flush({},{status:403,statusText:'Forbidden'});
+    expect(component.isEditing).toBeTrue();expect(component.content).toBe('Original');expect(component.isSaving).toBeFalse();
+  });
+});

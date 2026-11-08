@@ -1,3 +1,4 @@
+import { ComponentTestModule } from '../../../testing/component-test.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PaymentSuccessComponent } from './payment-success.component';
@@ -8,7 +9,7 @@ describe('PaymentSuccessComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PaymentSuccessComponent ]
+      imports: [ComponentTestModule]
     })
     .compileComponents();
   });

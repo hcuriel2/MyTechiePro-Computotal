@@ -1,3 +1,4 @@
+import { ComponentTestModule } from '../../../testing/component-test.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClientRequestComponent } from './client-request.component';
@@ -8,7 +9,7 @@ describe('ClientRequestComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClientRequestComponent ]
+      imports: [ComponentTestModule]
     })
     .compileComponents();
   });

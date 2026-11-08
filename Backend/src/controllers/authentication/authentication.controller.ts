@@ -14,6 +14,7 @@ import CreateAddressDto from "../user/address.dto";
 import User from "../../models/user/user.interface";
 import userModel from "../../models/user/user.model";
 import AuthenticationService from "./authentication.service";
+import PasswordResetService from "./password-reset.service";
 import AuthMiddleware from "../../middleware/auth.middleware";
 import LogInDto from "./logIn.dto";
 import qrcode from "qrcode";
@@ -452,30 +453,14 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        const { emailAddress } = request.body;
-
-        const user = await this.user.findOne({ email: emailAddress });
-
-        if (!user) {
-            response.status(200);
-            return;
-        }
-
-        const resetPasswordHtml = 
-        "<b>Reset Password</b><br/><br/>" +
-        `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`;
-
+        // A uniform response avoids disclosing account existence or mail failures.
+        response.setHeader('Cache-Control', 'no-store');
         try {
-            await sendEmail(
-                emailAddress,
-                "Reset Password",
-                resetPasswordHtml
-            );
-            response.status(200).send();
-        } catch (error) {
-            console.error("Failed to send reset password email:", error);
-            response.status(500).send();
+            await new PasswordResetService().requestReset(request.body && request.body.emailAddress);
+        } catch (_) {
+            // Do not expose recovery credentials, user records, or provider errors.
         }
+        response.status(200).json({ message: 'If the account exists, a reset link has been sent.' });
     };
 
     // Updates User's information in the frontend '/settings' route
