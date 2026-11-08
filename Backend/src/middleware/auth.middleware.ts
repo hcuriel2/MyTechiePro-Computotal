@@ -5,6 +5,7 @@ import WrongAuthenticationTokenException from "../exceptions/WrongAuthentication
 import DataStoredInToken from "../interfaces/dataStoredInToken";
 import RequestWithUser from "../interfaces/requestWithUser.interface";
 import userModel from "../models/user/user.model";
+import { sessionVersionMatches } from './session-version';
 
 async function authMiddleware(
     request: RequestWithUser,
@@ -21,7 +22,7 @@ async function authMiddleware(
             ) as DataStoredInToken;
             const id = verificationResponse._id;
             const user = await userModel.findById(id);
-            if (user) {
+            if (user && sessionVersionMatches(user, verificationResponse)) {
                 request.user = user;
                 next();
             } else {

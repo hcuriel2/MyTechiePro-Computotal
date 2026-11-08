@@ -47,7 +47,8 @@ export default class PasswordResetService {
             passwordResetExpiresAt: { $gt: new Date() },
         }, {
             $set: { password: hashedPassword },
-            $unset: { passwordResetTokenHash: '', passwordResetExpiresAt: '' },
+            $inc: { sessionVersion: 1 },
+            $unset: { passwordResetTokenHash: '', passwordResetExpiresAt: '', tempSecret: '', tempSecretExpiresAt: '' },
         }, { new: true, runValidators: true });
         if (!user) { throw invalid(); }
     }

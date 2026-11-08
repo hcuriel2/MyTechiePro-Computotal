@@ -58,6 +58,12 @@
     </p>
     <p class="mfa-help" *ngIf="mfaMessage">{{ mfaMessage }}</p>
     <p class="mfa-problem" *ngIf="mfaError">{{ mfaError }}</p>
+    <label for="mfaCurrentPassword">Current password</label>
+    <input id="mfaCurrentPassword" type="password" autocomplete="current-password" [(ngModel)]="currentPassword">
+    <ng-container *ngIf="mfaEnabled">
+      <label for="mfaCurrentToken">Current authenticator code</label>
+      <input id="mfaCurrentToken" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" [(ngModel)]="currentToken">
+    </ng-container>
 
     <div *ngIf="!enrolling && !mfaEnabled" class="text-center">
       <button type="button" (click)="startMfaSetup(false)" [disabled]="mfaBusy">

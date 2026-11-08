@@ -7,6 +7,7 @@ import DataStoredInToken from "../interfaces/dataStoredInToken";
 import RequestWithUser from "../interfaces/requestWithUser.interface";
 import userModel from "../models/user/user.model";
 import { AdminRole } from "../models/user/user.interface";
+import { sessionVersionMatches } from './session-version';
 
 async function adminMiddleware(
     request: RequestWithUser,
@@ -23,7 +24,7 @@ async function adminMiddleware(
             ) as DataStoredInToken;
             const id = verificationResponse._id;
             const user = await userModel.findById(id);
-            if (user && user.userType === "Admin") {
+            if (user && user.userType === "Admin" && sessionVersionMatches(user, verificationResponse)) {
                 request.user = user;
                 next();
             } else {

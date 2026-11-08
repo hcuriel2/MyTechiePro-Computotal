@@ -15,7 +15,7 @@ describe('AppComponent session access', () => {
     TestBed.configureTestingModule({imports: [HttpClientTestingModule]});
     http = TestBed.inject(HttpTestingController);
     router = {url: '/signup-controls', navigateByUrl: jasmine.createSpy('navigateByUrl')};
-    app = new AppComponent({observe: () => EMPTY} as any, TestBed.inject(HttpClient), router, new AdminAccessService());
+    app = new AppComponent({observe: () => EMPTY} as any, TestBed.inject(HttpClient), {} as any, router, new AdminAccessService());
     name = document.createElement('span'); name.id = 'fullName'; document.body.appendChild(name);
   });
   afterEach(() => {http.verify(); name.remove();});

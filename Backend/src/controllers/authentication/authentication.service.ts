@@ -30,6 +30,7 @@ class AuthenticationService {
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
             userType: user.userType,
+            sessionVersion: user.sessionVersion || 0,
         };
         return {
             expiresIn,
@@ -79,6 +80,15 @@ class AuthenticationService {
         //create the user in database with given user object.
         const user = await this.user.create({
             ...userData,
+            // Public registration cannot seed internal recovery/session/MFA state.
+            secret: undefined,
+            tempSecret: undefined,
+            tempSecretExpiresAt: undefined,
+            passwordResetTokenHash: undefined,
+            passwordResetExpiresAt: undefined,
+            passwordResetRequestedAt: undefined,
+            sessionVersion: 0,
+            approved: false,
             adminRole: userData.userType === "Admin"
                 ? userData.adminRole || "Admin"
                 : undefined,

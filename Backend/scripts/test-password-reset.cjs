@@ -24,6 +24,7 @@ User.findOneAndUpdate = async (filter, update, options) => {
     assert(update.$unset.passwordResetTokenHash !== undefined && update.$unset.passwordResetExpiresAt !== undefined);
     // No await between matching and consuming, modelling an atomic adapter operation.
     Object.assign(account, update.$set);
+    for (const [key, value] of Object.entries(update.$inc || {})) account[key] = (account[key] || 0) + value;
     for (const key of Object.keys(update.$unset)) delete account[key];
     mutations++; return {...account};
 };
@@ -34,7 +35,8 @@ app.use((err,_req,res,_next)=>res.status(err.status||500).json({message:err.stat
 const password = 'NewPassword1!', oldPassword = 'OldPassword1!';
 const hash = token => crypto.createHash('sha256').update(token).digest('hex');
 async function reset() {
-    account = {_id:id,email:'reset@example.com',password:await bcrypt.hash(oldPassword, 4)};
+    account = {_id:id,email:'reset@example.com',password:await bcrypt.hash(oldPassword, 4),sessionVersion:0,
+        secret:'DISPOSABLEACTIVE',tempSecret:'DISPOSABLEPENDING'};
     mutations=0; state.mail.length=0; failStore=false;
 }
 (async()=>{
@@ -73,6 +75,7 @@ async function reset() {
             const token=await issue(),result=await consume(token);assert.equal(result.status,200);
             assert(await bcrypt.compare(password,account.password));assert(!(await bcrypt.compare(oldPassword,account.password)));
             assert(!account.passwordResetTokenHash&&!account.passwordResetExpiresAt);assert.equal(mutations,1);
+            assert.equal(account.secret,'DISPOSABLEACTIVE');assert(!account.tempSecret);assert.equal(account.sessionVersion,1);
             assert.deepEqual(Object.keys(result.body),['message']);assert.equal(result.headers.get('cache-control'),'no-store');
         });
         await check('missing and malformed credentials cannot mutate a password',async()=>{

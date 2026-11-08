@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ResetPassword } from 'src/app/shared/models/resetPassword';
 import { UserService } from 'src/app/shared/services/user.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { passwordValidator } from '../sign-up/password.directive';
 
 @Component({
@@ -26,7 +27,8 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
      private formBuilder: FormBuilder, 
      private userService: UserService,
      private router: Router,
-     private location: Location) { }
+     private location: Location,
+     private authService: AuthService) { }
 
   ngOnInit(): void {
     this.password = new FormControl(null, [Validators.required,
@@ -79,6 +81,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         () => {
             this.isFailed = false;
             this.resetToken = '';
+            this.authService.setUserValue(null);
             this.router.navigateByUrl('/');
         },
         (error) => {

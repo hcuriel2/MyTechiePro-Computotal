@@ -5,6 +5,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentTestModule } from '../../../testing/component-test.module';
 import { ResetPasswordComponent } from './reset-password.component';
+import { AuthService } from '../../shared/services/auth.service';
 import { environment } from '../../../environments/environment';
 
 describe('ResetPasswordComponent recovery authorization', () => {
@@ -50,6 +51,7 @@ describe('ResetPasswordComponent recovery authorization', () => {
     expect(req.request.method).toBe('PUT');expect(req.request.body.token).toBe(token);
     expect(req.request.url).not.toContain(token);
     req.flush({message:'Password updated. Please sign in.'});
+    expect(TestBed.inject(AuthService).userValue).toBeNull();
     expect(component.resetToken).toBe('');expect(router.navigateByUrl).toHaveBeenCalledWith('/');
   });
   it('shows a recoverable error for rejected credentials', () => {

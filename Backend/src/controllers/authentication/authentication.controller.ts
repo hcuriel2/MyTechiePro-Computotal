@@ -147,12 +147,14 @@ class AuthenticationController implements Controller {
     // Creates a JWT token
     // This token's data is inserted into a HttpOnly cookie
     // Expires after an hour
-    private createToken(user: User): TokenData {
+    private createToken(user: User, mfaVerified = false): TokenData {
         const expiresIn = 60 * 60; // an hour
         const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
             userType: user.userType,
+            sessionVersion: user.sessionVersion || 0,
+            mfaVerified,
         };
         return {
             expiresIn,
@@ -192,6 +194,11 @@ class AuthenticationController implements Controller {
             typeof user.get === "function" ? user.get("secret") : source.secret
         );
         delete source.password;
+        delete source.sessionVersion;
+        delete source.tempSecretExpiresAt;
+        delete source.passwordResetTokenHash;
+        delete source.passwordResetExpiresAt;
+        delete source.passwordResetRequestedAt;
         delete source.secret;
         delete source.tempSecret;
         delete source.verificationToken;
@@ -233,7 +240,7 @@ class AuthenticationController implements Controller {
         // intentionally ignored so an unfinished enrollment cannot lock out the user.
         const sec = user.get("secret");
         if (sec) {
-            const token = (logInData.secret || "").replace(/\s/g, "");
+            const token = typeof logInData.secret === 'string' ? logInData.secret.replace(/\s/g, "") : '';
             // Password was right, but they haven't typed a code yet.
             // Tell the sign-in dialog to slide the code box out. Don't set a cookie yet.
             if (!token) {
@@ -248,7 +255,7 @@ class AuthenticationController implements Controller {
             }
         }
 
-        const tokenData = this.createToken(user);
+        const tokenData = this.createToken(user, Boolean(sec));
         response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
         response.send(this.toPublicUser(user));
     };
@@ -258,11 +265,14 @@ class AuthenticationController implements Controller {
     // until they prove the new QR code works, so a half-finished reset doesn't lock them out.
     // This response is the one place the secret is shown. They need it for the QR / manual key.
     private setupMfa = async (request: RequestWithUser, response: Response) => {
-        const user = await this.user.findById(request.user._id);
+        const user = await this.user.findById(request.user._id).select("+tempSecretExpiresAt");
         if (!user) {
             return response.status(401).json({ message: "Unauthorized" });
         }
 
+        if (!(await this.authorizeFactorChange(user, request.body))) {
+            return response.status(401).json({ message: 'Enter your current password and, when enabled, your current authenticator code.' });
+        }
         try {
             const secret = generateMfaSecret();
             const otpauthUrl = buildOtpAuthUrl(user.email, secret);
@@ -272,10 +282,11 @@ class AuthenticationController implements Controller {
             // Update only the pending MFA field. Saving the whole user document here
             // re-runs validation for unrelated profile fields and can fail for older
             // accounts whose data predates the current schema requirements.
-            await this.user.updateOne(
-                { _id: user._id },
-                { $set: { tempSecret: secret } }
+            const result = await this.user.updateOne(
+                { _id: user._id, sessionVersion: user.sessionVersion || { $in: [0, null] } },
+                { $set: { tempSecret: secret, tempSecretExpiresAt: new Date(Date.now() + 10 * 60 * 1000) } }
             );
+            if (!result.nModified) { return response.status(401).json({ message: 'Session changed. Sign in again.' }); }
 
             return response.status(200).json({
                 otpauthUrl,
@@ -294,20 +305,24 @@ class AuthenticationController implements Controller {
     // If it matches tempSecret, that secret becomes the real one and MFA is actually on.
     private confirmMfa = async (request: RequestWithUser, response: Response) => {
         // Reject malformed input before querying the account or checking the TOTP.
-        const code = ((request.body && request.body.token) || "").replace(/\s/g, "");
+        const rawCode = request.body && request.body.token;
+        const code = typeof rawCode === "string" ? rawCode.replace(/\s/g, "") : "";
         if (!/^\d{6}$/.test(code)) {
             return response.status(400).json({
                 message: "Enter the 6-digit code from your authenticator app.",
             });
         }
 
-        const user = await this.user.findById(request.user._id);
-        if (!user || !user.get("tempSecret")) {
+        const user = await this.user.findById(request.user._id).select("+tempSecretExpiresAt");
+        if (!user || !user.get("tempSecret") || !user.get("tempSecretExpiresAt") || user.get("tempSecretExpiresAt").getTime() <= Date.now()) {
             return response.status(400).json({
                 message: "Start setup again to get a new QR code.",
             });
         }
 
+        if (!(await this.authorizeFactorChange(user, request.body))) {
+            return response.status(401).json({ message: 'Current password and authenticator proof are required.' });
+        }
         // Verify against the pending key, never the currently active key. A reset only
         // replaces the old authenticator after the new key proves it can generate codes.
         const pending = user.get("tempSecret");
@@ -318,26 +333,47 @@ class AuthenticationController implements Controller {
         }
 
         // Move the pending secret over and drop tempSecret so a later confirm can't reuse it.
-        await this.user.findByIdAndUpdate(user._id, {
+        const updated = await this.user.findOneAndUpdate({
+            _id: user._id, tempSecret: pending,
+            tempSecretExpiresAt: { $gt: new Date() },
+            sessionVersion: user.sessionVersion || { $in: [0, null] },
+        }, {
             $set: { secret: pending },
-            $unset: { tempSecret: 1 },
-        });
+            $inc: { sessionVersion: 1 },
+            $unset: { tempSecret: 1, tempSecretExpiresAt: 1, passwordResetTokenHash: 1, passwordResetExpiresAt: 1 },
+        }, { new: true });
+        if (!updated) { return response.status(400).json({ message: 'Setup expired or changed. Start again.' }); }
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated, true))]);
         return response.status(200).json({ mfaEnabled: true });
     };
 
     // Turns the authenticator off for the signed-in account.
     private disableMfa = async (request: RequestWithUser, response: Response) => {
-        const user = await this.user.findById(request.user._id);
+        const user = await this.user.findById(request.user._id).select("+tempSecretExpiresAt");
         if (!user) {
             return response.status(401).json({ message: "Unauthorized" });
         }
 
-        await this.user.findByIdAndUpdate(user._id, {
-            $unset: { secret: 1, tempSecret: 1 },
-        });
+        if (!(await this.authorizeFactorChange(user, request.body))) {
+            return response.status(401).json({ message: 'Current password and authenticator proof are required.' });
+        }
+        const updated = await this.user.findOneAndUpdate({
+            _id: user._id, sessionVersion: user.sessionVersion || { $in: [0, null] },
+        }, {
+            $unset: { secret: 1, tempSecret: 1, tempSecretExpiresAt: 1, passwordResetTokenHash: 1, passwordResetExpiresAt: 1 },
+            $inc: { sessionVersion: 1 },
+        }, { new: true });
+        if (!updated) { return response.status(401).json({ message: 'Session changed. Sign in again.' }); }
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated))]);
         return response.status(200).json({ mfaEnabled: false });
     };
 
+    private async authorizeFactorChange(user: any, body: any): Promise<boolean> {
+        if (!body || typeof body.currentPassword !== 'string' || body.currentPassword.length > 128) { return false; }
+        if (!(await bcrypt.compare(body.currentPassword, user.get('password', null, { getters: false })))) { return false; }
+        const active = user.get('secret');
+        return !active || (typeof body.currentToken === 'string' && verifyTotp(active, body.currentToken));
+    }
     // Logs the User out
     // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
@@ -430,6 +466,10 @@ class AuthenticationController implements Controller {
             user.verificationToken = crypto.randomBytes(32).toString("hex");
             await user.save();
             // Create authentication token and cookie
+            if (user.get('secret')) {
+                return response.status(200).json({ success: true, mfaRequired: true,
+                    message: 'Email verified. Sign in with your password and authenticator.' });
+            }
             const tokenData = this.createToken(user);
             const cookie = this.createCookie(tokenData);
             // Set the cookie and redirect to home or dashboard
@@ -627,6 +667,10 @@ class AuthenticationController implements Controller {
             user.verificationTokenUsed = true;
             await user.save();
             
+            if (user.get('secret')) {
+                return response.status(200).json({ success: true, mfaRequired: true,
+                    message: 'Email verified. Sign in with your password and authenticator.' });
+            }
             const tokenData = this.createToken(user);
             const cookie = this.createCookie(tokenData);
             

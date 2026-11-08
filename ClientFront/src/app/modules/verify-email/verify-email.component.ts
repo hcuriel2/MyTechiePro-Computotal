@@ -68,7 +68,10 @@ export class VerifyEmailComponent implements OnInit {
           this.isVerified = true;
           
           // If user info is returned, update the auth service
-          if (response.user) {
+          if (response.mfaRequired) {
+            this.authService.setUserValue(null);
+            this.snackBar.open('Email verified. Sign in with your password and authenticator.', 'Close', {duration:5000});
+          } else if (response.user) {
             this.authService.setUserValue(response.user);
           }
           

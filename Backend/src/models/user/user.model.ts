@@ -134,6 +134,8 @@ const userSchema = new mongoose.Schema({
     // tempSecret is the key from a setup/reset that hasn't been confirmed yet. Login ignores it.
     secret: String,
     tempSecret: String,
+    tempSecretExpiresAt: { type: Date, select: false },
+    sessionVersion: { type: Number, default: 0 },
     approved: Boolean,
     verified: {
         type: Boolean,
@@ -163,6 +165,12 @@ userSchema.set("toJSON", {
     transform: (_doc, ret) => {
         ret.mfaEnabled = Boolean(ret.secret);
         delete ret.secret;
+        delete ret.password;
+        delete ret.sessionVersion;
+        delete ret.tempSecretExpiresAt;
+        delete ret.passwordResetTokenHash;
+        delete ret.passwordResetExpiresAt;
+        delete ret.passwordResetRequestedAt;
         delete ret.tempSecret;
         delete ret.verificationToken;
         delete ret.verificationSessionId;
