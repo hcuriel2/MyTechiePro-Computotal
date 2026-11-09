@@ -1,0 +1,16 @@
+
+{
+  "Dictionary": {
+    "SignIn": "Iniciar sesión",
+    "SignUp": "Registrarse",
+    "ContactUs": "Contáctanos",
+    "Search": "Buscar"
+  },
+  "Label": {
+    "JoinPro": "Únete a la red de profesionales"
+  },
+  "Message": {
+    "HowCanWeHelp": "¿Cómo podemos ayudarte?",
+    "GetStarted": "Para comenzar, busca un servicio específico o selecciona una categoría a continuación."
+  }
+}

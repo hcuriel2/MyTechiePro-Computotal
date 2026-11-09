@@ -26,6 +26,7 @@ import { GoogleMapsService } from './shared/services/google-maps.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   public user: User | null | undefined;
+  public currentLanguage: string = 'en-us';
   userAddress: string = '';
   userLatitude: string = '';
   userLongitude: string = '';
@@ -42,8 +43,23 @@ export class AppComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private googleMapsService: GoogleMapsService
   ) {
+    
     translateService.setDefaultLang('en-us');
-    translateService.use('en-us');
+
+    const savedLanguage = localStorage.getItem('mytechiepro-language');
+    this.currentLanguage =
+      savedLanguage === 'fr' || savedLanguage === 'es'
+        ? savedLanguage
+        : 'en-us';
+
+    translateService.use(this.currentLanguage);
+
+    
+    if (!savedLanguage) {
+      this.detectLanguageFromIP();
+    }
+
+
 
     this.authService.user.subscribe(
       (u: any) =>
@@ -205,4 +221,73 @@ export class AppComponent implements OnInit, OnDestroy {
   public navigateToProProfile(): void {
     this.router.navigateByUrl('/pro-profile');
   }
+  // This would switch language based on User's preference (currently work in progress with limited language dictionaries)
+  public changeLanguage(event: Event): void {
+    const language = (event.target as HTMLSelectElement).value;
+
+    this.currentLanguage = language;
+    this.translateService.use(language);
+    localStorage.setItem('mytechiepro-language', language);
+  }
+  
+// Detect the visitor's approximate location from their public IP.
+private detectLanguageFromIP(): void {
+  fetch('https://ipapi.co/json/')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Location lookup failed');
+      }
+      return response.json();
+    })
+    .then(location => {
+      // Do not override a language manually selected by the user.
+      if (localStorage.getItem('mytechiepro-language')) {
+        return;
+      }
+
+      if (location.error) {
+        throw new Error('Location service returned an error');
+      }
+
+      const country = (location.country_code || '').toUpperCase();
+      const region = (location.region_code || '').toUpperCase();
+
+      // const language = this.getLanguageForLocation(country, region);
+      const language = this.getLanguageForLocation('country', 'region');
+
+      this.currentLanguage = language;
+      this.translateService.use(language);
+      console.log('Auto-detected language:', language);
+    })
+    .catch(error => {
+      console.warn('Using default English language:', error);
+    });
+}
+
+// Map location to a supported language.
+private getLanguageForLocation(
+  country: string,
+  region: string
+): string {
+  if (country === 'CA' && region === 'QC') {
+    return 'fr';
+  }
+
+  if (country === 'FR') {
+    return 'fr';
+  }
+
+  const spanishCountries = [
+    'ES', 'MX', 'AR', 'BO', 'CL', 'CO',
+    'CR', 'CU', 'DO', 'EC', 'SV', 'GT',
+    'HN', 'NI', 'PA', 'PY', 'PE', 'UY', 'VE'
+  ];
+
+  if (spanishCountries.includes(country)) {
+    return 'es';
+  }
+
+  return 'en-us';
+}
+
 }

@@ -1,0 +1,16 @@
+
+{
+  "Dictionary": {
+    "SignIn": "Se connecter",
+    "SignUp": "S'inscrire",
+    "ContactUs": "Nous contacter",
+    "Search": "Rechercher"
+  },
+  "Label": {
+    "JoinPro": "Rejoindre le réseau Pro"
+  },
+  "Message": {
+    "HowCanWeHelp": "Comment pouvons-nous vous aider ?",
+    "GetStarted": "Pour commencer, recherchez un service ou sélectionnez une catégorie ci-dessous !"
+  }
+}

@@ -15,6 +15,8 @@
       >
         <h5 id="app-title" class="mb-0">{{ 'App.Title' | translate }}</h5>
       </button>
+      <!-- Right-side navigation and language selector -->
+      <div class="d-flex align-items-center ml-auto">
 
       <!-- User Menu Dropdown when logged in -->
       <div *ngIf="user" class="d-flex align-items-center">
@@ -90,6 +92,21 @@
             {{ 'Dictionary.ContactUs' | translate }}
           </button>
         </div>
+      </div>
+
+        <!-- Language selector -->
+      <select
+        class="custom-select custom-select-sm ml-2"
+        style="width: 110px;"
+        aria-label="Select language"
+        [value]="currentLanguage"
+        (change)="changeLanguage($event)"
+      >
+        <option value="en-us">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+      
       </div>
     </div>
   </nav>
