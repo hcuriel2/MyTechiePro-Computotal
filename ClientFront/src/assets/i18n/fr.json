@@ -4,13 +4,20 @@
     "SignIn": "Se connecter",
     "SignUp": "S'inscrire",
     "ContactUs": "Nous contacter",
-    "Search": "Rechercher"
+    "Search": "Rechercher",
+    "AboutUs": "À propos de nous",
+    "WhoWeAre": "Qui sommes-nous",
+    "Appendix": "Annexe",
+    "YourProfile": "Votre profil",
+    "MyProjects": "Mes projets"
   },
   "Label": {
-    "JoinPro": "Rejoindre le réseau Pro"
+    "JoinPro": "Rejoindre notre réseau de professionnels"
   },
   "Message": {
     "HowCanWeHelp": "Comment pouvons-nous vous aider ?",
-    "GetStarted": "Pour commencer, recherchez un service ou sélectionnez une catégorie ci-dessous !"
+    "GetStarted": "Pour commencer, recherchez un service ou sélectionnez une catégorie ci-dessous !",
+    "NoMatchingResults": "(Aucun résultat correspondant)",
+    "WelcomeBack": "Bon retour,"
   }
 }

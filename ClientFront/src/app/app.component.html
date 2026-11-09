@@ -39,10 +39,10 @@
         </button>
         <mat-menu #userMenu="matMenu">
           <button mat-menu-item (click)="renderProjectsList()">
-            My Projects
+            {{ 'Dictionary.MyProjects' | translate }}
           </button>
           <button mat-menu-item (click)="settings()">
-            Your Profile
+            {{ 'Dictionary.YourProfile' | translate }}
           </button>
           <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
             {{ 'Label.JoinPro' | translate }}
@@ -116,8 +116,8 @@
   <footer class="footer px-5 py-3" id="footer">
     &copy; {{ currentYear }} Computotal
     <span class="footer-links">
-      <a routerLink="/who-we-are">Who We Are</a>
-      <a routerLink="/appendix">Appendix</a>
+      <a routerLink="/who-we-are">{{ 'Dictionary.WhoWeAre' | translate }}</a>
+      <a routerLink="/appendix">{{ 'Dictionary.Appendix' | translate }}</a>
     </span>
   </footer>
 </div>
