@@ -81,6 +81,7 @@ class AuthenticationService {
         const user = await this.user.create({
             ...userData,
             // Public registration cannot seed internal recovery/session/MFA state.
+            mfaSecurity: undefined,
             secret: undefined,
             tempSecret: undefined,
             tempSecretExpiresAt: undefined,

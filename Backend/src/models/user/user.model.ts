@@ -132,6 +132,7 @@ const userSchema = new mongoose.Schema({
     website: String,
     // secret is the live authenticator key. Empty means MFA is off and login is password-only.
     // tempSecret is the key from a setup/reset that hasn't been confirmed yet. Login ignores it.
+    mfaSecurity: { type: mongoose.Schema.Types.Mixed, select: false },
     secret: String,
     tempSecret: String,
     tempSecretExpiresAt: { type: Date, select: false },
@@ -164,6 +165,7 @@ const userSchema = new mongoose.Schema({
 userSchema.set("toJSON", {
     transform: (_doc, ret) => {
         ret.mfaEnabled = Boolean(ret.secret);
+        delete ret.mfaSecurity;
         delete ret.secret;
         delete ret.password;
         delete ret.sessionVersion;
