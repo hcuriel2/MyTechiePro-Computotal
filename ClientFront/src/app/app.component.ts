@@ -253,7 +253,7 @@ private detectLanguageFromIP(): void {
       const region = (location.region_code || '').toUpperCase();
 
       // const language = this.getLanguageForLocation(country, region);
-      const language = this.getLanguageForLocation('country', 'region');
+      const language = this.getLanguageForLocation(country, region);
 
       this.currentLanguage = language;
       this.translateService.use(language);
