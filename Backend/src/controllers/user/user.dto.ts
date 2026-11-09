@@ -5,9 +5,15 @@ import { Type } from 'class-transformer';
 
 
     enum UserType {
+        Admin = "Admin",
         Client = "Client",
         Professional = "Professional",
-        // Add other user types as needed
+    }
+
+    enum AdminRole {
+        Admin = "Admin",
+        Editor = "Editor",
+        ReadOnly = "Read-only",
     }
     
     class CreateUserDto {
@@ -28,6 +34,10 @@ import { Type } from 'class-transformer';
     
         @IsEnum(UserType)
         readonly userType: UserType;
+
+        @IsOptional()
+        @IsEnum(AdminRole)
+        public adminRole?: AdminRole;
     
         // Business registration applies only to Professionals.
         @ValidateIf(o => o.userType === 'Professional')

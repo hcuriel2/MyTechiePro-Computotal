@@ -42,7 +42,7 @@
             My Projects
           </button>
           <button mat-menu-item (click)="settings()">
-            <label>Your Profile</label>
+            Your Profile
           </button>
           <button *ngIf="!isProfessional" mat-menu-item (click)="joinPro()">
             {{ 'Label.JoinPro' | translate }}
@@ -115,5 +115,9 @@
 
   <footer class="footer px-5 py-3" id="footer">
     &copy; {{ currentYear }} Computotal
+    <span class="footer-links">
+      <a routerLink="/who-we-are">Who We Are</a>
+      <a routerLink="/appendix">Appendix</a>
+    </span>
   </footer>
 </div>

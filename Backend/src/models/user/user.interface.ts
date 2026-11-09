@@ -40,6 +40,8 @@ interface Performance {
     service: string;
 }
 
+export type AdminRole = "Admin" | "Editor" | "Read-only";
+
 interface User {
     _id: string;
     firstName: string;
@@ -48,6 +50,7 @@ interface User {
     email: string;
     password: string;
     userType: "Admin" | "Client" | "Professional";
+    adminRole?: AdminRole;
     address?: Address;
     company?: string;
     dba?: string;
@@ -66,6 +69,8 @@ interface User {
     inquiry?: string;
     performance?: Performance[];
     website?: string;
+    // Internal MFA fields: `secret` is the active TOTP key; `tempSecret` is an
+    // enrollment or replacement key that is not active until a code is confirmed.
     secret?: string;
     tempSecret?: string;
     approved: boolean;

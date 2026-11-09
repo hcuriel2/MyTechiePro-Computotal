@@ -27,16 +27,24 @@
     />
   </mat-form-field>
 
-  <div id="authCode" style="display: none" class="col-md-12">
-    <div class="form-wrapper">
-      <mat-form-field class="w-100">
-        <input
-          matInput
-          [placeholder]="'Dictionary.AuthenticationCode' | translate"
-          formControlName="authCode"
-        />
-      </mat-form-field>
-    </div>
+  <!-- Hidden until the password is right and this account has an authenticator.
+       The .open class is what slides it down. -->
+  <div class="auth-code-panel col-md-12" [class.open]="mfaStep">
+    <p class="mfa-hint">{{ "Message.MfaPrompt" | translate }}</p>
+    <mat-form-field class="w-100">
+      <input
+        id="mfaCodeInput"
+        matInput
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        [placeholder]="'Dictionary.AuthenticationCode' | translate"
+        formControlName="authCode"
+      />
+    </mat-form-field>
+    <mat-error class="mfa-error" *ngIf="mfaError">
+      {{ "Message.MfaInvalid" | translate }}
+    </mat-error>
   </div>
 
   <mat-error

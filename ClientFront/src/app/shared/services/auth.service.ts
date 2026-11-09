@@ -5,7 +5,14 @@ import { Observable } from "rxjs/internal/Observable";
 import { tap, switchMap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { User } from "../models/user";
-import { MfaDto } from "../models/mfaDto";
+
+// Enrollment data returned by /auth/mfa/setup. The secret lets the user scan the QR
+// or enter it manually; the account is not protected until enrollment is confirmed.
+export interface MfaSetup {
+  qrDataUrl: string;
+  secret: string;
+  otpauthUrl: string;
+}
 
 @Injectable({
   providedIn: "root",
@@ -68,15 +75,62 @@ export class AuthService {
   // Signs in a User
   // Assigns the User's values to the UserSubject
   // It's then accessible through the 'this.user' value
-  public signIn(user: User): Observable<User> {
+  // If the account uses an authenticator, the password check returns
+  // { mfaRequired: true } without a session cookie. Keep the user unset until the
+  // follow-up request with the TOTP code succeeds and the server issues a session.
+  public signIn(user: User): Observable<any> {
     return this.httpClient
-      .post<User>(`${this.API_URL}/login`, user, { withCredentials: true })
+      .post<any>(`${this.API_URL}/login`, user, { withCredentials: true })
       .pipe(
-        tap((user: User) => {
-          this.setUserValue(user);
+        tap((body: any) => {
+          if (body && body.mfaRequired) {
+            return;
+          }
+          this.setUserValue(body);
         })
-        //switchMap(() => this.checkSession())
       );
+  }
+
+  // Starts enrollment (or reset) and receives a pending key plus its QR image.
+  // withCredentials sends the existing HttpOnly session cookie to the protected route.
+  public setupMfa(): Observable<MfaSetup> {
+    return this.httpClient.post<MfaSetup>(
+      `${this.API_URL}/mfa/setup`,
+      {},
+      { withCredentials: true }
+    );
+  }
+
+  // Proves the authenticator app can generate a code for the pending key. The server
+  // activates that key only after a match, then this updates the cached on/off flag.
+  public confirmMfa(token: string): Observable<{ mfaEnabled: boolean }> {
+    return this.httpClient
+      .post<{ mfaEnabled: boolean }>(
+        `${this.API_URL}/mfa/confirm`,
+        { token },
+        { withCredentials: true }
+      )
+      .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));
+  }
+
+  // Requests MFA removal for the signed-in account. The session cookie is enough.
+  public disableMfa(): Observable<{ mfaEnabled: boolean }> {
+    return this.httpClient
+      .post<{ mfaEnabled: boolean }>(
+        `${this.API_URL}/mfa/disable`,
+        {},
+        { withCredentials: true }
+      )
+      .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));
+  }
+
+  // Keeps settings and other subscribers in sync immediately after a successful change,
+  // rather than waiting for the next session check.
+  public setMfaEnabled(enabled: boolean): void {
+    const current = this.userValue;
+    if (current) {
+      this.setUserValue({ ...current, mfaEnabled: enabled });
+    }
   }
 
   // Modified the function - it needs to be a POST request in order to be secure

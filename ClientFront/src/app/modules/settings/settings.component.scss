@@ -26,7 +26,8 @@ label {
 }
 
 input[type="text"],
-input[type="email"] {
+input[type="email"],
+input[type="password"] {
   width: 100%;
   padding: 12px;
   margin-bottom: 15px;
@@ -94,6 +95,36 @@ form {
   color: #333;
   margin-bottom: 30px;
   text-align: center;
+}
+
+/* Authenticator card under the profile form. */
+.mfa-card {
+  margin-top: 12px;
+}
+
+.mfa-status,
+.mfa-help,
+.mfa-problem {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.mfa-problem {
+  color: #b00020;
+  font-weight: bold;
+}
+
+/* Square on purpose. A stretched QR code won't scan. */
+.qr-code {
+  display: block;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 16px;
+}
+
+#manualSecret {
+  font-family: Consolas, "Courier New", monospace;
+  letter-spacing: 1px;
 }
 
 @media (max-width: 768px) {

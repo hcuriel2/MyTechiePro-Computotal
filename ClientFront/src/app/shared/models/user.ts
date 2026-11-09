@@ -14,6 +14,7 @@ export class User {
     email: string;
     password: string;
     userType: string;
+    adminRole?: 'Admin' | 'Editor' | 'Read-only';
     address: Address;
     company: Company;
     skills: any[];
@@ -21,8 +22,14 @@ export class User {
     lat: number;
     lng: number;
     placeid: string;
+    // Login request only: despite the legacy property name, this holds the 6-digit
+    // authenticator code. The server never sends the actual shared key to the client.
     secret?: string;
+    // Backend-only pending key. The API strips this from user responses; the client
+    // relies on mfaEnabled instead of ever receiving this value.
     tempSecret?: string;
+    // True when this account has finished authenticator setup.
+    mfaEnabled?: boolean;
 
     // Professional's attributes
     alias: string;

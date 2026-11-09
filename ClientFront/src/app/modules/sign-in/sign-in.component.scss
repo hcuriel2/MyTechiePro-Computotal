@@ -1,3 +1,36 @@
 .mat-dialog-actions {
   align-items: initial;
 }
+
+/* Starts collapsed so password-only logins never see a code box.
+   Adding .open lets it ease open instead of popping in. */
+.auth-code-panel {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  width: 100%;
+  margin-top: 0;
+  transition: max-height 0.28s ease, opacity 0.28s ease, margin 0.28s ease;
+}
+
+.auth-code-panel.open {
+  max-height: 180px;
+  opacity: 1;
+  margin-top: 4px;
+}
+
+.mfa-hint,
+.mfa-error {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+}
+
+.mfa-hint {
+  margin: 0 0 8px;
+}
+
+.mfa-error {
+  margin-top: 4px;
+}
