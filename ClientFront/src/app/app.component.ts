@@ -17,6 +17,7 @@ import { SignInComponent } from './modules/sign-in/sign-in.component';
 import { Options } from 'ngx-google-places-autocomplete/objects/options/options';
 import { Message } from './shared/models/message';
 import { GoogleMapsService } from './shared/services/google-maps.service';
+import { getLanguageForLocation } from './shared/utils/language.util';
 
 @Component({
   selector: 'app-root',
@@ -253,7 +254,8 @@ private detectLanguageFromIP(): void {
       const region = (location.region_code || '').toUpperCase();
 
       // const language = this.getLanguageForLocation(country, region);
-      const language = this.getLanguageForLocation(country, region);
+      const language = getLanguageForLocation(country, region);
+
 
       this.currentLanguage = language;
       this.translateService.use(language);
