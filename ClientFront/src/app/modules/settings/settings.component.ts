@@ -29,6 +29,8 @@ export class SettingsComponent implements OnInit {
   public confirmCode = '';
   public mfaMessage = '';
   public mfaError = '';
+  public currentPassword = '';
+  public currentToken = '';
   private messages: any = {};
   private originalUserData: User | null = null;
   private editSnapshot: any = null;
@@ -168,7 +170,7 @@ export class SettingsComponent implements OnInit {
     this.mfaError = '';
     this.mfaMessage = '';
     this.replacing = replacing;
-    this.authService.setupMfa().subscribe({
+    this.authService.setupMfa(this.currentPassword, this.currentToken).subscribe({
       next: (setup) => {
         this.qrDataUrl = setup.qrDataUrl;
         this.manualSecret = setup.secret;
@@ -186,6 +188,7 @@ export class SettingsComponent implements OnInit {
   // Hide and clear the enrollment UI. The server-side pending key is not active, so
   // cancelling here leaves the current sign-in behavior unchanged.
   cancelMfaSetup(): void {
+    this.currentPassword = ''; this.currentToken = '';
     this.enrolling = false;
     this.qrDataUrl = '';
     this.manualSecret = '';
@@ -203,7 +206,7 @@ export class SettingsComponent implements OnInit {
     }
     this.mfaBusy = true;
     this.mfaError = '';
-    this.authService.confirmMfa(token).subscribe({
+    this.authService.confirmMfa(token, this.currentPassword, this.currentToken).subscribe({
       next: () => {
         this.mfaEnabled = true;
         this.enrolling = false;
@@ -211,6 +214,7 @@ export class SettingsComponent implements OnInit {
         this.manualSecret = '';
         this.confirmCode = '';
         this.mfaBusy = false;
+        this.currentPassword = ''; this.currentToken = '';
         this.mfaMessage = 'Authenticator is on for this account.';
       },
       error: (error) => {
@@ -224,10 +228,11 @@ export class SettingsComponent implements OnInit {
     this.mfaBusy = true;
     this.mfaError = '';
     this.mfaMessage = '';
-    this.authService.disableMfa().subscribe({
+    this.authService.disableMfa(this.currentPassword, this.currentToken).subscribe({
       next: () => {
         this.mfaEnabled = false;
         this.mfaBusy = false;
+        this.currentPassword = ''; this.currentToken = '';
         this.mfaMessage = 'Authenticator is off. Sign-in uses your password only.';
       },
       error: (error) => {

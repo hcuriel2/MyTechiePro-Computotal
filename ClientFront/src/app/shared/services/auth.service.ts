@@ -93,32 +93,32 @@ export class AuthService {
 
   // Starts enrollment (or reset) and receives a pending key plus its QR image.
   // withCredentials sends the existing HttpOnly session cookie to the protected route.
-  public setupMfa(): Observable<MfaSetup> {
+  public setupMfa(currentPassword: string, currentToken: string): Observable<MfaSetup> {
     return this.httpClient.post<MfaSetup>(
       `${this.API_URL}/mfa/setup`,
-      {},
+      { currentPassword, currentToken },
       { withCredentials: true }
     );
   }
 
   // Proves the authenticator app can generate a code for the pending key. The server
   // activates that key only after a match, then this updates the cached on/off flag.
-  public confirmMfa(token: string): Observable<{ mfaEnabled: boolean }> {
+  public confirmMfa(token: string, currentPassword: string, currentToken: string): Observable<{ mfaEnabled: boolean }> {
     return this.httpClient
       .post<{ mfaEnabled: boolean }>(
         `${this.API_URL}/mfa/confirm`,
-        { token },
+        { token, currentPassword, currentToken },
         { withCredentials: true }
       )
       .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));
   }
 
-  // Requests MFA removal for the signed-in account. The session cookie is enough.
-  public disableMfa(): Observable<{ mfaEnabled: boolean }> {
+  // Factor changes require the session plus fresh password/authenticator proof.
+  public disableMfa(currentPassword: string, currentToken: string): Observable<{ mfaEnabled: boolean }> {
     return this.httpClient
       .post<{ mfaEnabled: boolean }>(
         `${this.API_URL}/mfa/disable`,
-        {},
+        { currentPassword, currentToken },
         { withCredentials: true }
       )
       .pipe(tap((result) => this.setMfaEnabled(result.mfaEnabled)));

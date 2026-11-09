@@ -1,4 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentTestModule } from '../../../../testing/component-test.module';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ProjectReviewDialogComponent } from './project-review-dialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -10,11 +11,10 @@ describe('ProjectReviewDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, FormsModule, NoopAnimationsModule],
-      declarations: [ProjectReviewDialogComponent],
+      imports: [ComponentTestModule],
       providers: [
-        { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: MatDialogRef, useValue: {close:()=>{}} },
+        { provide: MAT_DIALOG_DATA, useValue: {projectID:"mock-project"} },
       ],
     }).compileComponents();
   });
@@ -35,11 +35,15 @@ describe('ProjectReviewDialogComponent', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should submit valid form', () => {
-    component.reviewForm.controls['rating'].setValue(5);
-    component.reviewForm.controls['comment'].setValue('Great service!');
-    let spy = spyOn(component.dialogRef, 'close');
+  it('submits the current review contract and closes after success', fakeAsync(() => {
+    component.reviewForm.patchValue({rating:5, review:'Great service!'});
+    const request = spyOn(window, 'fetch').and.returnValue(Promise.resolve({ok:true,json:()=>Promise.resolve({})} as Response));
+    const close = spyOn(component.dialogRef, 'close');
     component.onSubmit();
-    expect(spy).toHaveBeenCalledWith({rating: 5, comment: 'Great service!'});
-  });
+    tick(2000);
+    expect(request).toHaveBeenCalled();
+    const options = request.calls.mostRecent().args[1]!;
+    expect(JSON.parse(options.body as string)).toEqual({rating:5,review:'Great service!',projectID:'mock-project'});
+    expect(close).toHaveBeenCalledWith({rating:5,review:'Great service!',projectID:'mock-project'});
+  }));
 });
