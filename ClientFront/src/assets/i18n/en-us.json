@@ -3,6 +3,10 @@
     "Title": "My Techie Pro"
   },
   "Dictionary": {
+    "AboutUs": "About Us",
+    "WhoWeAre": "Who We Are",
+    "Appendix": "Appendix",
+    "YourProfile": "Your Profile",
     "About": "About",
     "Address": "Address",
     "AuthenticationCode": "Authentication Code",
@@ -174,6 +178,7 @@
     "NewPassword": "New Password"
   },
   "Message": {
+    "WelcomeBack": "Welcome back,",
     "AcceptProject": "Accept Project",
     "BioPlaceholder": "Please write a short bio to introduce yourself to potential clients.",
     "ClientComplaint": "File complaint against client",
