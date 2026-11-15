@@ -13,11 +13,11 @@ export class AboutUsService {
     this.API_URL = `${environment.apiEndpoint}/aboutus`;
   }
 
-  public getAboutUsContent(): Observable<{ content: string }> {
-    return this.httpClient.get<{ content: string }>(this.API_URL);
+  public getAboutUsContent(): Observable<{ content?: string; appendixContent?: string } | null> {
+    return this.httpClient.get<{ content?: string; appendixContent?: string } | null>(this.API_URL);
   }
 
-  public updateAboutUsContent(data: { content: string }): Observable<void> {
-    return this.httpClient.put<void>(this.API_URL, data);
+  public updateAboutUsContent(data: { content?: string; appendixContent?: string }): Observable<void> {
+    return this.httpClient.put<void>(this.API_URL, data, { withCredentials: true });
   }
 }

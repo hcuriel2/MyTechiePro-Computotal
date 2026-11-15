@@ -1,3 +1,12 @@
+// Prefer Chrome; allow an explicit CHROME_BIN or installed Edge on Windows.
+if (!process.env.CHROME_BIN && process.platform === 'win32') {
+  const fs = require('fs'), path = require('path');
+  const candidates = [
+    path.join(process.env.ProgramFiles || 'C:/Program Files', 'Google/Chrome/Application/chrome.exe'),
+    path.join(process.env['ProgramFiles(x86)'] || 'C:/Program Files (x86)', 'Microsoft/Edge/Application/msedge.exe')
+  ];
+  process.env.CHROME_BIN = candidates.find(file => fs.existsSync(file)) || '';
+}
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
@@ -37,7 +46,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
     singleRun: false,
     restartOnFileChange: true
   });

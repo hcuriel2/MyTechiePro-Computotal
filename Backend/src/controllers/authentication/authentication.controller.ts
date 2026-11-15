@@ -2,35 +2,51 @@ import * as bcrypt from "bcryptjs";
 import { Request, Response, NextFunction, Router } from "express";
 import * as jwt from "jsonwebtoken";
 import WrongCredentialsException from "../../exceptions/WrongCredentialsException";
+import HttpException from "../../exceptions/HttpException";
 import Controller from "../../interfaces/controller.interface";
 import DataStoredInToken from "../../interfaces/dataStoredInToken";
 import TokenData from "../../interfaces/tokenData.interface";
 import validationMiddleware from "../../middleware/validation.middleware";
 import adminMiddleware from "../../middleware/admin.middleware";
+import { adminRoleMiddleware } from "../../middleware/admin.middleware";
 import CreateUserDto from "../user/user.dto";
 import CreateAddressDto from "../user/address.dto";
 import User from "../../models/user/user.interface";
 import userModel from "../../models/user/user.model";
 import AuthenticationService from "./authentication.service";
+import MfaSecurityService from "./mfa-security.service";
+import PasswordResetService from "./password-reset.service";
 import AuthMiddleware from "../../middleware/auth.middleware";
 import LogInDto from "./logIn.dto";
-import speakeasy from "speakeasy";
 import qrcode from "qrcode";
+import {
+    buildOtpAuthUrl,
+    generateMfaSecret,
+    verifyTotp,
+} from "./mfa.util";
 import userController from "../user/user.controller";
 import MfaVerificationInvalidException from "../../exceptions/MfaVerificationInvalidException";
 import sendEmail from '../../middleware/sendgrid.middleware';
 import UserNotVerify from "../../exceptions/UserNotVerify";
-import authMiddleware from "../../middleware/error.middleware";
+import authMiddleware from "../../middleware/auth.middleware";
 import * as crypto from "crypto";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import AuthenticationTokenMissingException from "../../exceptions/AuthenticationTokenMissingException";
 import { validate, ValidationError } from "class-validator";
+import NotAuthorizedException from "../../exceptions/NotAuthorizedException";
+
+import { signupGuard } from '../../signup/signup.middleware';
 
 class AuthenticationController implements Controller {
     public path = "/auth";
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
+    private mfaSecurity = new MfaSecurityService();
+    private guarded = (handler: any) => (req: any, res: any, next: any) => Promise.resolve(handler(req, res, next)).catch(error => {
+        if (error.retryAfter) res.setHeader('Retry-After', String(error.retryAfter));
+        res.status(error.status || 503).json({ message: error.status ? error.message : 'Verification temporarily unavailable. Try again later.' });
+    });
     public URL = process.env.SERVER_URL;
     public CLIENT_URL = process.env.CLIENT_URL;
 
@@ -44,8 +60,10 @@ class AuthenticationController implements Controller {
     private initializeRoutes() {
         this.router.post(
             `${this.path}/admin/register`,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
             validationMiddleware(CreateUserDto),
-            this.registration
+            this.adminRegistration
         );
         this.router.get(
             `${this.path}/checkSession`,
@@ -55,16 +73,25 @@ class AuthenticationController implements Controller {
         this.router.post(
             `${this.path}/login`,
             validationMiddleware(LogInDto),
-            this.loggingIn
+            this.guarded(this.loggingIn)
         );
+        // MFA setup routes require an existing authenticated session. Setup creates a
+        // pending key, confirm activates it after a valid code, and disable removes it
+        // after a password check. Reset follows setup, so the current key stays active
+        // until the replacement key is confirmed.
+        this.router.post(`${this.path}/mfa/setup`, authMiddleware, this.guarded(this.setupMfa));
+        this.router.post(`${this.path}/mfa/confirm`, authMiddleware, this.guarded(this.confirmMfa));
+        this.router.post(`${this.path}/mfa/disable`, authMiddleware, this.guarded(this.disableMfa));
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(
             `${this.path}/professional/register`,
+            signupGuard(),
             validationMiddleware(CreateUserDto),
             this.registration
         );
         this.router.post(
             `${this.path}/register`,
+            signupGuard(),
             validationMiddleware(CreateUserDto),
             this.registration
         );
@@ -106,8 +133,7 @@ class AuthenticationController implements Controller {
         }
 
         try {
-            // Directly return the user object. Be cautious with sensitive information.
-            response.json(user);
+            response.json(this.toPublicUser(user));
         } catch (error) {
             console.error("Failed to fetch user information:", error);
             response.status(500).json({
@@ -127,12 +153,14 @@ class AuthenticationController implements Controller {
     // Creates a JWT token
     // This token's data is inserted into a HttpOnly cookie
     // Expires after an hour
-    private createToken(user: User): TokenData {
+    private createToken(user: User, mfaVerified = false): TokenData {
         const expiresIn = 60 * 60; // an hour
         const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
             userType: user.userType,
+            sessionVersion: user.sessionVersion || 0,
+            mfaVerified,
         };
         return {
             expiresIn,
@@ -155,62 +183,135 @@ class AuthenticationController implements Controller {
         }
 
         try {
-            response.json(user);
+            response.json(this.toPublicUser(user));
         } catch (error) {
             next(new Error("Check session response failed"));
         }
     };
 
-    // Logs the User in
-    // Searches the database for the User
-    // Decrypts password and issues an HttpOnly cookie on successful login
+    // What we actually send back to the browser after login or a session check.
+    // The password hash and the authenticator secret stay on the server.
+    // mfaEnabled is just a yes/no so the settings page knows whether to show "on" or "off".
+    private toPublicUser(user: any) {
+        const source =
+            typeof user.toObject === "function" ? user.toObject() : { ...user };
+        // Read the secret before we delete it from the copy we're about to send.
+        const mfaEnabled = Boolean(
+            typeof user.get === "function" ? user.get("secret") : source.secret
+        );
+        delete source.mfaSecurity;
+        delete source.password;
+        delete source.sessionVersion;
+        delete source.tempSecretExpiresAt;
+        delete source.passwordResetTokenHash;
+        delete source.passwordResetExpiresAt;
+        delete source.passwordResetRequestedAt;
+        delete source.secret;
+        delete source.tempSecret;
+        delete source.verificationToken;
+        delete source.verificationSessionId;
+        source.mfaEnabled = mfaEnabled;
+        return source;
+    }
+
+    // Logs the User in.
+    // Same email and password check as before.
+    // If this account never turned on an authenticator, we issue the cookie right here.
+    // If they did, we wait for a valid 6-digit code before the cookie goes out.
     private loggingIn = async (
         request: Request,
         response: Response,
         next: NextFunction
     ) => {
         const logInData: LogInDto = request.body;
-        const user = await this.user.findOne({ email: logInData.email });
+        let user = await this.user.findOne({ email: logInData.email });
 
-        if (user) {
-            if (!user.verified) {
-                next(new UserNotVerify());
+        if (!user) {
+            next(new WrongCredentialsException());
+            return;
+        }
+        if (!user.verified) {
+            next(new UserNotVerify());
+            return;
+        }
+        const isPasswordMatching = await bcrypt.compare(
+            logInData.password,
+            user.get("password", null, { getters: false })
+        );
+        if (!isPasswordMatching) {
+            next(new WrongCredentialsException());
+            return;
+        }
+
+        // Only the confirmed secret enables the second sign-in step. tempSecret is
+        // intentionally ignored so an unfinished enrollment cannot lock out the user.
+        const sec = user.get("secret");
+        if (sec) {
+            const token = typeof logInData.secret === 'string' ? logInData.secret.replace(/\s/g, "") : '';
+            // Password was right, but they haven't typed a code yet.
+            // Tell the sign-in dialog to slide the code box out. Don't set a cookie yet.
+            if (logInData.secret === undefined || logInData.secret === null || logInData.secret === '') {
+                response.status(200).json({ mfaRequired: true });
                 return;
             }
-            const sec = user.get("secret");
-            const isPasswordMatching = await bcrypt.compare(
-                logInData.password,
-                user.get("password", null, { getters: false })
-            );
-            if (isPasswordMatching) {
-                if (sec) {
-                    if (!logInData.secret) {
-                        next(new MfaVerificationInvalidException());
-                    }
-                    const isMfaVerified = speakeasy.totp.verify({
-                        secret: sec,
-                        encoding: "base32",
-                        token: logInData.secret,
-                    });
-                    if (!isMfaVerified) {
-                        next(new MfaVerificationInvalidException());
-                        return;
-                    }
-                }
-                const tokenData = this.createToken(user);
-                response.setHeader("Set-Cookie", [
-                    this.createCookie(tokenData),
-                ]);
-                //response.send({ message: 'Login successful' });
-                response.send(user);
-            } else {
-                next(new WrongCredentialsException());
-            }
-        } else {
-            next(new WrongCredentialsException());
+            user = await this.mfaSecurity.begin(user);
+            const step = this.mfaSecurity.step(sec, logInData.secret);
+            if (step === null) return this.mfaSecurity.reject(user);
+            user = await this.mfaSecurity.commit(user, step);
         }
+
+        const tokenData = this.createToken(user, Boolean(sec));
+        response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
+        response.send(this.toPublicUser(user));
     };
 
+    // Starts authenticator setup, or a reset if they already have one.
+    // The new secret is saved as tempSecret only. Login still uses the old secret
+    // until they prove the new QR code works, so a half-finished reset doesn't lock them out.
+    // This response is the one place the secret is shown. They need it for the QR / manual key.
+    private async factorProof(user: any, body: any): Promise<{ user: any, step: number | null }> {
+        if (!user) throw Object.assign(new Error('Unauthorized'), { status: 401 });
+        user = await this.mfaSecurity.begin(user);
+        if (!body || typeof body.currentPassword !== 'string' || body.currentPassword.length > 128 ||
+            !(await bcrypt.compare(body.currentPassword, user.get('password', null, { getters: false }))))
+            return this.mfaSecurity.reject(user);
+        const step = user.secret ? this.mfaSecurity.step(user.secret, body.currentToken) : null;
+        if (user.secret && step === null) return this.mfaSecurity.reject(user);
+        return { user, step };
+    }
+    private setupMfa = async (request: RequestWithUser, response: Response) => {
+        const proof = await this.factorProof(await this.user.findById(request.user._id), request.body);
+        const secret = generateMfaSecret();
+        const otpauthUrl = buildOtpAuthUrl(proof.user.email, secret);
+        const qrDataUrl = await qrcode.toDataURL(otpauthUrl);
+        await this.mfaSecurity.commit(proof.user, proof.step, { $set: { tempSecret: secret,
+            tempSecretExpiresAt: new Date(Date.now() + 600000) } });
+        return response.json({ secret, otpauthUrl, qrDataUrl });
+    };
+    private confirmMfa = async (request: RequestWithUser, response: Response) => {
+        const initial = await this.user.findById(request.user._id).select('+tempSecretExpiresAt');
+        if (!initial || !initial.tempSecret || !initial.get('tempSecretExpiresAt') || initial.get('tempSecretExpiresAt').getTime() <= Date.now())
+            return response.status(400).json({ message: 'Start setup again to get a new QR code.' });
+        const proof = await this.factorProof(initial, request.body);
+        const pendingStep = this.mfaSecurity.step(proof.user.tempSecret, request.body.token);
+        if (pendingStep === null) return this.mfaSecurity.reject(proof.user);
+        const updated = await this.mfaSecurity.commit(proof.user, proof.step, {
+            $set: { secret: proof.user.tempSecret, 'mfaSecurity.lastStep': pendingStep },
+            $inc: { sessionVersion: 1 },
+            $unset: { tempSecret: 1, tempSecretExpiresAt: 1, passwordResetTokenHash: 1, passwordResetExpiresAt: 1 },
+        }, { tempSecret: initial.tempSecret, tempSecretExpiresAt: { $gt: new Date() } });
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated, true))]);
+        return response.json({ mfaEnabled: true });
+    };
+    private disableMfa = async (request: RequestWithUser, response: Response) => {
+        const proof = await this.factorProof(await this.user.findById(request.user._id), request.body);
+        const updated = await this.mfaSecurity.commit(proof.user, proof.step, {
+            $unset: { secret: 1, tempSecret: 1, tempSecretExpiresAt: 1, passwordResetTokenHash: 1, passwordResetExpiresAt: 1 },
+            $inc: { sessionVersion: 1 },
+        });
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated))]);
+        return response.json({ mfaEnabled: false });
+    };
     // Logs the User out
     // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
@@ -238,12 +339,42 @@ class AuthenticationController implements Controller {
     ) => {
         const userData: CreateUserDto = request.body;
 
+        if (userData.userType === "Admin") {
+            return next(new NotAuthorizedException());
+        }
+
         try {
             const { user } = await this.authenticationService.register(
                 userData
             );
             response.status(201).send(user);
         } catch (error) {
+            next(error);
+        }
+    };
+
+    private adminRegistration = async (
+        request: Request,
+        response: Response,
+        next: NextFunction
+    ) => {
+        const userData: CreateUserDto = request.body;
+
+        if (userData.userType !== "Admin") {
+            return response.status(400).json({
+                message: "Admin registration requires userType Admin.",
+            });
+        }
+
+        try {
+            const { user } = await this.authenticationService.register(
+                userData
+            );
+            response.status(201).send(user);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                return response.status(error.status).json({ message: error.message });
+            }
             next(error);
         }
     };
@@ -273,6 +404,10 @@ class AuthenticationController implements Controller {
             user.verificationToken = crypto.randomBytes(32).toString("hex");
             await user.save();
             // Create authentication token and cookie
+            if (user.get('secret')) {
+                return response.status(200).json({ success: true, mfaRequired: true,
+                    message: 'Email verified. Sign in with your password and authenticator.' });
+            }
             const tokenData = this.createToken(user);
             const cookie = this.createCookie(tokenData);
             // Set the cookie and redirect to home or dashboard
@@ -280,7 +415,7 @@ class AuthenticationController implements Controller {
             return response.status(200).json({
                 success: true,
                 message: "Email verified successfully",
-                user,
+                user: this.toPublicUser(user),
             });
         } catch (error) {
             console.error("Verification error:", error);
@@ -296,30 +431,14 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        const { emailAddress } = request.body;
-
-        const user = await this.user.findOne({ email: emailAddress });
-
-        if (!user) {
-            response.status(200);
-            return;
-        }
-
-        const resetPasswordHtml = 
-        "<b>Reset Password</b><br/><br/>" +
-        `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`;
-
+        // A uniform response avoids disclosing account existence or mail failures.
+        response.setHeader('Cache-Control', 'no-store');
         try {
-            await sendEmail(
-                emailAddress,
-                "Reset Password",
-                resetPasswordHtml
-            );
-            response.status(200).send();
-        } catch (error) {
-            console.error("Failed to send reset password email:", error);
-            response.status(500).send();
+            await new PasswordResetService().requestReset(request.body && request.body.emailAddress);
+        } catch (_) {
+            // Do not expose recovery credentials, user records, or provider errors.
         }
+        response.status(200).json({ message: 'If the account exists, a reset link has been sent.' });
     };
 
     // Updates User's information in the frontend '/settings' route
@@ -486,6 +605,10 @@ class AuthenticationController implements Controller {
             user.verificationTokenUsed = true;
             await user.save();
             
+            if (user.get('secret')) {
+                return response.status(200).json({ success: true, mfaRequired: true,
+                    message: 'Email verified. Sign in with your password and authenticator.' });
+            }
             const tokenData = this.createToken(user);
             const cookie = this.createCookie(tokenData);
             
@@ -493,7 +616,7 @@ class AuthenticationController implements Controller {
             return response.status(200).json({
                 success: true,
                 message: "Email verified successfully",
-                user,
+                user: this.toPublicUser(user),
             });
         } catch (error) {
             console.error("Verification confirmation error:", error);

@@ -60,6 +60,9 @@ import { MatChipsModule } from '@angular/material/chips';
         MatToolbarModule,
         MatTooltipModule,
         TranslateModule,
+        // The authenticator inputs on the settings page use ngModel, so this has to be imported, not just exported.
+        FormsModule,
+        ReactiveFormsModule,
         NgxMaskModule.forRoot(),
         Ng2SearchPipeModule,
         MatChipsModule,

@@ -9,7 +9,7 @@ import project from "../../models/project/project.interface";
 import projectModel from "../../models/project/project.model";
 import userModel from "../../models/user/user.model";
 import categoryModel from "../../models/category/category.model";
-import adminMiddleware from "../../middleware/admin.middleware";
+import adminMiddleware, { adminRoleMiddleware, adminWriteMiddleware } from "../../middleware/admin.middleware";
 import sendEmail from '../../middleware/sendgrid.middleware';
 import HttpException from "../../exceptions/HttpException";
 import TransactionModel from "../../models/transaction/transaction.model";
@@ -61,7 +61,7 @@ class ProjectController implements Controller {
     };
     
     private initializeRoutes() {
-        this.router.post(`${this.path}/pay`, async (req, res, next) => {
+        this.router.post(`${this.path}/pay`, authMiddleware, adminWriteMiddleware, async (req, res, next) => {
             try {
                 await this.payProject(req, res);
             } catch (error) {
@@ -84,9 +84,15 @@ class ProjectController implements Controller {
         this.router.get(`${this.path}`, this.getAllProjects);
         // this.router.get(`${this.path}/:id`, this.getAllProjectsByProfessionID);
         this.router.get(`${this.path}/:id`, this.getprojectById);
-        this.router.delete(`${this.path}/:id`, this.deleteproject);
-        this.router.all(`${this.path}/*`)
-                    .post(this.path, authMiddleware, this.createproject)
+        this.router.delete(
+            `${this.path}/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.deleteproject
+        );
+        this.router.all(`${this.path}/*`, authMiddleware, adminWriteMiddleware)
+                    .post(this.path, authMiddleware, adminWriteMiddleware, this.createproject)
                     .patch(`${this.path}/comment/:id`, authMiddleware, this.commentProject)
                     .patch(`${this.path}/start/:id`, authMiddleware, this.startProject)
                     .patch(`${this.path}/feedback/:id`, authMiddleware,this.reviewProject)

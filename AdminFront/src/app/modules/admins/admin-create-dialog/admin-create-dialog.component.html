@@ -67,6 +67,15 @@
             required
         />
     </mat-form-field>
+
+    <mat-form-field class="col-sm-12">
+        <mat-label>Admin access level</mat-label>
+        <mat-select formControlName="adminRole" required>
+            <mat-option value="Admin">Admin</mat-option>
+            <mat-option value="Editor">Editor</mat-option>
+            <mat-option value="Read-only">Read-only</mat-option>
+        </mat-select>
+    </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions>
@@ -74,7 +83,7 @@
         <button mat-raised-button (click)="onCancel()">
             Cancel
         </button>
-        <button mat-raised-button class="mat-primary" (click)="onSubmit()">
+        <button mat-raised-button class="mat-primary" [disabled]="formGroup.invalid" (click)="onSubmit()">
             Submit
         </button>
     </div>

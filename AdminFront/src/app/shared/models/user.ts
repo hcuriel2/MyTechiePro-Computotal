@@ -2,6 +2,7 @@ import { Address } from './address';
 import { Company } from './company';
 
 export class User {
+  adminRole: 'Admin' | 'Editor' | 'Read-only' | undefined;
   _id: string | undefined;
   firstName: string | undefined;
   lastName: string | undefined;

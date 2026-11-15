@@ -24,6 +24,12 @@ const userTypes = Object.freeze({
     Professional: "Professional",
 });
 
+const adminRoles = Object.freeze({
+    Admin: "Admin",
+    Editor: "Editor",
+    ReadOnly: "Read-only",
+});
+
 //User signup rate types here, value tag in html must match the variable string
 const uniTypes = Object.freeze({
     Hour: "Hour",
@@ -75,6 +81,12 @@ const userSchema = new mongoose.Schema({
     company: {
         type: String,
     },
+    // Require business fields on new Professionals; legacy email-verification saves must still work.
+    dba: { type: String, trim: true, maxlength: 200, required: function () { return this.isNew && this.userType === 'Professional'; } },
+    gstNumber: { type: String, trim: true, maxlength: 50, required: function () { return this.isNew && this.userType === 'Professional'; } },
+    pstNumber: { type: String, trim: true, maxlength: 50, required: function () { return this.isNew && this.userType === 'Professional'; } },
+    businessNumber: { type: String, trim: true, maxlength: 50 },
+    dunsNumber: { type: String, trim: true, maxlength: 50 },
     phoneNumber: {
         type: String,
         required: true,
@@ -91,6 +103,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: Object.values(userTypes),
         required: true,
+    },
+    adminRole: {
+        type: String,
+        enum: Object.values(adminRoles),
     },
     proStatus: {
         type: String,
@@ -114,13 +130,21 @@ const userSchema = new mongoose.Schema({
     inquiry: String,
     performance: { type: [performaceSchema], default: [] },
     website: String,
+    // secret is the live authenticator key. Empty means MFA is off and login is password-only.
+    // tempSecret is the key from a setup/reset that hasn't been confirmed yet. Login ignores it.
+    mfaSecurity: { type: mongoose.Schema.Types.Mixed, select: false },
     secret: String,
     tempSecret: String,
+    tempSecretExpiresAt: { type: Date, select: false },
+    sessionVersion: { type: Number, default: 0 },
     approved: Boolean,
     verified: {
         type: Boolean,
         default: false,
     },
+    passwordResetTokenHash: { type: String, select: false },
+    passwordResetExpiresAt: { type: Date, select: false },
+    passwordResetRequestedAt: { type: Date, select: false },
     verificationToken: {
         type: String,
         required: false,
@@ -133,6 +157,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
     }
+});
+
+// Any time a user document is sent as JSON (user lists, etc.) drop the authenticator
+// secret and the email-verification tokens. The settings page only needs mfaEnabled.
+// Login still reads `secret` off the mongoose document itself, before this runs.
+userSchema.set("toJSON", {
+    transform: (_doc, ret) => {
+        ret.mfaEnabled = Boolean(ret.secret);
+        delete ret.mfaSecurity;
+        delete ret.secret;
+        delete ret.password;
+        delete ret.sessionVersion;
+        delete ret.tempSecretExpiresAt;
+        delete ret.passwordResetTokenHash;
+        delete ret.passwordResetExpiresAt;
+        delete ret.passwordResetRequestedAt;
+        delete ret.tempSecret;
+        delete ret.verificationToken;
+        delete ret.verificationSessionId;
+        return ret;
+    },
 });
 
 Object.assign(userSchema.statics, { userTypes });
