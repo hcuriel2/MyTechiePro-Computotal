@@ -1,35 +1,29 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { BehaviorSubject, of } from 'rxjs';
 import { AppComponent } from './app.component';
 
-describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
+describe('AppComponent session state', () => {
+  let app: AppComponent;
+  let auth: any;
+  let maps: any;
+  let translate: any;
+  beforeEach(() => {
+    auth = {user:new BehaviorSubject<any>(null),isSessionChecked:false,checkSession:jasmine.createSpy('checkSession').and.returnValue(of(null))};
+    maps = {loadGoogleMapsScript:jasmine.createSpy('maps').and.returnValue(Promise.resolve())};
+    translate = {setDefaultLang:jasmine.createSpy('default'),use:jasmine.createSpy('use')};
+    app = new AppComponent({} as any, {} as any, {} as any, auth,
+      {detectChanges:()=>{}} as any, translate, maps);
   });
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  it('initializes the visitor and language state', () => {
+    expect(app.user).toBeNull(); expect(app.isProfessional).toBeFalse();
+    expect(translate.setDefaultLang).toHaveBeenCalledWith('en-us');
   });
-
-  it(`should have as title 'computer-guy-frontend'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('computer-guy-frontend');
+  it('checks a session once when not previously checked', () => {
+    app.ngOnInit(); expect(auth.checkSession).toHaveBeenCalledTimes(1);
   });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('computer-guy-frontend app is running!');
+  it('tracks Professional sign-in and sign-out', () => {
+    auth.isSessionChecked=true; app.ngOnInit();
+    auth.user.next({userType:'Professional'}); expect(app.isProfessional).toBeTrue();
+    auth.user.next(null); expect(app.isProfessional).toBeFalse();
+    expect(auth.checkSession).not.toHaveBeenCalled();
   });
 });

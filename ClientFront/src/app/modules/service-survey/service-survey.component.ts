@@ -18,7 +18,7 @@ export class ServiceSurveyComponent implements OnInit {
     /**
      * Container component to house survey sub components.
      */
-    public currentModule: string[];
+    public currentModule: string[] = [];
     public title: string;
     public isFirstModule = true;
     public goToSummary = false;

@@ -14,6 +14,8 @@ import CreateAddressDto from "../user/address.dto";
 import User from "../../models/user/user.interface";
 import userModel from "../../models/user/user.model";
 import AuthenticationService from "./authentication.service";
+import MfaSecurityService from "./mfa-security.service";
+import PasswordResetService from "./password-reset.service";
 import AuthMiddleware from "../../middleware/auth.middleware";
 import LogInDto from "./logIn.dto";
 import qrcode from "qrcode";
@@ -40,6 +42,11 @@ class AuthenticationController implements Controller {
     public router = Router();
     public authenticationService = new AuthenticationService();
     private user = userModel;
+    private mfaSecurity = new MfaSecurityService();
+    private guarded = (handler: any) => (req: any, res: any, next: any) => Promise.resolve(handler(req, res, next)).catch(error => {
+        if (error.retryAfter) res.setHeader('Retry-After', String(error.retryAfter));
+        res.status(error.status || 503).json({ message: error.status ? error.message : 'Verification temporarily unavailable. Try again later.' });
+    });
     public URL = process.env.SERVER_URL;
     public CLIENT_URL = process.env.CLIENT_URL;
 
@@ -66,15 +73,15 @@ class AuthenticationController implements Controller {
         this.router.post(
             `${this.path}/login`,
             validationMiddleware(LogInDto),
-            this.loggingIn
+            this.guarded(this.loggingIn)
         );
         // MFA setup routes require an existing authenticated session. Setup creates a
         // pending key, confirm activates it after a valid code, and disable removes it
         // after a password check. Reset follows setup, so the current key stays active
         // until the replacement key is confirmed.
-        this.router.post(`${this.path}/mfa/setup`, authMiddleware, this.setupMfa);
-        this.router.post(`${this.path}/mfa/confirm`, authMiddleware, this.confirmMfa);
-        this.router.post(`${this.path}/mfa/disable`, authMiddleware, this.disableMfa);
+        this.router.post(`${this.path}/mfa/setup`, authMiddleware, this.guarded(this.setupMfa));
+        this.router.post(`${this.path}/mfa/confirm`, authMiddleware, this.guarded(this.confirmMfa));
+        this.router.post(`${this.path}/mfa/disable`, authMiddleware, this.guarded(this.disableMfa));
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(
             `${this.path}/professional/register`,
@@ -146,12 +153,14 @@ class AuthenticationController implements Controller {
     // Creates a JWT token
     // This token's data is inserted into a HttpOnly cookie
     // Expires after an hour
-    private createToken(user: User): TokenData {
+    private createToken(user: User, mfaVerified = false): TokenData {
         const expiresIn = 60 * 60; // an hour
         const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id,
             userType: user.userType,
+            sessionVersion: user.sessionVersion || 0,
+            mfaVerified,
         };
         return {
             expiresIn,
@@ -190,7 +199,13 @@ class AuthenticationController implements Controller {
         const mfaEnabled = Boolean(
             typeof user.get === "function" ? user.get("secret") : source.secret
         );
+        delete source.mfaSecurity;
         delete source.password;
+        delete source.sessionVersion;
+        delete source.tempSecretExpiresAt;
+        delete source.passwordResetTokenHash;
+        delete source.passwordResetExpiresAt;
+        delete source.passwordResetRequestedAt;
         delete source.secret;
         delete source.tempSecret;
         delete source.verificationToken;
@@ -209,7 +224,7 @@ class AuthenticationController implements Controller {
         next: NextFunction
     ) => {
         const logInData: LogInDto = request.body;
-        const user = await this.user.findOne({ email: logInData.email });
+        let user = await this.user.findOne({ email: logInData.email });
 
         if (!user) {
             next(new WrongCredentialsException());
@@ -232,22 +247,20 @@ class AuthenticationController implements Controller {
         // intentionally ignored so an unfinished enrollment cannot lock out the user.
         const sec = user.get("secret");
         if (sec) {
-            const token = (logInData.secret || "").replace(/\s/g, "");
+            const token = typeof logInData.secret === 'string' ? logInData.secret.replace(/\s/g, "") : '';
             // Password was right, but they haven't typed a code yet.
             // Tell the sign-in dialog to slide the code box out. Don't set a cookie yet.
-            if (!token) {
+            if (logInData.secret === undefined || logInData.secret === null || logInData.secret === '') {
                 response.status(200).json({ mfaRequired: true });
                 return;
             }
-            // Wrong or expired code. 401 is separate from a bad password (that's 400)
-            // so the dialog can stay on the code step instead of saying the password was wrong.
-            if (!verifyTotp(sec, token)) {
-                next(new MfaVerificationInvalidException());
-                return;
-            }
+            user = await this.mfaSecurity.begin(user);
+            const step = this.mfaSecurity.step(sec, logInData.secret);
+            if (step === null) return this.mfaSecurity.reject(user);
+            user = await this.mfaSecurity.commit(user, step);
         }
 
-        const tokenData = this.createToken(user);
+        const tokenData = this.createToken(user, Boolean(sec));
         response.setHeader("Set-Cookie", [this.createCookie(tokenData)]);
         response.send(this.toPublicUser(user));
     };
@@ -256,87 +269,49 @@ class AuthenticationController implements Controller {
     // The new secret is saved as tempSecret only. Login still uses the old secret
     // until they prove the new QR code works, so a half-finished reset doesn't lock them out.
     // This response is the one place the secret is shown. They need it for the QR / manual key.
+    private async factorProof(user: any, body: any): Promise<{ user: any, step: number | null }> {
+        if (!user) throw Object.assign(new Error('Unauthorized'), { status: 401 });
+        user = await this.mfaSecurity.begin(user);
+        if (!body || typeof body.currentPassword !== 'string' || body.currentPassword.length > 128 ||
+            !(await bcrypt.compare(body.currentPassword, user.get('password', null, { getters: false }))))
+            return this.mfaSecurity.reject(user);
+        const step = user.secret ? this.mfaSecurity.step(user.secret, body.currentToken) : null;
+        if (user.secret && step === null) return this.mfaSecurity.reject(user);
+        return { user, step };
+    }
     private setupMfa = async (request: RequestWithUser, response: Response) => {
-        const user = await this.user.findById(request.user._id);
-        if (!user) {
-            return response.status(401).json({ message: "Unauthorized" });
-        }
-
-        try {
-            const secret = generateMfaSecret();
-            const otpauthUrl = buildOtpAuthUrl(user.email, secret);
-            // The phone app scans this image. The link inside it is the otpauth url above.
-            const qrDataUrl = await qrcode.toDataURL(otpauthUrl);
-
-            // Update only the pending MFA field. Saving the whole user document here
-            // re-runs validation for unrelated profile fields and can fail for older
-            // accounts whose data predates the current schema requirements.
-            await this.user.updateOne(
-                { _id: user._id },
-                { $set: { tempSecret: secret } }
-            );
-
-            return response.status(200).json({
-                otpauthUrl,
-                secret,
-                qrDataUrl,
-            });
-        } catch (error) {
-            console.error("MFA setup failed:", error);
-            return response.status(500).json({
-                message: "Could not start authenticator setup.",
-            });
-        }
+        const proof = await this.factorProof(await this.user.findById(request.user._id), request.body);
+        const secret = generateMfaSecret();
+        const otpauthUrl = buildOtpAuthUrl(proof.user.email, secret);
+        const qrDataUrl = await qrcode.toDataURL(otpauthUrl);
+        await this.mfaSecurity.commit(proof.user, proof.step, { $set: { tempSecret: secret,
+            tempSecretExpiresAt: new Date(Date.now() + 600000) } });
+        return response.json({ secret, otpauthUrl, qrDataUrl });
     };
-
-    // The user typed the code their app is showing for the QR we just gave them.
-    // If it matches tempSecret, that secret becomes the real one and MFA is actually on.
     private confirmMfa = async (request: RequestWithUser, response: Response) => {
-        // Reject malformed input before querying the account or checking the TOTP.
-        const code = ((request.body && request.body.token) || "").replace(/\s/g, "");
-        if (!/^\d{6}$/.test(code)) {
-            return response.status(400).json({
-                message: "Enter the 6-digit code from your authenticator app.",
-            });
-        }
-
-        const user = await this.user.findById(request.user._id);
-        if (!user || !user.get("tempSecret")) {
-            return response.status(400).json({
-                message: "Start setup again to get a new QR code.",
-            });
-        }
-
-        // Verify against the pending key, never the currently active key. A reset only
-        // replaces the old authenticator after the new key proves it can generate codes.
-        const pending = user.get("tempSecret");
-        if (!verifyTotp(pending, code)) {
-            return response.status(401).json({
-                message: "That code is incorrect or expired. Try the current code.",
-            });
-        }
-
-        // Move the pending secret over and drop tempSecret so a later confirm can't reuse it.
-        await this.user.findByIdAndUpdate(user._id, {
-            $set: { secret: pending },
-            $unset: { tempSecret: 1 },
-        });
-        return response.status(200).json({ mfaEnabled: true });
+        const initial = await this.user.findById(request.user._id).select('+tempSecretExpiresAt');
+        if (!initial || !initial.tempSecret || !initial.get('tempSecretExpiresAt') || initial.get('tempSecretExpiresAt').getTime() <= Date.now())
+            return response.status(400).json({ message: 'Start setup again to get a new QR code.' });
+        const proof = await this.factorProof(initial, request.body);
+        const pendingStep = this.mfaSecurity.step(proof.user.tempSecret, request.body.token);
+        if (pendingStep === null) return this.mfaSecurity.reject(proof.user);
+        const updated = await this.mfaSecurity.commit(proof.user, proof.step, {
+            $set: { secret: proof.user.tempSecret, 'mfaSecurity.lastStep': pendingStep },
+            $inc: { sessionVersion: 1 },
+            $unset: { tempSecret: 1, tempSecretExpiresAt: 1, passwordResetTokenHash: 1, passwordResetExpiresAt: 1 },
+        }, { tempSecret: initial.tempSecret, tempSecretExpiresAt: { $gt: new Date() } });
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated, true))]);
+        return response.json({ mfaEnabled: true });
     };
-
-    // Turns the authenticator off for the signed-in account.
     private disableMfa = async (request: RequestWithUser, response: Response) => {
-        const user = await this.user.findById(request.user._id);
-        if (!user) {
-            return response.status(401).json({ message: "Unauthorized" });
-        }
-
-        await this.user.findByIdAndUpdate(user._id, {
-            $unset: { secret: 1, tempSecret: 1 },
+        const proof = await this.factorProof(await this.user.findById(request.user._id), request.body);
+        const updated = await this.mfaSecurity.commit(proof.user, proof.step, {
+            $unset: { secret: 1, tempSecret: 1, tempSecretExpiresAt: 1, passwordResetTokenHash: 1, passwordResetExpiresAt: 1 },
+            $inc: { sessionVersion: 1 },
         });
-        return response.status(200).json({ mfaEnabled: false });
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated))]);
+        return response.json({ mfaEnabled: false });
     };
-
     // Logs the User out
     // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
@@ -429,6 +404,10 @@ class AuthenticationController implements Controller {
             user.verificationToken = crypto.randomBytes(32).toString("hex");
             await user.save();
             // Create authentication token and cookie
+            if (user.get('secret')) {
+                return response.status(200).json({ success: true, mfaRequired: true,
+                    message: 'Email verified. Sign in with your password and authenticator.' });
+            }
             const tokenData = this.createToken(user);
             const cookie = this.createCookie(tokenData);
             // Set the cookie and redirect to home or dashboard
@@ -452,30 +431,14 @@ class AuthenticationController implements Controller {
         response: Response,
         next: NextFunction
     ) => {
-        const { emailAddress } = request.body;
-
-        const user = await this.user.findOne({ email: emailAddress });
-
-        if (!user) {
-            response.status(200);
-            return;
-        }
-
-        const resetPasswordHtml = 
-        "<b>Reset Password</b><br/><br/>" +
-        `<p>Please click <a href="${this.CLIENT_URL}/resetPassword/${user._id}">here</a> to change password.</p> <br/>`;
-
+        // A uniform response avoids disclosing account existence or mail failures.
+        response.setHeader('Cache-Control', 'no-store');
         try {
-            await sendEmail(
-                emailAddress,
-                "Reset Password",
-                resetPasswordHtml
-            );
-            response.status(200).send();
-        } catch (error) {
-            console.error("Failed to send reset password email:", error);
-            response.status(500).send();
+            await new PasswordResetService().requestReset(request.body && request.body.emailAddress);
+        } catch (_) {
+            // Do not expose recovery credentials, user records, or provider errors.
         }
+        response.status(200).json({ message: 'If the account exists, a reset link has been sent.' });
     };
 
     // Updates User's information in the frontend '/settings' route
@@ -642,6 +605,10 @@ class AuthenticationController implements Controller {
             user.verificationTokenUsed = true;
             await user.save();
             
+            if (user.get('secret')) {
+                return response.status(200).json({ success: true, mfaRequired: true,
+                    message: 'Email verified. Sign in with your password and authenticator.' });
+            }
             const tokenData = this.createToken(user);
             const cookie = this.createCookie(tokenData);
             

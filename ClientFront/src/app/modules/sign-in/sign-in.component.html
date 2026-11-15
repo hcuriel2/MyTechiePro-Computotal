@@ -27,6 +27,7 @@
     />
   </mat-form-field>
 
+  <p role="alert" *ngIf="mfaNotice">{{ mfaNotice }}</p>
   <!-- Hidden until the password is right and this account has an authenticator.
        The .open class is what slides it down. -->
   <div class="auth-code-panel col-md-12" [class.open]="mfaStep">
@@ -42,7 +43,7 @@
         formControlName="authCode"
       />
     </mat-form-field>
-    <mat-error class="mfa-error" *ngIf="mfaError">
+    <mat-error class="mfa-error" *ngIf="mfaError && !mfaNotice">
       {{ "Message.MfaInvalid" | translate }}
     </mat-error>
   </div>

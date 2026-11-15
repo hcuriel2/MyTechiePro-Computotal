@@ -1,3 +1,4 @@
+import { ComponentTestModule } from '../../../../testing/component-test.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectStartDialogComponent } from './project-start-dialog.component';
@@ -8,7 +9,7 @@ describe('ProjectStartDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProjectStartDialogComponent ]
+      imports: [ComponentTestModule]
     })
     .compileComponents();
   });

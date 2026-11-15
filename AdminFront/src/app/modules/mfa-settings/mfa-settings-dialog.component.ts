@@ -22,6 +22,8 @@ export class MfaSettingsDialogComponent {
   public confirmCode = '';
   public message = '';
   public error = '';
+  public currentPassword = '';
+  public currentToken = '';
 
   private readonly api = `${environment.apiEndpoint}/auth`;
 
@@ -35,6 +37,7 @@ export class MfaSettingsDialogComponent {
 
   // Hand the updated on/off flag back so the toolbar remembers it if they reopen this.
   public close(): void {
+    this.currentPassword = ''; this.currentToken = '';
     this.dialogRef.close(this.mfaEnabled);
   }
 
@@ -46,7 +49,7 @@ export class MfaSettingsDialogComponent {
     this.message = '';
     this.replacing = replacing;
     this.http
-      .post<any>(`${this.api}/mfa/setup`, {}, { withCredentials: true })
+      .post<any>(`${this.api}/mfa/setup`, this.proof(), { withCredentials: true })
       .subscribe({
         next: (setup) => {
           this.qrDataUrl = setup.qrDataUrl;
@@ -64,6 +67,7 @@ export class MfaSettingsDialogComponent {
 
   // Hide and clear the QR form. Any pending key is ignored at sign-in until confirmed.
   public cancelSetup(): void {
+    this.currentPassword = ''; this.currentToken = '';
     this.enrolling = false;
     this.qrDataUrl = '';
     this.manualSecret = '';
@@ -81,7 +85,7 @@ export class MfaSettingsDialogComponent {
     this.busy = true;
     this.error = '';
     this.http
-      .post<any>(`${this.api}/mfa/confirm`, { token }, { withCredentials: true })
+      .post<any>(`${this.api}/mfa/confirm`, { token, ...this.proof() }, { withCredentials: true })
       .subscribe({
         next: () => {
           this.mfaEnabled = true;
@@ -91,6 +95,7 @@ export class MfaSettingsDialogComponent {
           this.confirmCode = '';
           this.busy = false;
           this.message = 'Authenticator is on for this account.';
+          this.currentPassword = ''; this.currentToken = '';
         },
         error: (error) => {
           this.busy = false;
@@ -104,12 +109,13 @@ export class MfaSettingsDialogComponent {
     this.error = '';
     this.message = '';
     this.http
-      .post<any>(`${this.api}/mfa/disable`, {}, { withCredentials: true })
+      .post<any>(`${this.api}/mfa/disable`, this.proof(), { withCredentials: true })
       .subscribe({
         next: () => {
           this.mfaEnabled = false;
           this.busy = false;
           this.message = 'Authenticator is off. Sign-in uses your password only.';
+          this.currentPassword = ''; this.currentToken = '';
         },
         error: (error) => {
           this.busy = false;
@@ -119,6 +125,8 @@ export class MfaSettingsDialogComponent {
   }
 
   // Use the server's message when it sent one (bad code, wrong password, and so on).
+  private proof() { return {currentPassword:this.currentPassword, currentToken:this.currentToken}; }
+
   private readError(error: any, fallback: string): string {
     if (error && error.error && error.error.message) {
       return error.error.message;

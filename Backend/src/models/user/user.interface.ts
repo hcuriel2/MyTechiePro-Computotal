@@ -73,6 +73,7 @@ interface User {
     // enrollment or replacement key that is not active until a code is confirmed.
     secret?: string;
     tempSecret?: string;
+    sessionVersion?: number;
     approved: boolean;
     verified: boolean;
     verificationToken?: string;

@@ -31,18 +31,14 @@ export function buildOtpAuthUrl(email: string, base32Secret: string): string {
 // Checks a code the user typed against the secret we have stored.
 // Spaces are stripped so a pasted "123 456" still counts.
 // window: 1 lets the previous or next 30-second code through, in case their phone clock is a little off.
+export function matchingTotpStep(base32Secret: string, token: any): number | null {
+    const code = typeof token === 'string' ? token.replace(/\s/g, '') : '';
+    if (!/^\d{6}$/.test(code)) return null;
+    const time = Math.floor(Date.now() / 1000);
+    const result = speakeasy.totp.verifyDelta({ secret: base32Secret, encoding: 'base32', token: code,
+        window: 1, digits: 6, step: 30, algorithm: 'sha1', time });
+    return result ? Math.floor(time / 30) + result.delta : null;
+}
 export function verifyTotp(base32Secret: string, token: string): boolean {
-    const code = (token || "").replace(/\s/g, "");
-    if (!/^\d{6}$/.test(code)) {
-        return false;
-    }
-    return !!speakeasy.totp.verify({
-        secret: base32Secret,
-        encoding: "base32",
-        token: code,
-        window: 1,
-        digits: 6,
-        step: 30,
-        algorithm: "sha1",
-    });
+    return matchingTotpStep(base32Secret, token) !== null;
 }

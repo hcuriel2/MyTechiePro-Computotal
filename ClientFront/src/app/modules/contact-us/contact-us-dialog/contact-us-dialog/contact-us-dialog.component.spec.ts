@@ -1,3 +1,4 @@
+import { ComponentTestModule } from '../../../../../testing/component-test.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ContactUsDialogComponent } from './contact-us-dialog.component';
@@ -8,7 +9,7 @@ describe('ContactUsDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ContactUsDialogComponent ]
+      imports: [ComponentTestModule]
     })
     .compileComponents();
   });

@@ -7,6 +7,12 @@
   </p>
   <p class="ok" *ngIf="message">{{ message }}</p>
   <p class="problem" *ngIf="error">{{ error }}</p>
+  <mat-form-field class="full">
+    <input matInput placeholder="Current password" type="password" autocomplete="current-password" [(ngModel)]="currentPassword">
+  </mat-form-field>
+  <mat-form-field class="full" *ngIf="mfaEnabled">
+    <input matInput placeholder="Current authenticator code" maxlength="6" inputmode="numeric" autocomplete="one-time-code" [(ngModel)]="currentToken">
+  </mat-form-field>
 
   <div *ngIf="!enrolling && !mfaEnabled" class="actions">
     <button mat-raised-button color="primary" (click)="startSetup(false)" [disabled]="busy">
