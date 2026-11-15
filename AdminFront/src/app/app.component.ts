@@ -31,51 +31,70 @@ export class AppComponent {
   ) { }
 
   ngAfterViewInit() {
-    this.http.get<any>(`${environment.apiEndpoint}/auth/checkSession`, { withCredentials: true })
-      .subscribe({
-        next: (user) => {
-          if (user.userType !== 'Admin') {
-            console.log(user);
-            window.location.href = environment.clientUrl;
-            return;
-          }
-
-          // MFA status from the session check.
-          this.mfaEnabled = !!user.mfaEnabled;
-
-          // Preserve the role-based restrictions from dev.
-          this.adminRole = user.adminRole || 'Admin';
-          this.adminAccessService.setAdminRole(this.adminRole);
-          if (this.adminRole !== 'Admin' && this.router.url !== '/edit-about-us') {
-            this.router.navigateByUrl('/edit-about-us');
-          }
-
-          document.getElementById('fullName')!.innerHTML =
-            `${user.firstName} ${user.lastName}`;
-
-          const avatar = document.getElementById('userAvatar');
-          if (avatar) {
-            avatar.setAttribute('src', `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&background=edf2fa`);
-          }
-
-          this.observer.observe(['(max-width: 800px)']).subscribe((res) => {
-            if (res.matches) {
-              this.sidenav.mode = 'over';
-              this.sidenav.close();
-            } else {
-              this.sidenav.mode = 'side';
-              this.sidenav.open();
-            }
-          });
-        },
-        error: () => {
-          console.log('error');
+    this.http.get<any>(
+      `${environment.apiEndpoint}/auth/checkSession`,
+      { withCredentials: true }
+    ).subscribe({
+      next: (user) => {
+        if (user.userType !== 'Admin') {
+          console.log(user);
           window.location.href = environment.clientUrl;
+          return;
         }
-      });
+
+        // Apply the violet theme for authenticated AdminFront users.
+        document.body.classList.add('theme-admin');
+
+        // Retrieve MFA status from the authenticated session.
+        this.mfaEnabled = !!user.mfaEnabled;
+
+        // Preserve role-based access restrictions.
+        this.adminRole = user.adminRole || 'Admin';
+        this.adminAccessService.setAdminRole(this.adminRole);
+
+        // Redirect restricted administrators to the About Us page.
+        if (
+          this.adminRole !== 'Admin' &&
+          this.router.url !== '/edit-about-us'
+        ) {
+          this.router.navigateByUrl('/edit-about-us');
+        }
+
+        // Display the authenticated user's full name.
+        document.getElementById('fullName')!.innerHTML =
+          `${user.firstName} ${user.lastName}`;
+
+        // Generate an avatar based on the user's name.
+        const avatar = document.getElementById('userAvatar');
+
+        if (avatar) {
+          avatar.setAttribute(
+            'src',
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              user.firstName + ' ' + user.lastName
+            )}&background=edf2fa`
+          );
+        }
+
+        // Adjust the sidenav for different screen sizes.
+        this.observer.observe(['(max-width: 800px)']).subscribe((res) => {
+          if (res.matches) {
+            this.sidenav.mode = 'over';
+            this.sidenav.close();
+          } else {
+            this.sidenav.mode = 'side';
+            this.sidenav.open();
+          }
+        });
+      },
+      error: () => {
+        console.log('error');
+        window.location.href = environment.clientUrl;
+      }
+    });
   }
 
-  // Opens MFA enrollment/reset/disable settings.
+  // Open MFA enrollment, reset, or disable settings.
   public openMfaSettings(): void {
     this.dialog.open(MfaSettingsDialogComponent, {
       width: '440px',
@@ -89,20 +108,27 @@ export class AppComponent {
     });
   }
 
+  // Log out the current administrator.
   public signOut() {
-    this.http.post(`${environment.apiEndpoint}/auth/logout`, {}, {
-      withCredentials: true,
-      observe: 'response'
-    }).subscribe({
+    this.http.post(
+      `${environment.apiEndpoint}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+        observe: 'response'
+      }
+    ).subscribe({
       next: (response) => {
         console.log('Logout successful');
         window.location.href = environment.clientUrl;
+
         setTimeout(() => {
           window.location.href = environment.clientUrl;
         }, 500);
       },
       error: (error) => {
         console.error('Logout failed:', error);
+
         setTimeout(() => {
           window.location.href = environment.clientUrl;
         }, 500);

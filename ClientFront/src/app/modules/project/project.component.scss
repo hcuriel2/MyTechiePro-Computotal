@@ -1,4 +1,4 @@
-/* Hide scrollbar across browsers */
+﻿/* Hide scrollbar across browsers */
 @mixin hide-scrollbar {
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
@@ -72,7 +72,7 @@
 .reject-btn,
 .reset-price-btn,
 .send-btn {
-  background-color: #225d9c;
+  background-color: var(--role-primary, #225d9c);
   color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -90,7 +90,7 @@
 .btn-action:hover,
 .send-btn:hover,
 .reset-price-btn:hover {
-  background-color: #17396f;
+  background-color: var(--role-primary-dark, #17396f);
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
@@ -381,7 +381,7 @@ h3 {
 .back-button {
   display: flex;
   align-items: center;
-  color: #225d9c;
+  color: var(--role-primary, #225d9c);
   font-weight: 500;
   padding: 4px 12px;
   border-radius: 4px;

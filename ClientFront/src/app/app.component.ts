@@ -63,8 +63,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
     this.authService.user.subscribe(
-      (u: any) =>
-        (this.user = u === null || Object.keys(u).length === 0 ? null : u)
+      (u: any) => {
+        this.user = u === null || Object.keys(u).length === 0 ? null : u;
+        this.applyRoleTheme(this.user?.userType);
+      }
     );
   }
   title = 'computer-guy-frontend';
@@ -90,7 +92,22 @@ export class AppComponent implements OnInit, OnDestroy {
       } else {
         this.isProfessional = false;
       }
+      this.applyRoleTheme(user?.userType);
     });
+  }
+
+  private applyRoleTheme(userType?: string): void {
+    const body = document.body;
+    body.classList.remove('theme-client', 'theme-professional', 'theme-admin');
+
+    // Keep the site colors in sync with the role returned by the active session.
+    if (userType === 'Professional') {
+      body.classList.add('theme-professional');
+    } else if (userType === 'Admin') {
+      body.classList.add('theme-admin');
+    } else if (userType === 'Client') {
+      body.classList.add('theme-client');
+    }
   }
 
   private updateUIBasedOnUser(user: User | null): void {
