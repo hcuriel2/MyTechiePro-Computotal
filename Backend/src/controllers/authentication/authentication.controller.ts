@@ -16,6 +16,7 @@ import userModel from "../../models/user/user.model";
 import AuthenticationService from "./authentication.service";
 import MfaSecurityService from "./mfa-security.service";
 import PasswordResetService from "./password-reset.service";
+import ChangePasswordDto from "./changePassword.dto";
 import AuthMiddleware from "../../middleware/auth.middleware";
 import LogInDto from "./logIn.dto";
 import qrcode from "qrcode";
@@ -82,6 +83,13 @@ class AuthenticationController implements Controller {
         this.router.post(`${this.path}/mfa/setup`, authMiddleware, this.guarded(this.setupMfa));
         this.router.post(`${this.path}/mfa/confirm`, authMiddleware, this.guarded(this.confirmMfa));
         this.router.post(`${this.path}/mfa/disable`, authMiddleware, this.guarded(this.disableMfa));
+        // Changing a password requires the active session, old password, and MFA proof if enabled.
+        this.router.post(
+            `${this.path}/change-password`,
+            authMiddleware,
+            validationMiddleware(ChangePasswordDto),
+            this.guarded(this.changePassword)
+        );
         this.router.post(`${this.path}/logout`, this.loggingOut);
         this.router.post(
             `${this.path}/professional/register`,
@@ -312,6 +320,36 @@ class AuthenticationController implements Controller {
         response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated))]);
         return response.json({ mfaEnabled: false });
     };
+    // Rotate the password without exposing a password hash or trusting a user id from the body.
+    // Existing MFA verification throttling limits wrong-password attempts on this endpoint.
+    // The atomic write checks the old hash and session version to prevent concurrent stale writes.
+    private changePassword = async (request: RequestWithUser, response: Response) => {
+        response.setHeader('Cache-Control', 'no-store');
+        const data: ChangePasswordDto = request.body;
+        if (data.newPassword !== data.confirmNewPassword) {
+            return response.status(400).json({ message: 'New passwords do not match.' });
+        }
+
+        const proof = await this.factorProof(await this.user.findById(request.user._id), data);
+        if (await bcrypt.compare(data.newPassword, proof.user.get('password', null, { getters: false }))) {
+            return response.status(400).json({ message: 'Choose a new password different from the current password.' });
+        }
+
+        const hash = await bcrypt.hash(data.newPassword, 10);
+        const updated = await this.mfaSecurity.commit(proof.user, proof.step, {
+            $set: { password: hash },
+            // All other sessions become invalid, including sessions on other devices.
+            $inc: { sessionVersion: 1 },
+            // Invalidate unused recovery links and unfinished authenticator setup.
+            $unset: { passwordResetTokenHash: 1, passwordResetExpiresAt: 1,
+                tempSecret: 1, tempSecretExpiresAt: 1 },
+        });
+
+        // Renew this browser's cookie against the new session version to keep it signed in.
+        response.setHeader('Set-Cookie', [this.createCookie(this.createToken(updated, Boolean(updated.secret)))]);
+        return response.status(200).json({ message: 'Password changed successfully.' });
+    };
+
     // Logs the User out
     // Sets the HttpOnly cookie to an expired state
     private loggingOut = (request: Request, response: Response) => {
