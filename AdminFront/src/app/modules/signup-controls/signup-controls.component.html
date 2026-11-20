@@ -1,0 +1,13 @@
+<section><h1>Signup controls</h1><p>Manage Client and Professional signups independently. Notices appear when signups are closed.</p>
+<p role="status" class="status">{{ message }}</p><button *ngIf="!settings" (click)="load()">Retry loading</button>
+<form *ngIf="settings" #controls="ngForm" (ngSubmit)="save()">
+<fieldset [disabled]="saving"><legend>Client signup</legend>
+<label><input type="checkbox" name="clientEnabled" [(ngModel)]="settings.clientEnabled"> Allow Client signups</label>
+<p>{{ settings.clientEnabled ? 'Open — signup form available' : 'Closed — signup form hidden' }}</p>
+<label for="clientNotice">Client closure notice</label><textarea id="clientNotice" name="clientNotice" [(ngModel)]="settings.clientNotice" required maxlength="1000"></textarea></fieldset>
+<fieldset [disabled]="saving"><legend>Professional signup</legend>
+<label><input type="checkbox" name="professionalEnabled" [(ngModel)]="settings.professionalEnabled"> Allow Professional signups</label>
+<p>{{ settings.professionalEnabled ? 'Open — signup form available' : 'Closed — signup form hidden' }}</p>
+<label for="professionalNotice">Professional closure notice</label><textarea id="professionalNotice" name="professionalNotice" [(ngModel)]="settings.professionalNotice" required maxlength="1000"></textarea></fieldset>
+<button type="submit" [disabled]="saving || controls.invalid || !settings.clientNotice.trim() || !settings.professionalNotice.trim()">{{ saving ? 'Saving…' : 'Save signup settings' }}</button>
+</form></section>

@@ -1,3 +1,4 @@
+import { ComponentTestModule } from '../../../testing/component-test.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProProfileComponent } from './pro-profile.component';
@@ -8,7 +9,7 @@ describe('ProProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProProfileComponent ]
+      imports: [ComponentTestModule]
     })
     .compileComponents();
   });

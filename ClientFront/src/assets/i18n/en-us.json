@@ -3,6 +3,10 @@
     "Title": "My Techie Pro"
   },
   "Dictionary": {
+    "AboutUs": "About Us",
+    "WhoWeAre": "Who We Are",
+    "Appendix": "Appendix",
+    "YourProfile": "Your Profile",
     "About": "About",
     "Address": "Address",
     "AuthenticationCode": "Authentication Code",
@@ -174,6 +178,7 @@
     "NewPassword": "New Password"
   },
   "Message": {
+    "WelcomeBack": "Welcome back,",
     "AcceptProject": "Accept Project",
     "BioPlaceholder": "Please write a short bio to introduce yourself to potential clients.",
     "ClientComplaint": "File complaint against client",
@@ -208,6 +213,8 @@
     "WeakPassword": "Password is too weak, please use a stronger password.",
     "ServerError": "Server error occurred. Please try again later.",
     "InvalidCredentials": "Invalid email or password, please try again.",
+    "MfaPrompt": "Enter the 6-digit code from your authenticator app.",
+    "MfaInvalid": "That code is incorrect or expired. Try the current code.",
     "EmailNotVerified": "Email not verified. Please verify your email address.",
     "EmailVerificationSuccess": "Your email has been verified successfully.",
     "LoggingYouIn": "Logging you in...",

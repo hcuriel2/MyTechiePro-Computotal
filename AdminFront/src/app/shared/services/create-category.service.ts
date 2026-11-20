@@ -25,7 +25,7 @@ export class CreateCategoryService {
     
     
     return this.httpClient
-      .post<Category>(`${this.API_URL}`, newCategory)
+      .post<Category>(`${this.API_URL}`, newCategory, { withCredentials: true })
       // .pipe(
       //   map((newCategory: Category) => {
       //     localStorage.setItem('newCategory', JSON.stringify(newCategory));

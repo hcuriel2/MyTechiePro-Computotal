@@ -13,8 +13,16 @@ export class AdminCreateDialogComponent implements OnInit {
   public email: FormControl;
   public password: FormControl;
   public phoneNumber: FormControl;
+  public adminRole: FormControl;
   public formGroup: FormGroup;
-  public data: any;
+  public data: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    password?: string;
+    phoneNumber?: string;
+    adminRole?: 'Admin' | 'Editor' | 'Read-only';
+  };
 
   constructor(
       public dialogRef: MatDialogRef<AdminCreateDialogComponent>,
@@ -26,23 +34,26 @@ export class AdminCreateDialogComponent implements OnInit {
           lastName: undefined,
           email: undefined,
           password: undefined,
-          phoneNumber: undefined
+          phoneNumber: undefined,
+          adminRole: 'Admin'
       };
   }
 
   public ngOnInit(): void {
       this.firstName = new FormControl(null, Validators.required);
       this.lastName = new FormControl(null, Validators.required);
-      this.email = new FormControl(null, Validators.email);
+      this.email = new FormControl(null, [Validators.required, Validators.email]);
       this.password = new FormControl(null, Validators.required);
       this.phoneNumber = new FormControl(null, Validators.required);
+      this.adminRole = new FormControl('Admin', Validators.required);
 
       this.formGroup = this.formBuilder.group({
         firstName: this.firstName,
         lastName: this.lastName,
         email: this.email,
         password: this.password,
-        phoneNumber: this.phoneNumber
+        phoneNumber: this.phoneNumber,
+        adminRole: this.adminRole
     });
 
   }
@@ -53,6 +64,7 @@ export class AdminCreateDialogComponent implements OnInit {
       this.data.lastName = this.lastName.value;
       this.data.password = this.password.value;
       this.data.phoneNumber = this.phoneNumber.value;
+      this.data.adminRole = this.adminRole.value;
       
       this.dialogRef.close(this.data);
       

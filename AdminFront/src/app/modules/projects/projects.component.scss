@@ -1,4 +1,4 @@
-.tableStyle {
+﻿.tableStyle {
     margin-top: 30px;
   }
 
@@ -28,7 +28,7 @@
     padding-top: 35px;
     font-size: xx-large;
     font-weight: bold;
-    color: #002b5c;
+    color: var(--role-primary, #002b5c);
   }
 
   .blue {
@@ -87,7 +87,7 @@
   height: 50px;
   border: 3px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 3px solid #002b5c;
+  border-top: 3px solid var(--role-primary, #002b5c);
   animation: spin 1s linear infinite;
 }
 

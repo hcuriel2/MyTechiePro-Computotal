@@ -3,12 +3,15 @@ import NotAuthorizedException from "../../exceptions/NotAuthorizedException";
 import Controller from "../../interfaces/controller.interface";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
 import authMiddleware from "../../middleware/auth.middleware";
-import adminMiddleware from "../../middleware/admin.middleware";
+import adminMiddleware, { adminRoleMiddleware, adminWriteMiddleware } from "../../middleware/admin.middleware";
 import userModel from "../../models/user/user.model";
 import UserNotFoundException from "../../exceptions/UserNotFoundException";
 import ResetPasswordDto from "../authentication/resetPassword.dto";
 import * as bcrypt from "bcryptjs";
 import CreateUserDto from "./user.dto";
+import PasswordResetService from '../authentication/password-reset.service';
+import validationMiddleware from '../../middleware/validation.middleware';
+import HttpException from '../../exceptions/HttpException';
 
 class UserController implements Controller {
     public path = "/users";
@@ -24,20 +27,43 @@ class UserController implements Controller {
         
         
         //User routes - No authentication needed 
-        this.router.put(`${this.path}/reset/:id`, this.resetPassword);
+        this.router.put(`${this.path}/reset/:id`, validationMiddleware(ResetPasswordDto), this.resetPassword);
         this.router.get(`${this.path}/verify/:id`, this.verifyUserEmail);
         this.router.get(`${this.path}/professionals/:skill`, this.getAllProfessionalsBySkill);
         this.router.get(`${this.path}/professionals`, this.getAllProfessionals)
-        this.router.delete(`${this.path}/:id`, this.deleteUser)
-        this.router.patch(`${this.path}/stripe-account/:id`, this.setStripeAccountId)
+        this.router.delete(
+            `${this.path}/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.deleteUser
+        );
+        this.router.patch(
+            `${this.path}/stripe-account/:id`,
+            authMiddleware,
+            adminWriteMiddleware,
+            this.setStripeAccountId
+        );
 
         //Admin routes - Admin authentication needed (only admins can access these)
-        this.router.get(`${this.path}`, this.getAllUsers)
-        this.router.get(`${this.path}/clients`, this.getAllClients)
-        this.router.get(`${this.path}/admins`, this.getAllAdmins)
-        this.router.put(`${this.path}/approve/:id`, this.approveUser)
-        this.router.get(`${this.path}/:id`, this.getUserById)
-        this.router.patch(`${this.path}/:id`, this.changeStatus)
+        this.router.get(`${this.path}`, authMiddleware, adminMiddleware, this.getAllUsers);
+        this.router.get(`${this.path}/clients`, authMiddleware, adminMiddleware, this.getAllClients);
+        this.router.get(`${this.path}/admins`, authMiddleware, adminMiddleware, this.getAllAdmins);
+        this.router.put(
+            `${this.path}/approve/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.approveUser
+        );
+        this.router.get(`${this.path}/:id`, authMiddleware, adminMiddleware, this.getUserById);
+        this.router.patch(
+            `${this.path}/:id`,
+            authMiddleware,
+            adminMiddleware,
+            adminRoleMiddleware("Admin"),
+            this.changeStatus
+        );
 
         
 
@@ -212,27 +238,23 @@ class UserController implements Controller {
         }
     };
 
-    private resetPassword = async (request: Request, response: Response) => {
-        const id = request.params.id;
+    private resetPassword = async (request: Request, response: Response, next: NextFunction) => {
+        response.setHeader('Cache-Control', 'no-store');
         const data: ResetPasswordDto = request.body;
-        if (data.password === data.confirmPassword) {
-            const newPassword = await bcrypt.hash(data.password, 10);
-            this.user.findByIdAndUpdate(
-                id,
-                { password: newPassword },
-                function (err, result) {
-                    if (err) {
-                        response.send(err);
-                    } else {
-                        response.send(result);
-                    }
-                }
-            );
-        } else {
-            response.send("The password is not matched.");
+        if (data.password !== data.confirmPassword) {
+            return response.status(400).json({ message: 'Passwords do not match.' });
+        }
+        try {
+            await new PasswordResetService().reset(request.params.id, data.token, data.password);
+            response.status(200).json({ message: 'Password updated. Please sign in.' });
+        } catch (error) {
+            const invalidLink = error instanceof HttpException && error.status === 400;
+            response.status(invalidLink ? 400 : 500)
+                .json({ message: invalidLink
+                    ? 'Reset link is invalid or expired. Request a new link.'
+                    : 'Password could not be updated. Please try again later.' });
         }
     };
-
     private setStripeAccountId = async (request: Request, response: Response) => {
         const id = request.params.id;
         const { stripeAccountId } = request.body;

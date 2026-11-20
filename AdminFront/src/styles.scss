@@ -3,5 +3,23 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+// Match the admin navigation and primary actions to the Admin role color.
+body.theme-admin {
+  --role-primary: #6a1b9a;
+}
+
+body.theme-admin .mat-raised-button.mat-primary,
+body.theme-admin .mat-flat-button.mat-primary,
+body.theme-admin .mat-fab.mat-primary,
+body.theme-admin .mat-mini-fab.mat-primary {
+  background-color: var(--role-primary);
+}
+
+body.theme-admin .mat-button.mat-primary,
+body.theme-admin .mat-icon-button.mat-primary,
+body.theme-admin .mat-stroked-button.mat-primary {
+  color: var(--role-primary);
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

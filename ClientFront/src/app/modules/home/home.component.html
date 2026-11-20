@@ -1,8 +1,8 @@
 <div
   class="container-fluid row align-items-center pt-5 pb-5"
   [ngClass]="{
-    'client-banner-color': isCustomer,
-    'custom-bg-pro': !isCustomer,
+    'role-banner-color': !!user && user.userType !== 'Client',
+    'client-banner-color': !!user && user.userType === 'Client',
     'default-banner-color': !user
   }"
   id="banner"
@@ -10,13 +10,13 @@
   <div class="row align-items-center justify-content-center">
     <div class="col-auto text-center">
       <p class="h1 d-inline" *ngIf="user">
-        Welcome back, {{ user.firstName }}.
+        {{ 'Message.WelcomeBack' | translate }} {{ user.firstName }}.
       </p>
       <br />
-      <p class="h1 d-inline" [ngClass]="{ 'black-text': !user }">
+      <p class="h1 d-inline" [ngClass]="{ 'black-text': !user || user.userType === 'Client' }">
         {{ "Message.HowCanWeHelp" | translate }}
       </p>
-      <p class="h6" [ngClass]="{ 'black-text': !user }">
+      <p class="h6" [ngClass]="{ 'black-text': !user || user.userType === 'Client' }">
         {{ "Message.GetStarted" | translate }}
       </p>
     </div>
@@ -28,7 +28,7 @@
         <input
           class="form-control search-input"
           type="text"
-          placeholder="Search"
+          [placeholder]="'Dictionary.Search' | translate"
           [(ngModel)]="searchQuery"
           (ngModelChange)="showResults = searchQuery !== ''"
         />
@@ -108,7 +108,7 @@
 </div>
 
 <mat-card id="aboutUs">
-  <mat-card-title>About Us</mat-card-title>
+  <mat-card-title>{{ 'Dictionary.AboutUs' | translate }}</mat-card-title>
   <mat-card-content>
     <app-about></app-about>
   </mat-card-content>

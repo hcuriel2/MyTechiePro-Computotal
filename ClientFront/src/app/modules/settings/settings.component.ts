@@ -15,8 +15,26 @@ export class SettingsComponent implements OnInit {
   public editing = false;
   public userId = '';
   public settingsForm: FormGroup;
+  public passwordForm: FormGroup;
+  public passwordBusy = false;
+  public passwordMessage = '';
+  public passwordError = '';
   public successMessage: string = '';
   public errorMessage: string = '';
+  // MFA screen state: `enrolling` shows the pending QR flow; `replacing` keeps the
+  // copy accurate during a reset. The server continues accepting the old key until
+  // the replacement is confirmed.
+  public mfaEnabled = false;
+  public enrolling = false;
+  public replacing = false;
+  public mfaBusy = false;
+  public qrDataUrl = '';
+  public manualSecret = '';
+  public confirmCode = '';
+  public mfaMessage = '';
+  public mfaError = '';
+  public currentPassword = '';
+  public currentToken = '';
   private messages: any = {};
   private originalUserData: User | null = null;
   private editSnapshot: any = null;
@@ -46,14 +64,26 @@ export class SettingsComponent implements OnInit {
       postalCode: [{ value: '', disabled: true }],
     });
 
+    // Separate form so saving a profile never sends passwords with profile data.
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(8),
+        Validators.maxLength(16),
+        Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/)]],
+      confirmNewPassword: ['', Validators.required],
+      currentToken: [''],
+    });
+
     this.authService.user.subscribe((user) => {
       if (user) {
-        this.originalUserData = user;
+        this.mfaEnabled = !!user.mfaEnabled;
         this.userId = user._id;
-        // this.isProfessional = user.userType === 'Professional';
-        // this.stripeConnected = !!user.stripeAccountId;
-        // this.stripeAccountId = user.stripeAccountId || '';
-        this.populateForm(user);
+        // Don't refill the profile form while they're mid-edit. Confirming MFA
+        // updates the user and would otherwise wipe what they typed.
+        if (!this.editing) {
+          this.originalUserData = user;
+          this.populateForm(user);
+        }
       }
     });
   }
@@ -145,5 +175,128 @@ export class SettingsComponent implements OnInit {
         this.errorMessage = '';
       }, 3000);
     }
+  }
+
+  public submitPasswordChange(): void {
+    this.passwordMessage = '';
+    this.passwordError = '';
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      this.passwordError = 'Please enter your current password and a valid new password.';
+      return;
+    }
+
+    const data = this.passwordForm.value;
+    if (data.newPassword !== data.confirmNewPassword) {
+      this.passwordError = 'New passwords do not match.';
+      return;
+    }
+    if (this.mfaEnabled && !/^\d{6}$/.test((data.currentToken || '').trim())) {
+      this.passwordError = 'Enter the current 6-digit authenticator code.';
+      return;
+    }
+
+    this.passwordBusy = true;
+    this.authService.changePassword(
+      data.currentPassword, data.newPassword, data.confirmNewPassword,
+      this.mfaEnabled ? data.currentToken.trim() : undefined
+    ).subscribe({
+      next: () => {
+        this.passwordBusy = false;
+        this.passwordForm.reset({ currentPassword: '', newPassword: '', confirmNewPassword: '', currentToken: '' });
+        this.passwordMessage = 'Password changed. Your other signed-in sessions have been logged out.';
+      },
+      error: (error) => {
+        this.passwordBusy = false;
+        this.passwordError = this.readMfaError(error, 'Could not change password. Please try again.');
+      },
+    });
+  }
+
+  // First-time setup and reset share the same endpoint. The API stores a pending key
+  // and returns its QR/manual form; neither action enables MFA by itself.
+  startMfaSetup(replacing: boolean): void {
+    this.mfaBusy = true;
+    this.mfaError = '';
+    this.mfaMessage = '';
+    this.replacing = replacing;
+    this.authService.setupMfa(this.currentPassword, this.currentToken).subscribe({
+      next: (setup) => {
+        this.qrDataUrl = setup.qrDataUrl;
+        this.manualSecret = setup.secret;
+        this.confirmCode = '';
+        this.enrolling = true;
+        this.mfaBusy = false;
+      },
+      error: (error) => {
+        this.mfaBusy = false;
+        this.mfaError = this.readMfaError(error, 'Could not start authenticator setup.');
+      },
+    });
+  }
+
+  // Hide and clear the enrollment UI. The server-side pending key is not active, so
+  // cancelling here leaves the current sign-in behavior unchanged.
+  cancelMfaSetup(): void {
+    this.currentPassword = ''; this.currentToken = '';
+    this.enrolling = false;
+    this.qrDataUrl = '';
+    this.manualSecret = '';
+    this.confirmCode = '';
+    this.mfaError = '';
+  }
+
+  // Confirm the pending key with a current 6-digit code. Only a successful response
+  // switches this view to the enabled state and updates the shared user session model.
+  confirmMfaSetup(): void {
+    const token = (this.confirmCode || '').replace(/\s/g, '');
+    if (!/^\d{6}$/.test(token)) {
+      this.mfaError = 'Enter the 6-digit code from your authenticator app.';
+      return;
+    }
+    this.mfaBusy = true;
+    this.mfaError = '';
+    this.authService.confirmMfa(token, this.currentPassword, this.currentToken).subscribe({
+      next: () => {
+        this.mfaEnabled = true;
+        this.enrolling = false;
+        this.qrDataUrl = '';
+        this.manualSecret = '';
+        this.confirmCode = '';
+        this.mfaBusy = false;
+        this.currentPassword = ''; this.currentToken = '';
+        this.mfaMessage = 'Authenticator is on for this account.';
+      },
+      error: (error) => {
+        this.mfaBusy = false;
+        this.mfaError = this.readMfaError(error, 'That code was not accepted.');
+      },
+    });
+  }
+
+  disableMfa(): void {
+    this.mfaBusy = true;
+    this.mfaError = '';
+    this.mfaMessage = '';
+    this.authService.disableMfa(this.currentPassword, this.currentToken).subscribe({
+      next: () => {
+        this.mfaEnabled = false;
+        this.mfaBusy = false;
+        this.currentPassword = ''; this.currentToken = '';
+        this.mfaMessage = 'Authenticator is off. Sign-in uses your password only.';
+      },
+      error: (error) => {
+        this.mfaBusy = false;
+        this.mfaError = this.readMfaError(error, 'Could not turn off the authenticator.');
+      },
+    });
+  }
+
+  // Use the server's message when it sent one (bad code, wrong password, and so on).
+  private readMfaError(error: any, fallback: string): string {
+    if (error && error.error && error.error.message) {
+      return error.error.message;
+    }
+    return fallback;
   }
 }

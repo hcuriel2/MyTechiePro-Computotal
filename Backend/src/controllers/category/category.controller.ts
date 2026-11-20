@@ -2,7 +2,8 @@ import { Request, Response, NextFunction, Router } from "express";
 import NotFoundCategoryException from "../../exceptions/NotFoundCategoryException";
 import Controller from "../../interfaces/controller.interface";
 import RequestWithUser from "../../interfaces/requestWithUser.interface";
-import adminMiddleware from "../../middleware/admin.middleware";
+import authMiddleware from "../../middleware/auth.middleware";
+import adminMiddleware, { adminRoleMiddleware } from "../../middleware/admin.middleware";
 import validationMiddleware from "../../middleware/validation.middleware";
 import CreateCategoryDto from "./category.dto";
 import Category from "../../models/category/category.interface";
@@ -24,8 +25,12 @@ class CategoryController implements Controller {
         this.router.get(`${this.path}/:id`, this.getCategoryById);
         this.router.get(`${this.path}/:id/:serviceId`, this.getServiceById);
         this.router
-            .all(`${this.path}/*`)
-            // .all(`${this.path}/*`, adminMiddleware)
+            .all(
+                `${this.path}/*`,
+                authMiddleware,
+                adminMiddleware,
+                adminRoleMiddleware("Admin")
+            )
             .put(`${this.path}/services/:id`, this.addServiceKeywords)
             .patch(
                 `${this.path}/:id`,
@@ -37,6 +42,9 @@ class CategoryController implements Controller {
             .delete(`${this.path}/:id/:serviceId`, this.deleteService)
             .post(
                 this.path,
+                authMiddleware,
+                adminMiddleware,
+                adminRoleMiddleware("Admin"),
                 validationMiddleware(CreateCategoryDto),
                 this.createCategory
             );

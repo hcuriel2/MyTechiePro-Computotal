@@ -1,4 +1,4 @@
-.survey-container {
+﻿.survey-container {
   height: 85vw;
   width: 70%;
   margin-left: auto;
@@ -13,7 +13,7 @@
 
 #next-btn{
   margin-top: 5vh !important;
-  background-color: #225d9c;
+  background-color: var(--role-primary, #225d9c);
   color: white;
   padding: 4px 10px;
   border: none;
