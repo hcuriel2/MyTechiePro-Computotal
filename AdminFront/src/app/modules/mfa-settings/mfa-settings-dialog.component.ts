@@ -24,6 +24,15 @@ export class MfaSettingsDialogComponent {
   public error = '';
   public currentPassword = '';
   public currentToken = '';
+  // Admins use the account-security dialog rather than the customer Settings page.
+  public showPasswordForm = false;
+  public changeCurrentPassword = '';
+  public changeNewPassword = '';
+  public changeConfirmPassword = '';
+  public changeToken = '';
+  public passwordBusy = false;
+  public passwordMessage = '';
+  public passwordError = '';
 
   private readonly api = `${environment.apiEndpoint}/auth`;
 
@@ -122,6 +131,46 @@ export class MfaSettingsDialogComponent {
           this.error = this.readError(error, 'Could not turn off the authenticator.');
         },
       });
+  }
+
+  public changePassword(): void {
+    this.passwordError = '';
+    this.passwordMessage = '';
+    if (!this.changeCurrentPassword ||
+      this.changeNewPassword.length < 8 || this.changeNewPassword.length > 16 ||
+      !/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/.test(this.changeNewPassword)) {
+      this.passwordError = 'Use 8–16 characters with uppercase, lowercase, number and special character.';
+      return;
+    }
+    if (this.changeNewPassword !== this.changeConfirmPassword) {
+      this.passwordError = 'New passwords do not match.';
+      return;
+    }
+    if (this.mfaEnabled && !/^\d{6}$/.test(this.changeToken.trim())) {
+      this.passwordError = 'Enter the current 6-digit authenticator code.';
+      return;
+    }
+    this.passwordBusy = true;
+    const body: any = {
+      currentPassword: this.changeCurrentPassword,
+      newPassword: this.changeNewPassword,
+      confirmNewPassword: this.changeConfirmPassword,
+    };
+    if (this.mfaEnabled) body.currentToken = this.changeToken.trim();
+    this.http.post<any>(`${this.api}/change-password`, body, { withCredentials: true }).subscribe({
+      next: () => {
+        this.passwordBusy = false;
+        this.changeCurrentPassword = '';
+        this.changeNewPassword = '';
+        this.changeConfirmPassword = '';
+        this.changeToken = '';
+        this.passwordMessage = 'Password changed. Other signed-in sessions are now invalid.';
+      },
+      error: (error) => {
+        this.passwordBusy = false;
+        this.passwordError = this.readError(error, 'Could not change password. Please try again.');
+      },
+    });
   }
 
   // Use the server's message when it sent one (bad code, wrong password, and so on).

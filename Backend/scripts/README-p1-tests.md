@@ -7,6 +7,7 @@ From Backend, after installing the repository dependencies:
     node scripts/test-signup-store.cjs
     node scripts/test-admin-levels.cjs
     node scripts/test-password-reset.cjs
+    node scripts/test-change-password.cjs
     node scripts/test-mfa-totp.cjs
 
 Use the project's supported Node runtime. These checks use the compiled production controllers, validation, services and schemas with memory-only persistence and captured mail. The helper blocks MongoDB connections and replaces the email module before loading authentication. HTTP listens on an ephemeral loopback port. No environment file, application server or demo route is loaded.
@@ -24,3 +25,9 @@ Frontend unit suites: from each frontend directory, run `npm test -- --watch=fal
 With a compatible modern Node runtime and the test-only `mongodb-memory-server` package installed **outside this application**, set `DISPOSABLE_MONGO_HELPER` to that package's absolute path and run `node scripts/test-mfa-recovery-mongo.cjs`. Optionally set `MONGOMS_DOWNLOAD_DIR` to a test cache. The script starts its own MongoDB 7.0.14 on `127.0.0.1` and an ephemeral port; it accepts no database URI, reads no `.env`, captures mail and shuts down its disposable database in `finally`. Initial execution may download the official MongoDB binary. Do not substitute a shared database.
 
 The suite runs 23 HTTP groups covering normal login, factor enrollment/confirmation/expiry, recovery with active MFA, old-session invalidation, Admin authorization, real concurrent recovery, replacement/disable proof, legacy migration and recovery-link invalidation on factor changes. Used-code rejection is now asserted. Run `scripts/test-mfa-security.cjs` with the same disposable helper configuration for 11 additional security groups across two independent API processes, including simultaneous requests, shared limits, backoff, recovery and database-outage rejection. Test clocks are advanced only in the harness; no production clock override exists. No actual email delivery, replica-set failover, production cookie/CORS or human usability certification is implied.
+
+The password-change suite runs six authenticated HTTP groups with in-memory persistence.
+It exercises mandatory current-password proof, password strength and confirmation,
+rotation of bcrypt credentials and JWT session version, recovery-token invalidation,
+MFA proof, and administrator accounts. It does not replace real MongoDB durability,
+race-condition or deployment cookie checks.

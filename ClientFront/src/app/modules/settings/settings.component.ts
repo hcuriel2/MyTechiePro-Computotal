@@ -15,6 +15,10 @@ export class SettingsComponent implements OnInit {
   public editing = false;
   public userId = '';
   public settingsForm: FormGroup;
+  public passwordForm: FormGroup;
+  public passwordBusy = false;
+  public passwordMessage = '';
+  public passwordError = '';
   public successMessage: string = '';
   public errorMessage: string = '';
   // MFA screen state: `enrolling` shows the pending QR flow; `replacing` keeps the
@@ -58,6 +62,16 @@ export class SettingsComponent implements OnInit {
       city: [{ value: '', disabled: true }],
       country: [{ value: '', disabled: true }],
       postalCode: [{ value: '', disabled: true }],
+    });
+
+    // Separate form so saving a profile never sends passwords with profile data.
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(8),
+        Validators.maxLength(16),
+        Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$/)]],
+      confirmNewPassword: ['', Validators.required],
+      currentToken: [''],
     });
 
     this.authService.user.subscribe((user) => {
@@ -161,6 +175,42 @@ export class SettingsComponent implements OnInit {
         this.errorMessage = '';
       }, 3000);
     }
+  }
+
+  public submitPasswordChange(): void {
+    this.passwordMessage = '';
+    this.passwordError = '';
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      this.passwordError = 'Please enter your current password and a valid new password.';
+      return;
+    }
+
+    const data = this.passwordForm.value;
+    if (data.newPassword !== data.confirmNewPassword) {
+      this.passwordError = 'New passwords do not match.';
+      return;
+    }
+    if (this.mfaEnabled && !/^\d{6}$/.test((data.currentToken || '').trim())) {
+      this.passwordError = 'Enter the current 6-digit authenticator code.';
+      return;
+    }
+
+    this.passwordBusy = true;
+    this.authService.changePassword(
+      data.currentPassword, data.newPassword, data.confirmNewPassword,
+      this.mfaEnabled ? data.currentToken.trim() : undefined
+    ).subscribe({
+      next: () => {
+        this.passwordBusy = false;
+        this.passwordForm.reset({ currentPassword: '', newPassword: '', confirmNewPassword: '', currentToken: '' });
+        this.passwordMessage = 'Password changed. Your other signed-in sessions have been logged out.';
+      },
+      error: (error) => {
+        this.passwordBusy = false;
+        this.passwordError = this.readMfaError(error, 'Could not change password. Please try again.');
+      },
+    });
   }
 
   // First-time setup and reset share the same endpoint. The API stores a pending key

@@ -1,5 +1,5 @@
 <!-- Turn the authenticator on, confirm a code from the QR, reset it, or turn it off. -->
-<h2 mat-dialog-title>Authenticator</h2>
+<h2 mat-dialog-title>Account Security</h2>
 
 <mat-dialog-content>
   <p *ngIf="!enrolling">
@@ -47,6 +47,35 @@
     <div class="actions">
       <button mat-stroked-button (click)="cancelSetup()" [disabled]="busy">Cancel</button>
       <button mat-raised-button color="primary" (click)="confirmSetup()" [disabled]="busy">Confirm</button>
+    </div>
+  </div>
+  <mat-divider class="section-separator"></mat-divider>
+  <div class="actions">
+    <button mat-stroked-button type="button" (click)="showPasswordForm = !showPasswordForm" [disabled]="passwordBusy">
+      {{ showPasswordForm ? 'Hide password form' : 'Change password' }}
+    </button>
+  </div>
+  <div *ngIf="showPasswordForm" class="change-password-panel">
+    <h3>Change Password</h3>
+    <p>Use 8–16 characters with uppercase, lowercase, a number and a special character (!@#$%^&amp;*).</p>
+    <p class="ok" *ngIf="passwordMessage" role="status">{{ passwordMessage }}</p>
+    <p class="problem" *ngIf="passwordError" role="alert">{{ passwordError }}</p>
+    <mat-form-field class="full">
+      <input matInput placeholder="Current password" type="password" autocomplete="current-password" [(ngModel)]="changeCurrentPassword">
+    </mat-form-field>
+    <mat-form-field class="full">
+      <input matInput placeholder="New password" type="password" maxlength="16" autocomplete="new-password" [(ngModel)]="changeNewPassword">
+    </mat-form-field>
+    <mat-form-field class="full">
+      <input matInput placeholder="Confirm new password" type="password" maxlength="16" autocomplete="new-password" [(ngModel)]="changeConfirmPassword">
+    </mat-form-field>
+    <mat-form-field class="full" *ngIf="mfaEnabled">
+      <input matInput placeholder="Current authenticator code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" [(ngModel)]="changeToken">
+    </mat-form-field>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="button" (click)="changePassword()" [disabled]="passwordBusy">
+        {{ passwordBusy ? 'Changing password…' : 'Save new password' }}
+      </button>
     </div>
   </div>
 </mat-dialog-content>

@@ -134,3 +134,10 @@ form {
     max-width: 100%;
   }
 }
+
+/* Account password controls match the rest of the settings page. */
+.password-card { margin-top: 12px; }
+.password-help { text-align: center; margin-bottom: 20px; }
+.password-success { color: #1b5e20; text-align: center; font-weight: 600; }
+.password-problem { color: #b00020; text-align: center; font-weight: 600; }
+button:disabled { opacity: .65; cursor: not-allowed; }

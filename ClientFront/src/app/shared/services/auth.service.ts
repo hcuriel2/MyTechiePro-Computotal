@@ -133,6 +133,19 @@ export class AuthService {
     }
   }
 
+  // Uses the authenticated HttpOnly cookie; the backend checks the old password and,
+  // when MFA is enabled, a fresh authenticator code before rotating the credential.
+  public changePassword(currentPassword: string, newPassword: string,
+    confirmNewPassword: string, currentToken?: string): Observable<{ message: string }> {
+    const body: any = { currentPassword, newPassword, confirmNewPassword };
+    if (currentToken !== undefined) {
+      body.currentToken = currentToken;
+    }
+    return this.httpClient.post<{ message: string }>(
+      `${this.API_URL}/change-password`, body, { withCredentials: true }
+    );
+  }
+
   // Modified the function - it needs to be a POST request in order to be secure
   public sendEmailResetPw(emailAddress: string): Observable<any> {
     const body = { emailAddress };

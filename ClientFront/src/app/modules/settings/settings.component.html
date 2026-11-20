@@ -50,6 +50,37 @@
     </div>
   </form>
 
+  <!-- Password changes are a separate authenticated operation, never part of profile edits. -->
+  <form *ngIf="userId" [formGroup]="passwordForm" (ngSubmit)="submitPasswordChange()" class="settings-card password-card">
+    <h2 class="section-title"><strong>Change Password</strong></h2>
+    <p class="password-help">Use 8–16 characters with an uppercase letter, a lowercase letter, a number, and a special character (!@#$%^&amp;*).</p>
+    <p *ngIf="passwordMessage" class="password-success" role="status">{{ passwordMessage }}</p>
+    <p *ngIf="passwordError" class="password-problem" role="alert">{{ passwordError }}</p>
+
+    <label for="changeCurrentPassword"><strong>Current password</strong></label>
+    <input id="changeCurrentPassword" type="password" autocomplete="current-password" formControlName="currentPassword" maxlength="128">
+
+    <label for="changeNewPassword"><strong>New password</strong></label>
+    <input id="changeNewPassword" type="password" autocomplete="new-password" formControlName="newPassword" maxlength="16">
+    <p class="password-problem" *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+      The new password must meet all requirements above.
+    </p>
+
+    <label for="changeConfirmPassword"><strong>Confirm new password</strong></label>
+    <input id="changeConfirmPassword" type="password" autocomplete="new-password" formControlName="confirmNewPassword" maxlength="16">
+    <p class="password-problem" *ngIf="passwordForm.get('confirmNewPassword')?.touched && passwordForm.get('confirmNewPassword')?.value !== passwordForm.get('newPassword')?.value">
+      New passwords do not match.
+    </p>
+
+    <ng-container *ngIf="mfaEnabled">
+      <label for="changePasswordToken"><strong>Authenticator code</strong></label>
+      <input id="changePasswordToken" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" formControlName="currentToken">
+    </ng-container>
+    <div class="text-center">
+      <button type="submit" [disabled]="passwordBusy"><strong>{{ passwordBusy ? 'Changing password…' : 'Change Password' }}</strong></button>
+    </div>
+  </form>
+
   <!-- Optional authenticator. Off means the normal email + password login is unchanged. -->
   <div class="settings-card mfa-card" *ngIf="userId">
     <h2 class="section-title"><strong>Authenticator</strong></h2>
